@@ -12,7 +12,7 @@ import edu.gemini.spModel.core.AngleSyntax._
 import edu.gemini.pot.ModelConverters._
 import edu.gemini.spModel.gemini.gems.Canopus.Wfs
 import edu.gemini.spModel.gemini.gems.{Canopus, Gems}
-import edu.gemini.spModel.gemini.gsaoi.{Gsaoi, GsaoiOdgw}
+import edu.gemini.spModel.gemini.iris.{Iris, IrisOdgw}
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality
 import edu.gemini.spModel.gems.{GemsGuideStarType, GemsTipTiltMode}
 import edu.gemini.spModel.guide.GuideSpeed
@@ -43,8 +43,8 @@ class GemsStrategySpec extends Specification {
       val dec = Angle.fromDMS(41, 30, 42.078).getOrElse(Angle.zero)
       val target = new SPTarget(ra.toDegrees, dec.toDegrees)
       val env = TargetEnvironment.create(target)
-      val inst = new Gsaoi <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
-      val gsaoi = GsaoiOdgw.values().toList
+      val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
+      val iris = IrisOdgw.values().toList
       val canopus = Canopus.Wfs.values().toList
       val pwfs1 = List(PwfsGuideProbe.pwfs1)
 
@@ -58,7 +58,7 @@ class GemsStrategySpec extends Specification {
       val dec = Angle.fromDMS(41, 30, 42.078).getOrElse(Angle.zero)
       val target = new SPTarget(ra.toDegrees, dec.toDegrees)
       val env = TargetEnvironment.create(target)
-      val inst = new Gsaoi <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
+      val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val conditions = SPSiteQuality.Conditions.NOMINAL.sb(SPSiteQuality.SkyBackground.ANY)
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), conditions , null, new Gems, JNone.instance())
       val tipTiltMode = GemsTipTiltMode.instrument
@@ -68,7 +68,7 @@ class GemsStrategySpec extends Specification {
       val results = Await.result(TestGemsStrategy("/gemsstrategyquery.xml").search(tipTiltMode, ctx, posAngles, scala.None)(implicitly), 1.minute)
       results should be size 2
 
-      results.head.criterion should beEqualTo(GemsCatalogSearchCriterion(GemsCatalogSearchKey(GemsGuideStarType.tiptilt, GsaoiOdgw.Group.instance), CatalogSearchCriterion("On-detector Guide Window tiptilt", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(SingleBand(MagnitudeBand.H), FaintnessConstraint(14.5), scala.Option(SaturationConstraint(7.3))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.None)))
+      results.head.criterion should beEqualTo(GemsCatalogSearchCriterion(GemsCatalogSearchKey(GemsGuideStarType.tiptilt, IrisOdgw.Group.instance), CatalogSearchCriterion("On-detector Guide Window tiptilt", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(SingleBand(MagnitudeBand.H), FaintnessConstraint(14.5), scala.Option(SaturationConstraint(7.3))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.None)))
       results(1).criterion should beEqualTo(GemsCatalogSearchCriterion(GemsCatalogSearchKey(GemsGuideStarType.flexure, Wfs.Group.instance), CatalogSearchCriterion("Canopus Wave Front Sensor flexure", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(RBandsList, FaintnessConstraint(15.8), scala.Option(SaturationConstraint(8.3))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.None)))
       results.head.results should be size 5
       results(1).results should be size 4
@@ -78,7 +78,7 @@ class GemsStrategySpec extends Specification {
       val dec = Angle.fromDMS(79, 34, 51.80).getOrElse(Angle.zero)
       val target = new SPTarget(ra.toDegrees, dec.toDegrees)
       val env = TargetEnvironment.create(target)
-      val inst = new Gsaoi <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
+      val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val conditions = SPSiteQuality.Conditions.NOMINAL
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), conditions, null, new Gems, JNone.instance())
       val tipTiltMode = GemsTipTiltMode.canopus
@@ -138,7 +138,7 @@ class GemsStrategySpec extends Specification {
       val dec = Angle.zero - Angle.fromDMS(0, 0, 7.76).getOrElse(Angle.zero)
       val target = new SPTarget(ra.toDegrees, dec.toDegrees)
       val env = TargetEnvironment.create(target)
-      val inst = new Gsaoi <| {_.setPosAngle(90.0)} <| {_.setIssPort(IssPort.UP_LOOKING)} <| {_.setFilter(Gsaoi.Filter.H)}
+      val inst = new Iris <| {_.setPosAngle(90.0)} <| {_.setIssPort(IssPort.UP_LOOKING)} <| {_.setFilter(Iris.Filter.H)}
       val conditions = new SPSiteQuality.Conditions(CloudCover.PERCENT_50, ImageQuality.PERCENT_85, SkyBackground.ANY, WaterVapor.ANY)
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), conditions, null, new Gems, JNone.instance())
       val tipTiltMode = GemsTipTiltMode.canopus
@@ -184,7 +184,7 @@ class GemsStrategySpec extends Specification {
       val dec = Angle.zero - Angle.fromDMS(0, 3, 16.13).getOrElse(Angle.zero)
       val target = new SPTarget(ra.toDegrees, dec.toDegrees)
       val env = TargetEnvironment.create(target)
-      val inst = new Gsaoi <| {_.setPosAngle(90.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
+      val inst = new Iris <| {_.setPosAngle(90.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), SPSiteQuality.Conditions.BEST, null, new Gems, JNone.instance())
       val tipTiltMode = GemsTipTiltMode.canopus
 
@@ -254,7 +254,7 @@ class GemsStrategySpec extends Specification {
       val dec = Angle.zero - Angle.fromDMS(69, 16, 11.07).getOrElse(Angle.zero)
       val target = new SPTarget(ra.toDegrees, dec.toDegrees)
       val env = TargetEnvironment.create(target)
-      val inst = new Gsaoi <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
+      val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val conditions = SPSiteQuality.Conditions.NOMINAL.sb(SPSiteQuality.SkyBackground.ANY)
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), conditions, null, new Gems, JNone.instance())
       val tipTiltMode = GemsTipTiltMode.canopus
@@ -323,7 +323,7 @@ class GemsStrategySpec extends Specification {
       val dec = Angle.zero - Angle.fromDMS(69, 16, 11.07).getOrElse(Angle.zero)
       val target = new SPTarget(ra.toDegrees, dec.toDegrees)
       val env = TargetEnvironment.create(target)
-      val inst = new Gsaoi <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
+      val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val conditions = SPSiteQuality.Conditions.BEST.cc(SPSiteQuality.CloudCover.PERCENT_50)
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), conditions, null, new Gems, JNone.instance())
       val tipTiltMode = GemsTipTiltMode.canopus
@@ -380,7 +380,7 @@ class GemsStrategySpec extends Specification {
       val dec = Angle.zero - Angle.fromDMS(48, 27, 24.02).getOrElse(Angle.zero)
       val target = new SPTarget(ra.toDegrees, dec.toDegrees)
       val env = TargetEnvironment.create(target)
-      val inst = new Gsaoi <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
+      val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val conditions = SPSiteQuality.Conditions.NOMINAL.sb(SPSiteQuality.SkyBackground.ANY).wv(SPSiteQuality.WaterVapor.ANY)
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), conditions, null, new Gems, JNone.instance())
       val tipTiltMode = GemsTipTiltMode.canopus
@@ -446,7 +446,7 @@ class GemsStrategySpec extends Specification {
       val dec = Angle.zero - Angle.fromDMS(32, 15, 12.0).getOrElse(Angle.zero)
       val target = new SPTarget(ra.toDegrees, dec.toDegrees)
       val env = TargetEnvironment.create(target)
-      val inst = new Gsaoi <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
+      val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val conditions = SPSiteQuality.Conditions.NOMINAL.sb(SPSiteQuality.SkyBackground.ANY).wv(SPSiteQuality.WaterVapor.ANY)
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), conditions, null, new Gems, JNone.instance())
       val tipTiltMode = GemsTipTiltMode.canopus
@@ -513,7 +513,7 @@ class GemsStrategySpec extends Specification {
       val dec = Angle.zero - Angle.fromDMS(49, 48, 0.20).getOrElse(Angle.zero)
       val target = new SPTarget(ra.toDegrees, dec.toDegrees)
       val env = TargetEnvironment.create(target)
-      val inst = new Gsaoi <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
+      val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val conditions = SPSiteQuality.Conditions.NOMINAL.sb(SPSiteQuality.SkyBackground.ANY)
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), conditions, null, new Gems, JNone.instance())
       val tipTiltMode = GemsTipTiltMode.canopus
@@ -569,7 +569,7 @@ class GemsStrategySpec extends Specification {
       val dec = Angle.zero - Angle.fromDMS(49, 48, 0.20).getOrElse(Angle.zero)
       val target = new SPTarget(ra.toDegrees, dec.toDegrees)
       val env = TargetEnvironment.create(target)
-      val inst = new Gsaoi <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
+      val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val conditions = SPSiteQuality.Conditions.BEST.cc(SPSiteQuality.CloudCover.PERCENT_50)
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), conditions, null, new Gems, JNone.instance())
       val tipTiltMode = GemsTipTiltMode.canopus
@@ -628,8 +628,8 @@ class GemsStrategySpec extends Specification {
 
     results.head.criterion.key should beEqualTo(GemsCatalogSearchKey(GemsGuideStarType.tiptilt, Wfs.Group.instance))
     results.head.criterion should beEqualTo(GemsCatalogSearchCriterion(GemsCatalogSearchKey(GemsGuideStarType.tiptilt, Wfs.Group.instance), CatalogSearchCriterion("Canopus Wave Front Sensor tiptilt", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(RBandsList, FaintnessConstraint(15.8), scala.Option(SaturationConstraint(8.3))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.Some(Angle.zero))))
-    results(1).criterion.key should beEqualTo(GemsCatalogSearchKey(GemsGuideStarType.flexure, GsaoiOdgw.Group.instance))
-    results(1).criterion should beEqualTo(GemsCatalogSearchCriterion(GemsCatalogSearchKey(GemsGuideStarType.flexure, GsaoiOdgw.Group.instance), CatalogSearchCriterion("On-detector Guide Window flexure", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(SingleBand(MagnitudeBand.H), FaintnessConstraint(17.0), scala.Option(SaturationConstraint(8.0))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.Some(Angle.zero))))
+    results(1).criterion.key should beEqualTo(GemsCatalogSearchKey(GemsGuideStarType.flexure, IrisOdgw.Group.instance))
+    results(1).criterion should beEqualTo(GemsCatalogSearchCriterion(GemsCatalogSearchKey(GemsGuideStarType.flexure, IrisOdgw.Group.instance), CatalogSearchCriterion("On-detector Guide Window flexure", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(SingleBand(MagnitudeBand.H), FaintnessConstraint(17.0), scala.Option(SaturationConstraint(8.0))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.Some(Angle.zero))))
     results.head.results should be size expectedTipTiltResultsCount
     results(1).results should be size expectedFlexureResultsCount
   }
@@ -640,8 +640,8 @@ class GemsStrategySpec extends Specification {
 
     results.head.criterion.key should beEqualTo(GemsCatalogSearchKey(GemsGuideStarType.tiptilt, Wfs.Group.instance))
     results.head.criterion should beEqualTo(GemsCatalogSearchCriterion(GemsCatalogSearchKey(GemsGuideStarType.tiptilt, Wfs.Group.instance), CatalogSearchCriterion("Canopus Wave Front Sensor tiptilt", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(RBandsList, FaintnessConstraint(16.3), scala.Option(SaturationConstraint(8.8))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.Some(Angle.zero))))
-    results(1).criterion.key should beEqualTo(GemsCatalogSearchKey(GemsGuideStarType.flexure, GsaoiOdgw.Group.instance))
-    results(1).criterion should beEqualTo(GemsCatalogSearchCriterion(GemsCatalogSearchKey(GemsGuideStarType.flexure, GsaoiOdgw.Group.instance), CatalogSearchCriterion("On-detector Guide Window flexure", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(SingleBand(MagnitudeBand.H), FaintnessConstraint(17.0), scala.Option(SaturationConstraint(8.0))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.Some(Angle.zero))))
+    results(1).criterion.key should beEqualTo(GemsCatalogSearchKey(GemsGuideStarType.flexure, IrisOdgw.Group.instance))
+    results(1).criterion should beEqualTo(GemsCatalogSearchCriterion(GemsCatalogSearchKey(GemsGuideStarType.flexure, IrisOdgw.Group.instance), CatalogSearchCriterion("On-detector Guide Window flexure", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(SingleBand(MagnitudeBand.H), FaintnessConstraint(17.0), scala.Option(SaturationConstraint(8.0))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.Some(Angle.zero))))
     results.head.results should be size expectedTipTiltResultsCount
     results(1).results should be size expectedFlexureResultsCount
   }
@@ -652,8 +652,8 @@ class GemsStrategySpec extends Specification {
 
     results.head.criterion.key should beEqualTo(GemsCatalogSearchKey(GemsGuideStarType.tiptilt, Wfs.Group.instance))
     results.head.criterion should beEqualTo(GemsCatalogSearchCriterion(GemsCatalogSearchKey(GemsGuideStarType.tiptilt, Wfs.Group.instance), CatalogSearchCriterion("Canopus Wave Front Sensor tiptilt", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(RBandsList, FaintnessConstraint(16.8), scala.Option(SaturationConstraint(9.3))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.Some(Angle.zero))))
-    results(1).criterion.key should beEqualTo(GemsCatalogSearchKey(GemsGuideStarType.flexure, GsaoiOdgw.Group.instance))
-    results(1).criterion should beEqualTo(GemsCatalogSearchCriterion(GemsCatalogSearchKey(GemsGuideStarType.flexure, GsaoiOdgw.Group.instance), CatalogSearchCriterion("On-detector Guide Window flexure", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(SingleBand(MagnitudeBand.H), FaintnessConstraint(17.0), scala.Option(SaturationConstraint(8.0))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.Some(Angle.zero))))
+    results(1).criterion.key should beEqualTo(GemsCatalogSearchKey(GemsGuideStarType.flexure, IrisOdgw.Group.instance))
+    results(1).criterion should beEqualTo(GemsCatalogSearchCriterion(GemsCatalogSearchKey(GemsGuideStarType.flexure, IrisOdgw.Group.instance), CatalogSearchCriterion("On-detector Guide Window flexure", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(SingleBand(MagnitudeBand.H), FaintnessConstraint(17.0), scala.Option(SaturationConstraint(8.0))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.Some(Angle.zero))))
     results.head.results should be size expectedTipTiltResultsCount
     results(1).results should be size expectedFlexureResultsCount
   }

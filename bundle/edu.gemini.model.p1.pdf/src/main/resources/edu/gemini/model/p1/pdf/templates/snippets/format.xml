@@ -221,7 +221,7 @@
             <xsl:when test="$inst = 'gmosN'">GMOS North</xsl:when>
             <xsl:when test="$inst = 'gmosS'">GMOS South</xsl:when>
             <xsl:when test="$inst = 'gnirs'">GNIRS</xsl:when>
-            <xsl:when test="$inst = 'gsaoi'">GSAOI</xsl:when>
+            <xsl:when test="$inst = 'iris'">IRIS</xsl:when>
             <xsl:when test="$inst = 'graces'">GRACES</xsl:when>
             <xsl:when test="$inst = 'gpi'">GPI</xsl:when>
             <xsl:when test="$inst = 'michelle'">Michelle</xsl:when>
@@ -252,7 +252,7 @@
             <xsl:when test="$inst = 'gmosN'">Gemini North</xsl:when>
             <xsl:when test="$inst = 'gmosS'">Gemini South</xsl:when>
             <xsl:when test="$inst = 'gnirs'">Gemini North</xsl:when>
-            <xsl:when test="$inst = 'gsaoi'">Gemini South</xsl:when>
+            <xsl:when test="$inst = 'iris'">Gemini South</xsl:when>
             <xsl:when test="$inst = 'graces'">Gemini North</xsl:when>
             <xsl:when test="$inst = 'gpi'">Gemini South</xsl:when>
             <xsl:when test="$inst = 'michelle'">Gemini North</xsl:when>

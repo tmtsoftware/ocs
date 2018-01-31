@@ -95,7 +95,7 @@ case class ObsConstraint private(types: Types, inst: Option[SPComponentType]) ex
       // These can only use GEMS
       case INSTRUMENT_FLAMINGOS2
          | INSTRUMENT_GMOSSOUTH
-         | INSTRUMENT_GSAOI  => ts.retainOnly(AO, AO_GEMS)
+         | INSTRUMENT_IRIS  => ts.retainOnly(AO, AO_GEMS)
 
       // These can only use Altair
       case INSTRUMENT_GNIRS
@@ -114,7 +114,7 @@ case class ObsConstraint private(types: Types, inst: Option[SPComponentType]) ex
   def constrainInstrument(t: SPComponentType, ts: Types) = {
     require(t.broadType == AO, "Not an AO type: " + t)
     t match {
-      case AO_GEMS   => ts.retainOnly(INSTRUMENT, INSTRUMENT_ACQCAM, INSTRUMENT_FLAMINGOS2, INSTRUMENT_GMOSSOUTH, INSTRUMENT_GSAOI)
+      case AO_GEMS   => ts.retainOnly(INSTRUMENT, INSTRUMENT_ACQCAM, INSTRUMENT_FLAMINGOS2, INSTRUMENT_GMOSSOUTH, INSTRUMENT_IRIS)
       case AO_ALTAIR => ts.retainOnly(INSTRUMENT, INSTRUMENT_ACQCAM, INSTRUMENT_GNIRS, INSTRUMENT_NIFS, INSTRUMENT_NIRI, INSTRUMENT_GMOS)
     }
   }

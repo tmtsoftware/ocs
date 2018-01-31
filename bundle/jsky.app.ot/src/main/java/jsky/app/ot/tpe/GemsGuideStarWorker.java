@@ -258,7 +258,7 @@ public class GemsGuideStarWorker extends SwingWorker implements MascotProgress {
 
         SPInstObsComp inst = obsContext.getInstrument();
 
-        GemsInstrument instrument = inst instanceof Flamingos2 ? GemsInstrument.flamingos2 : GemsInstrument.gsaoi;
+        GemsInstrument instrument = inst instanceof Flamingos2 ? GemsInstrument.flamingos2 : GemsInstrument.iris;
         GemsGuideStarSearchOptions options = new GemsGuideStarSearchOptions(instrument, tipTiltMode, posAngles);
 
         return new GemsVoTableCatalog(ConeSearchBackend.instance(), catalog.catalog()).search4Java(obsContext, ModelConverters.toCoordinates(base), options, nirBand, 30, ec);

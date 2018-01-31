@@ -286,21 +286,21 @@
         <sequenceName>instrument:wollastonPrism</sequenceName>
     </entry>
 
-    <!-- GSAOI Entries -->
+    <!-- IRIS Entries -->
 
-    <entry key="gsaoi_filter">
+    <entry key="iris_filter">
         <heading>Filter</heading>
         <property>filter</property>
         <sequenceName>instrument:filter</sequenceName>
     </entry>
 
-     <entry key="gsaoi_readmode">
+     <entry key="iris_readmode">
         <heading>Read Mode</heading>
         <property>readMode</property>
         <sequenceName>instrument:readMode</sequenceName>
     </entry>
 
-    <entry key="gsaoi_coadds">
+    <entry key="iris_coadds">
         <heading>Coadds</heading>
         <property>coadds</property>
         <sequenceName>observe:coadds</sequenceName>
@@ -797,16 +797,16 @@
         <entry key="datasetcomments"/>
     </logEntry>
 
-    <logEntry key="GSAOI">
+    <logEntry key="IRIS">
         <entry key="observationid"/>
         <entry key="datasetut"/>
         <entry key="datalabels"/>
         <entry key="filename"/>
         <entry key="targetname"/>
-        <entry key="gsaoi_filter"/>
+        <entry key="iris_filter"/>
         <entry key="observe_exposuretime"/>
-        <entry key="gsaoi_readmode"/>
-        <entry key="gsaoi_coadds"/>
+        <entry key="iris_readmode"/>
+        <entry key="iris_coadds"/>
         <entry key="comment"/>
         <entry key="observe_status"/>
         <entry key="datasetcomments"/>

@@ -351,8 +351,8 @@ package object immutable {
   type PhoenixFilter = mutable.PhoenixFilter
   object PhoenixFilter extends EnumObject[mutable.PhoenixFilter]
 
-  type GsaoiFilter = mutable.GsaoiFilter
-  object GsaoiFilter extends EnumObject[mutable.GsaoiFilter]
+  type IrisFilter = mutable.IrisFilter
+  object IrisFilter extends EnumObject[mutable.IrisFilter]
 
   type Guider = M.Guider
   object Guider extends EnumObject[M.Guider]

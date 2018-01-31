@@ -15,7 +15,7 @@ import edu.gemini.spModel.gemini.gmos.GmosCommonType.{AmpGain, AmpReadMode, Dete
 import edu.gemini.spModel.gemini.gmos.GmosNorthType.{DisperserNorth, FPUnitNorth, FilterNorth}
 import edu.gemini.spModel.gemini.gmos.GmosSouthType.{DisperserSouth, FPUnitSouth, FilterSouth}
 import edu.gemini.spModel.gemini.gnirs.GNIRSParams
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi
+import edu.gemini.spModel.gemini.iris.Iris
 import edu.gemini.spModel.gemini.michelle.MichelleParams
 import edu.gemini.spModel.gemini.nifs.NIFSParams
 import edu.gemini.spModel.gemini.niri.Niri
@@ -123,7 +123,7 @@ object ITCRequest {
     else if (i == INSTRUMENT_GMOS.readableStr)       gmosParameters(r)
     else if (i == INSTRUMENT_GMOSSOUTH.readableStr)  gmosParameters(r)
     else if (i == INSTRUMENT_GNIRS.readableStr)      gnirsParameters(r)
-    else if (i == INSTRUMENT_GSAOI.readableStr)      gsaoiParameters(r)
+    else if (i == INSTRUMENT_IRIS.readableStr)      irisParameters(r)
     else if (i == INSTRUMENT_MICHELLE.readableStr)   michelleParameters(r)
     else if (i == INSTRUMENT_NIFS.readableStr)       nifsParameters(r)
     else if (i == INSTRUMENT_NIRI.readableStr)       niriParameters(r)
@@ -182,11 +182,11 @@ object ITCRequest {
     GnirsParameters(pixelScale, filter, grating, readMode, xDisp, centralWl, fpMask, camera, wellDepth, altair)
   }
 
-  def gsaoiParameters(r: ITCRequest): GsaoiParameters = {
-    val filter      = r.enumParameter(classOf[Gsaoi.Filter])
-    val readMode    = r.enumParameter(classOf[Gsaoi.ReadMode])
+  def irisParameters(r: ITCRequest): IrisParameters = {
+    val filter      = r.enumParameter(classOf[Iris.Filter])
+    val readMode    = r.enumParameter(classOf[Iris.ReadMode])
     val gems        = gemsParameters(r)
-    GsaoiParameters(filter, readMode, gems)
+    IrisParameters(filter, readMode, gems)
   }
 
   def michelleParameters(r: ITCRequest): MichelleParameters = {

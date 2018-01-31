@@ -5,7 +5,7 @@ import edu.gemini.catalog.votable.{TestVoTableBackend, VoTableClient}
 import edu.gemini.spModel.core._
 import edu.gemini.spModel.target.SPTarget
 import edu.gemini.spModel.target.env.TargetEnvironment
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi
+import edu.gemini.spModel.gemini.iris.Iris
 import edu.gemini.spModel.telescope.IssPort
 import edu.gemini.spModel.obs.context.ObsContext
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality
@@ -212,7 +212,7 @@ class MascotGuideStarSpec extends Specification {
       val coordinates = Coordinates(RightAscension.fromAngle(Angle.fromHMS(3, 19, 48.2341).getOrElse(Angle.zero)), Declination.fromAngle(Angle.fromDMS(41, 30, 42.078).getOrElse(Angle.zero)).getOrElse(Declination.zero))
       val base = new SPTarget(coordinates.ra.toAngle.toDegrees, coordinates.dec.toDegrees)
       val env = TargetEnvironment.create(base)
-      val inst = new Gsaoi()
+      val inst = new Iris()
       inst.setPosAngle(0.0)
       inst.setIssPort(IssPort.SIDE_LOOKING)
       val ctx = ObsContext.create(env, inst, JNone.instance(), SPSiteQuality.Conditions.BEST, null, null, JNone.instance())
@@ -229,7 +229,7 @@ class MascotGuideStarSpec extends Specification {
       val coordinates = Coordinates(RightAscension.fromAngle(Angle.fromHMS(3, 19, 48.2341).getOrElse(Angle.zero)), Declination.fromAngle(Angle.fromDMS(41, 30, 42.078).getOrElse(Angle.zero)).getOrElse(Declination.zero))
       val base = new SPTarget(coordinates.ra.toAngle.toDegrees, coordinates.dec.toDegrees)
       val env = TargetEnvironment.create(base)
-      val inst = new Gsaoi()
+      val inst = new Iris()
       inst.setPosAngle(0.0)
       inst.setIssPort(IssPort.SIDE_LOOKING)
       val ctx = ObsContext.create(env, inst, JNone.instance(), SPSiteQuality.Conditions.BEST, null, null, JNone.instance())
@@ -249,7 +249,7 @@ class MascotGuideStarSpec extends Specification {
       val r = VoTableClient.catalog(query, TestVoTableBackend("/mascotquery.xml"))(implicitly).map { t =>
         val base = new SPTarget(coordinates.ra.toAngle.toDegrees, coordinates.dec.toDegrees)
         val env = TargetEnvironment.create(base)
-        val inst = new Gsaoi()
+        val inst = new Iris()
         inst.setPosAngle(0.0)
         inst.setIssPort(IssPort.SIDE_LOOKING)
         val ctx = ObsContext.create(env, inst, JNone.instance(), SPSiteQuality.Conditions.BEST, null, null, JNone.instance())

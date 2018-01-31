@@ -48,7 +48,7 @@ public enum StandardGuideOptions implements GuideOptions {
         } catch (RuntimeException ex) {
             // Handle the case where an OnDetectorGuideOptions probe gets
             // converted into a StandardGuideOptions probe.  Bizarre.  They
-            // decided that GSAOI ODGW can in fact be frozen and parked.
+            // decided that IRIS ODGW can in fact be frozen and parked.
             switch (OnDetectorGuideOptions.Value.valueOf(optString)) {
                 case on:  return Value.guide;
                 case off: return Value.freeze;

@@ -6,11 +6,11 @@ import edu.gemini.shared.util.immutable.None;
 import edu.gemini.shared.util.immutable.Option;
 import edu.gemini.shared.util.immutable.Some;
 import edu.gemini.spModel.gemini.gems.Canopus;
-import edu.gemini.spModel.gemini.gsaoi.GsaoiDetectorArray;
-import edu.gemini.spModel.gemini.gsaoi.GsaoiDetectorArray.Config.Direction;
+import edu.gemini.spModel.gemini.iris.IrisDetectorArray;
+import edu.gemini.spModel.gemini.iris.IrisDetectorArray.Config.Direction;
 import edu.gemini.spModel.telescope.IssPort;
 
-import static edu.gemini.spModel.gemini.gsaoi.GsaoiDetectorArray.Config.Direction.*;
+import static edu.gemini.spModel.gemini.iris.IrisDetectorArray.Config.Direction.*;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Applies GeMS (Canopus and GSAOI) configuration options.
+ * Applies GeMS (Canopus and IRIS) configuration options.
  */
 public enum GemsConfig implements ConfigApply {
     instance;
@@ -69,7 +69,7 @@ public enum GemsConfig implements ConfigApply {
     private static final Map<String, Direction> m;
 
     static {
-        Map<String, GsaoiDetectorArray.Config.Direction> t = new HashMap<String, Direction>();
+        Map<String, IrisDetectorArray.Config.Direction> t = new HashMap<String, Direction>();
         t.put("clockwise", clockwise);
         t.put("counterclockwise", counterClockwise);
         t.put("cw", clockwise);
@@ -95,17 +95,17 @@ public enum GemsConfig implements ConfigApply {
         });
     }
 
-    private static Option<GsaoiDetectorArray.Id> parseId(Integer i) {
-        for (GsaoiDetectorArray.Id id : GsaoiDetectorArray.Id.values()) {
-            if (id.index() == i) return new Some<GsaoiDetectorArray.Id>(id);
+    private static Option<IrisDetectorArray.Id> parseId(Integer i) {
+        for (IrisDetectorArray.Id id : IrisDetectorArray.Id.values()) {
+            if (id.index() == i) return new Some<IrisDetectorArray.Id>(id);
         }
         return None.instance();
     }
 
-    private static Option<GsaoiDetectorArray.Id> getId(String key, ModelConfig config) {
+    private static Option<IrisDetectorArray.Id> getId(String key, ModelConfig config) {
         Option<Integer> idOpt = config.getInteger(key + "." + ODGW_TOP_LEFT_KEY);
-        return idOpt.flatMap(new MapOp<Integer, Option<GsaoiDetectorArray.Id>>() {
-            @Override public Option<GsaoiDetectorArray.Id> apply(Integer i) {
+        return idOpt.flatMap(new MapOp<Integer, Option<IrisDetectorArray.Id>>() {
+            @Override public Option<IrisDetectorArray.Id> apply(Integer i) {
                 return parseId(i);
             }
         });
@@ -113,18 +113,18 @@ public enum GemsConfig implements ConfigApply {
     private void setOdgw(String key, ModelConfig config) {
         Option<Direction> dirOpt = getDirection(key, config);
         if (dirOpt.isEmpty()) return;
-        Option<GsaoiDetectorArray.Id> idOpt = getId(key, config);
+        Option<IrisDetectorArray.Id> idOpt = getId(key, config);
         if (idOpt.isEmpty()) return;
 
         Direction dir = dirOpt.getValue();
-        GsaoiDetectorArray.Id id = idOpt.getValue();
+        IrisDetectorArray.Id id = idOpt.getValue();
 
         IssPort port = (ODGW_SIDE == key) ? IssPort.SIDE_LOOKING : IssPort.UP_LOOKING;
         String msg  = String.format("Set ODGW %s: top left = %d, direction = %s", port.displayValue(), id.index(), dir.name());
         LOG.log(Level.INFO, msg);
 
-        GsaoiDetectorArray.Config c = new GsaoiDetectorArray.Config(id, dir);
-        GsaoiDetectorArray.setQuadrantConfig(port, c);
+        IrisDetectorArray.Config c = new IrisDetectorArray.Config(id, dir);
+        IrisDetectorArray.setQuadrantConfig(port, c);
     }
 
     @Override public void apply(ModelConfig config) {

@@ -10,7 +10,7 @@ import edu.gemini.spModel.gemini.flamingos2.Flamingos2;
 import edu.gemini.spModel.gemini.gmos.InstGmosCommon;
 import edu.gemini.spModel.gemini.gnirs.InstGNIRS;
 import edu.gemini.spModel.gemini.gpi.Gpi;
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi;
+import edu.gemini.spModel.gemini.iris.Iris;
 import edu.gemini.spModel.gemini.michelle.InstMichelle;
 import edu.gemini.spModel.gemini.nici.InstNICI;
 import edu.gemini.spModel.gemini.nifs.InstNIFS;
@@ -23,7 +23,7 @@ import jsky.app.ot.gemini.acqcam.AcqCam_SciAreaFeature;
 import jsky.app.ot.gemini.bhros.BHROS_SciAreaFeature;
 import jsky.app.ot.gemini.gnirs.GNIRS_SciAreaFeature;
 import jsky.app.ot.gemini.gpi.Gpi_SciAreaFeature;
-import jsky.app.ot.gemini.gsaoi.GsaoiDetectorArrayFeature;
+import jsky.app.ot.gemini.iris.IrisDetectorArrayFeature;
 import jsky.app.ot.gemini.michelle.Michelle_SciAreaFeature;
 import jsky.app.ot.gemini.nici.NICI_SciAreaFeature;
 import jsky.app.ot.gemini.nifs.NIFS_SciAreaFeature;
@@ -65,7 +65,7 @@ public class SciAreaFeature extends TpeImageFeature
     private NICI_SciAreaFeature _niciFeat;
     private Texes_SciAreaFeature _texesFeat;
     private Gpi_SciAreaFeature _gpiFeat;
-    private GsaoiDetectorArrayFeature _gsaoiFeat;
+    private IrisDetectorArrayFeature _irisFeat;
 
     // properties (items are displayed in the OT View menu)
     private static final BasicPropertyList _props = new BasicPropertyList(SciAreaFeature.class.getName());
@@ -260,11 +260,11 @@ public class SciAreaFeature extends TpeImageFeature
                 _gpiFeat = new Gpi_SciAreaFeature();
             }
             _feat = _gpiFeat;
-        } else if (inst instanceof Gsaoi) {
-            if (_gsaoiFeat == null) {
-                _gsaoiFeat = new GsaoiDetectorArrayFeature();
+        } else if (inst instanceof Iris) {
+            if (_irisFeat == null) {
+                _irisFeat = new IrisDetectorArrayFeature();
             }
-            _feat = _gsaoiFeat;
+            _feat = _irisFeat;
         } else {
             _feat = null;
         }

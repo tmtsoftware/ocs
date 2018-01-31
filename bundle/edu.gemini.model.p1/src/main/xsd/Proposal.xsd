@@ -7,7 +7,7 @@
     <xsd:include schemaLocation="GmosN.xsd"/>
     <xsd:include schemaLocation="Gnirs.xsd"/>
     <xsd:include schemaLocation="Graces.xsd"/>
-    <xsd:include schemaLocation="Gsaoi.xsd"/>
+    <xsd:include schemaLocation="Iris.xsd"/>
     <xsd:include schemaLocation="Gpi.xsd"/>
     <xsd:include schemaLocation="Keck.xsd"/>
     <xsd:include schemaLocation="Michelle.xsd"/>
@@ -119,7 +119,7 @@
             <xsd:element name="gmosN"      type="GmosNBlueprintChoice"/>
             <xsd:element name="gmosS"      type="GmosSBlueprintChoice"/>
             <xsd:element name="gnirs"      type="GnirsBlueprintChoice"/>
-            <xsd:element name="gsaoi"      type="GsaoiBlueprintChoice"/>
+            <xsd:element name="iris"      type="IrisBlueprintChoice"/>
             <xsd:element name="graces"     type="GracesBlueprintChoice"/>
             <xsd:element name="gpi"        type="GpiBlueprintChoice"/>
             <xsd:element name="keck"       type="KeckBlueprint"/>

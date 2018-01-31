@@ -125,7 +125,7 @@ object AgsHash {
         }
 
       case GemsKey                       =>
-        // GeMS works differently depending upon whether GSAOI or F2 is in use.
+        // GeMS works differently depending upon whether IRIS or F2 is in use.
         Option(ctx.getInstrument).map(_.getPhaseIResourceName).foreach { n =>
           M3.stringHash(n) +=: buf
         }

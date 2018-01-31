@@ -123,10 +123,10 @@ class P1TemplatesSpec extends Specification with XmlMatchers {
       // Check there is a scheduling element
       XML.loadString(result) must (\\("block") \ "inline" \>~ """.*Guiding is problematic \(0%\).*""")
     }
-    "present the correct name when using GSAOI, REL-693" in {
-      val result = transformProposal("proposal_with_gsaoi.xml")
+    "present the correct name when using IRIS, REL-693" in {
+      val result = transformProposal("proposal_with_iris.xml")
       // Check that we use the proper public name of GSOAI
-      XML.loadString(result) must (\\("table-cell") \ "block" \> "GSAOI")
+      XML.loadString(result) must (\\("table-cell") \ "block" \> "IRIS")
     }
     "present the correct name when using Texes, REL-1062" in {
       val result = transformProposal("proposal_with_texes.xml")
@@ -177,7 +177,7 @@ class P1TemplatesSpec extends Specification with XmlMatchers {
       XML.loadString(result) must \\("block") \>~ "Another itac comment"
     }
     "if there is no ITAC section in the proposal, no ITAC Information section should be included, REL-1165" in {
-      val result = transformProposal("proposal_with_gsaoi.xml")
+      val result = transformProposal("proposal_with_iris.xml")
       // Check that there is no ITAC information section
       XML.loadString(result) must not (\\("block") \ "inline" \> "ITAC Information")
     }
@@ -215,12 +215,12 @@ class P1TemplatesSpec extends Specification with XmlMatchers {
     "Shows Visitors on each site on the summary" in {
       val result = transformProposal("proposal_with_visitor_gn_and_gs.xml")
       val proposalXml = XML.loadString(result)
-      proposalXml must (\\("table-cell") \ "block" \>~ """GPI, GRACES, GMOS North, GNIRS, GMOS South, Flamingos2, NIRI, GSAOI, NIFS, Visitor - Gemini South - GS Cam, Visitor - Gemini North - DSSI""")
+      proposalXml must (\\("table-cell") \ "block" \>~ """GPI, GRACES, GMOS North, GNIRS, GMOS South, Flamingos2, NIRI, IRIS, NIFS, Visitor - Gemini South - GS Cam, Visitor - Gemini North - DSSI""")
     }
     "Shows Texes on each site on the summary" in {
       val result = transformProposal("proposal_with_texes_gn_and_gs.xml")
       val proposalXml = XML.loadString(result)
-      proposalXml must (\\("table-cell") \ "block" \>~ """GPI, GRACES, GMOS North, GNIRS, GMOS South, Flamingos2, Texes - Gemini North, NIRI, GSAOI, Texes - Gemini South, NIFS""")
+      proposalXml must (\\("table-cell") \ "block" \>~ """GPI, GRACES, GMOS North, GNIRS, GMOS South, Flamingos2, Texes - Gemini North, NIRI, IRIS, Texes - Gemini South, NIFS""")
     }
     "show correct Observing Mode for FT, REL-1894" in {
       val result = transformProposal("proposal_fast_turnaround.xml")
@@ -299,9 +299,9 @@ class P1TemplatesSpec extends Specification with XmlMatchers {
       // Check there is a block with text 2.0 hr (1.0 hr)
       XML.loadString(result) must \\("block")  \>~ """2\.0.hr.\(1\.0.hr\)"""
     }
-    "show that GSAOI is in Gemini South, REL-693" in {
-      val result = transformProposal("proposal_with_gsaoi.xml", P1PDF.NOAONoInvestigatorsList)
-      // Check that GSAOI is shown in Gemini South
+    "show that IRIS is in Gemini South, REL-693" in {
+      val result = transformProposal("proposal_with_iris.xml", P1PDF.NOAONoInvestigatorsList)
+      // Check that IRIS is shown in Gemini South
       XML.loadString(result) must (\\("table-cell") \ "block" \> "Gemini South")
     }
     "show that Texes is in Gemini North, REL-1062" in {
@@ -348,7 +348,7 @@ class P1TemplatesSpec extends Specification with XmlMatchers {
       XML.loadString(result) must (\\("block") \ "inline" \>~ "ITAC Information:.*")
     }
     "if there is no ITAC section in the proposal, no ITAC Information section should be included, REL-1165" in {
-      val result = transformProposal("proposal_with_gsaoi.xml", P1PDF.NOAONoInvestigatorsList)
+      val result = transformProposal("proposal_with_iris.xml", P1PDF.NOAONoInvestigatorsList)
       // Check that there is no ITAC information section
       XML.loadString(result) must not (\\("block") \ "inline" \> "ITAC Information: ")
     }

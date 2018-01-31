@@ -10,8 +10,8 @@ import edu.gemini.spModel.gemini.gems.Canopus;
 import edu.gemini.spModel.gemini.gems.Gems;
 import edu.gemini.spModel.gemini.gmos.GmosOiwfsGuideProbe;
 import edu.gemini.spModel.gemini.gmos.InstGmosSouth;
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi;
-import edu.gemini.spModel.gemini.gsaoi.GsaoiOdgw;
+import edu.gemini.spModel.gemini.iris.Iris;
+import edu.gemini.spModel.gemini.iris.IrisOdgw;
 import edu.gemini.spModel.guide.GuideProbe;
 import edu.gemini.spModel.target.SPTarget;
 import edu.gemini.spModel.target.env.*;
@@ -199,21 +199,21 @@ public final class TargetGroupTest extends TestBase {
         testTargetEnvironment(env);
     }
 
-    @Test public void testGsaoiOdgwMapping() throws Exception {
+    @Test public void testIrisOdgwMapping() throws Exception {
         // Create a target environment that uses an instrument OIWFS.
         final SPTarget odgwTarget = new SPTarget(); odgwTarget.setName("");
 
         final ImList<SPTarget> targetList = ImCollections.singletonList(odgwTarget);
-        final GuideProbeTargets gt = GuideProbeTargets.create(GsaoiOdgw.odgw1, targetList);
+        final GuideProbeTargets gt = GuideProbeTargets.create(IrisOdgw.odgw1, targetList);
 
         final TargetEnvironment env = TargetEnvironment.create(base).putPrimaryGuideProbeTargets(gt);
 
         // Now, we need to add the instrument itself or the guide targets are
         // not enabled and not sent to the TCC.
-        final ISPObsComponent gsaoiComp = odb.getFactory().createObsComponent(prog, Gsaoi.SP_TYPE, null);
-        obs.addObsComponent(gsaoiComp);
+        final ISPObsComponent irisComp = odb.getFactory().createObsComponent(prog, Iris.SP_TYPE, null);
+        obs.addObsComponent(irisComp);
 
-        // Now do the test.  The GSAOI OIWFS keys do not get mapped.  They
+        // Now do the test.  The IRIS OIWFS keys do not get mapped.  They
         // are ODGW1, ODGW2, etc.
         // So the target name then defaults to "ODGW1 (1)"
         nameMap.putTargetName(odgwTarget, "ODGW1 (1)");

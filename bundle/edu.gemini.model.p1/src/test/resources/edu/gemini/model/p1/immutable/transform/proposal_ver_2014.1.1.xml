@@ -2,7 +2,7 @@
 <proposal schemaVersion="2014.1.1">
     <meta band3optionChosen="false"/>
     <semester year="2014" half="A"/>
-    <title>Observation with GSAOI</title>
+    <title>Observation with IRIS</title>
     <abstract/>
     <scheduling/>
     <keywords/>
@@ -22,12 +22,12 @@
     <targets/>
     <conditions/>
     <blueprints>
-        <gsaoi>
-            <Gsaoi id="blueprint-0">
-                <name>Gsaoi K(short) (2.150 um) </name>
+        <iris>
+            <Iris id="blueprint-0">
+                <name>Iris K(short) (2.150 um) </name>
                 <filter>K(short) (2.150 um)</filter>
-            </Gsaoi>
-        </gsaoi>
+            </Iris>
+        </iris>
     </blueprints>
     <observations>
         <observation band="Band 1/2" enabled="true" blueprint="blueprint-0"/>

@@ -22,7 +22,7 @@ class UpConverterSpec extends Specification with SemesterProperties with XmlMatc
           val proposal = ProposalIo.read(result.toString())
           proposal.meta.band3OptionChosen must beFalse
           proposal.meta.overrideAffiliate must beTrue
-          proposal.title must beEqualTo("Observation with GSAOI")
+          proposal.title must beEqualTo("Observation with IRIS")
           proposal.abstrakt must beEmpty
           proposal.scheduling must beEmpty
           proposal.keywords must beEmpty
@@ -36,7 +36,7 @@ class UpConverterSpec extends Specification with SemesterProperties with XmlMatc
           // Check the instruments
           proposal.blueprints.headOption.foreach {
             i =>
-              i.name must beEqualTo("GSAOI K(short) (2.150 um)")
+              i.name must beEqualTo("IRIS K(short) (2.150 um)")
               i.visitor must beFalse
           }
 
@@ -64,7 +64,7 @@ class UpConverterSpec extends Specification with SemesterProperties with XmlMatc
           val proposal = ProposalIo.read(result.toString())
           proposal.meta.band3OptionChosen must beFalse
           proposal.meta.overrideAffiliate must beTrue
-          proposal.title must beEqualTo("Observation with GSAOI")
+          proposal.title must beEqualTo("Observation with IRIS")
           proposal.abstrakt must beEmpty
           proposal.scheduling must beEmpty
           proposal.keywords must beEmpty
@@ -78,7 +78,7 @@ class UpConverterSpec extends Specification with SemesterProperties with XmlMatc
           // Check the instruments
           proposal.blueprints.headOption.foreach {
             i =>
-              i.name must beEqualTo("GSAOI K(short) (2.150 um)")
+              i.name must beEqualTo("IRIS K(short) (2.150 um)")
               i.visitor must beFalse
           }
 
@@ -108,7 +108,7 @@ class UpConverterSpec extends Specification with SemesterProperties with XmlMatc
           // Sanity checks
           proposal.meta.band3OptionChosen must beFalse
           proposal.meta.overrideAffiliate must beTrue
-          proposal.title must beEqualTo("Observation with GSAOI")
+          proposal.title must beEqualTo("Observation with IRIS")
           proposal.abstrakt must beEmpty
           proposal.scheduling must beEmpty
           proposal.keywords must beEmpty

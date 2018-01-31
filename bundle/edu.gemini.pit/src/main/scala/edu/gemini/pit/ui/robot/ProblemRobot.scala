@@ -236,14 +236,14 @@ class ProblemRobot(s: ShellAdvisor) extends Robot {
         case a: GnirsBlueprintSpectroscopy => a.altair.ao
         case a: NifsBlueprintAo            => a.altair.ao
         case a: NiriBlueprint              => a.altair.ao
-        case a: GsaoiBlueprint             => a.ao
+        case a: IrisBlueprint             => a.ao
         case _                             => AoNone
       })
 
     // NOTE: This needs to be maintained for any future instruments that use GeMS.
     def bpIsGemsLgs(b: BlueprintBase): Boolean =
       b match {
-        case a: GsaoiBlueprint => aoPerspectiveIsLgs(a.ao)
+        case a: IrisBlueprint => aoPerspectiveIsLgs(a.ao)
         case _                 => false
       }
 
@@ -352,7 +352,7 @@ class ProblemRobot(s: ShellAdvisor) extends Robot {
       new Problem(Severity.Todo, s"Please create Band 3 observations with conditions, targets, and resources.", "Band 3", s.showObsListView(Band.BAND_3))
 
     def isIR(b: BlueprintBase): Boolean = b match {
-      case _: GsaoiBlueprint                           => true
+      case _: IrisBlueprint                           => true
       case _: Flamingos2BlueprintBase                  => true
       case _: PhoenixBlueprint                         => true
       case _: NiciBlueprintBase                        => true
@@ -486,7 +486,7 @@ class ProblemRobot(s: ShellAdvisor) extends Robot {
 
     private lazy val cwfsCorrectionsIssue = for {
       o <- p.observations
-      b <- o.blueprint if b.isInstanceOf[GsaoiBlueprint]
+      b <- o.blueprint if b.isInstanceOf[IrisBlueprint]
       m <- o.meta
       g <- m.guiding if g.evaluation != GuidingEvaluation.SUCCESS
     } yield new Problem(Severity.Warning,

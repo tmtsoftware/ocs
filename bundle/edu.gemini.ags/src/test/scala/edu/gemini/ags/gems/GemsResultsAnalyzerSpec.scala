@@ -15,8 +15,8 @@ import edu.gemini.spModel.gemini.flamingos2.Flamingos2
 import edu.gemini.spModel.gemini.gems.Canopus
 import edu.gemini.spModel.gemini.gems.Gems
 import edu.gemini.spModel.gemini.gems.GemsInstrument
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi
-import edu.gemini.spModel.gemini.gsaoi.GsaoiOdgw
+import edu.gemini.spModel.gemini.iris.Iris
+import edu.gemini.spModel.gemini.iris.IrisOdgw
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality.Conditions
 import edu.gemini.spModel.gems.GemsTipTiltMode
@@ -53,9 +53,9 @@ class GemsResultsAnalyzerSpec extends MascotProgress with SpecificationLike with
   val NoTime = JNone.instance[java.lang.Long]
 
   "GemsCatalogResultsSpec" should {
-    "support Gsaoi Search on TYC 8345-1155-1" in {
+    "support Iris Search on TYC 8345-1155-1" in {
       val base = new WorldCoords("17:25:27.529", "-48:27:24.02")
-      val inst = new Gsaoi <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
+      val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val tipTiltMode = GemsTipTiltMode.canopus
 
       val conditions = SPSiteQuality.Conditions.NOMINAL.sb(SPSiteQuality.SkyBackground.ANY).wv(SPSiteQuality.WaterVapor.ANY)
@@ -82,15 +82,15 @@ class GemsResultsAnalyzerSpec extends MascotProgress with SpecificationLike with
       set.contains(Canopus.Wfs.cwfs1) should beTrue
       set.contains(Canopus.Wfs.cwfs2) should beTrue
       set.contains(Canopus.Wfs.cwfs3) should beTrue
-      set.contains(GsaoiOdgw.odgw1) should beFalse
-      set.contains(GsaoiOdgw.odgw2) should beFalse
-      set.contains(GsaoiOdgw.odgw3) should beFalse
-      set.contains(GsaoiOdgw.odgw4) should beTrue
+      set.contains(IrisOdgw.odgw1) should beFalse
+      set.contains(IrisOdgw.odgw2) should beFalse
+      set.contains(IrisOdgw.odgw3) should beFalse
+      set.contains(IrisOdgw.odgw4) should beTrue
 
       val cwfs1 = group.get(Canopus.Wfs.cwfs1).getValue.getPrimary.getValue
       val cwfs2 = group.get(Canopus.Wfs.cwfs2).getValue.getPrimary.getValue
       val cwfs3 = group.get(Canopus.Wfs.cwfs3).getValue.getPrimary.getValue
-      val odgw4 = group.get(GsaoiOdgw.odgw4).getValue.getPrimary.getValue
+      val odgw4 = group.get(IrisOdgw.odgw4).getValue.getPrimary.getValue
       cwfs1.getName must beEqualTo("208-152095")
       cwfs2.getName must beEqualTo("208-152215")
       cwfs3.getName must beEqualTo("208-152039")
@@ -115,9 +115,9 @@ class GemsResultsAnalyzerSpec extends MascotProgress with SpecificationLike with
       val cwfs3Mag = cwfs3.getMagnitude(MagnitudeBand._r).map(_.value).get
       cwfs3Mag < cwfs1Mag && cwfs2Mag < cwfs1Mag should beTrue
     }
-    "support Gsaoi Search on SN-1987A" in {
+    "support Iris Search on SN-1987A" in {
       val base = new WorldCoords("05:35:28.020", "-69:16:11.07")
-      val inst = new Gsaoi <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
+      val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val tipTiltMode = GemsTipTiltMode.canopus
 
       val (results, gemsGuideStars) = search(inst, base.getRA.toString, base.getDec.toString, tipTiltMode, SPSiteQuality.Conditions.NOMINAL.sb(SPSiteQuality.SkyBackground.ANY), new TestGemsVoTableCatalog("/gems_sn1987A.xml"))
@@ -143,15 +143,15 @@ class GemsResultsAnalyzerSpec extends MascotProgress with SpecificationLike with
       set.contains(Canopus.Wfs.cwfs1) should beTrue
       set.contains(Canopus.Wfs.cwfs2) should beTrue
       set.contains(Canopus.Wfs.cwfs3) should beTrue
-      set.contains(GsaoiOdgw.odgw1) should beFalse
-      set.contains(GsaoiOdgw.odgw2) should beTrue
-      set.contains(GsaoiOdgw.odgw3) should beFalse
-      set.contains(GsaoiOdgw.odgw4) should beFalse
+      set.contains(IrisOdgw.odgw1) should beFalse
+      set.contains(IrisOdgw.odgw2) should beTrue
+      set.contains(IrisOdgw.odgw3) should beFalse
+      set.contains(IrisOdgw.odgw4) should beFalse
 
       val cwfs1 = group.get(Canopus.Wfs.cwfs1).getValue.getPrimary.getValue
       val cwfs2 = group.get(Canopus.Wfs.cwfs2).getValue.getPrimary.getValue
       val cwfs3 = group.get(Canopus.Wfs.cwfs3).getValue.getPrimary.getValue
-      val odgw2 = group.get(GsaoiOdgw.odgw2)  .getValue.getPrimary.getValue
+      val odgw2 = group.get(IrisOdgw.odgw2)  .getValue.getPrimary.getValue
       cwfs1.getName must beEqualTo("104-014597")
       cwfs2.getName must beEqualTo("104-014608")
       cwfs3.getName must beEqualTo("104-014547")
@@ -176,9 +176,9 @@ class GemsResultsAnalyzerSpec extends MascotProgress with SpecificationLike with
       val cwfs3Mag = cwfs3.getMagnitude(MagnitudeBand.UC).map(_.value).get
       cwfs3Mag < cwfs1Mag && cwfs2Mag < cwfs1Mag should beTrue
     }
-    "support Gsaoi Search on M6" in {
+    "support Iris Search on M6" in {
       val base = new WorldCoords("17:40:20.000", "-32:15:12.00")
-      val inst = new Gsaoi
+      val inst = new Iris
       val tipTiltMode = GemsTipTiltMode.canopus
 
       val (results, gemsGuideStars) = search(inst, base.getRA.toString, base.getDec.toString, tipTiltMode, SPSiteQuality.Conditions.NOMINAL.sb(SPSiteQuality.SkyBackground.ANY), new TestGemsVoTableCatalog("/gems_m6.xml"))
@@ -204,15 +204,15 @@ class GemsResultsAnalyzerSpec extends MascotProgress with SpecificationLike with
       set.contains(Canopus.Wfs.cwfs1) should beTrue
       set.contains(Canopus.Wfs.cwfs2) should beTrue
       set.contains(Canopus.Wfs.cwfs3) should beTrue
-      set.contains(GsaoiOdgw.odgw1) should beFalse
-      set.contains(GsaoiOdgw.odgw2) should beTrue
-      set.contains(GsaoiOdgw.odgw3) should beFalse
-      set.contains(GsaoiOdgw.odgw4) should beFalse
+      set.contains(IrisOdgw.odgw1) should beFalse
+      set.contains(IrisOdgw.odgw2) should beTrue
+      set.contains(IrisOdgw.odgw3) should beFalse
+      set.contains(IrisOdgw.odgw4) should beFalse
 
       val cwfs1 = group.get(Canopus.Wfs.cwfs1).getValue.getPrimary.getValue
       val cwfs2 = group.get(Canopus.Wfs.cwfs2).getValue.getPrimary.getValue
       val cwfs3 = group.get(Canopus.Wfs.cwfs3).getValue.getPrimary.getValue
-      val odgw2 = group.get(GsaoiOdgw.odgw2)  .getValue.getPrimary.getValue
+      val odgw2 = group.get(IrisOdgw.odgw2)  .getValue.getPrimary.getValue
       cwfs1.getName must beEqualTo("289-128909")
       cwfs2.getName must beEqualTo("289-128878")
       cwfs3.getName must beEqualTo("289-128908")
@@ -237,9 +237,9 @@ class GemsResultsAnalyzerSpec extends MascotProgress with SpecificationLike with
       val cwfs3Mag = cwfs3.getMagnitude(MagnitudeBand.UC).map(_.value).get
       cwfs3Mag < cwfs1Mag && cwfs2Mag < cwfs1Mag should beTrue
     }
-    "support Gsaoi Search on BPM 37093" in {
+    "support Iris Search on BPM 37093" in {
       val base = new WorldCoords("12:38:49.820", "-49:48:00.20")
-      val inst = new Gsaoi
+      val inst = new Iris
       val tipTiltMode = GemsTipTiltMode.canopus
 
       val (results, gemsGuideStars) = search(inst, base.getRA.toString, base.getDec.toString, tipTiltMode, SPSiteQuality.Conditions.NOMINAL.sb(SPSiteQuality.SkyBackground.ANY), new TestGemsVoTableCatalog("/gems_bpm_37093.xml"))
@@ -265,14 +265,14 @@ class GemsResultsAnalyzerSpec extends MascotProgress with SpecificationLike with
       set.contains(Canopus.Wfs.cwfs1) should beTrue
       set.contains(Canopus.Wfs.cwfs2) should beTrue
       set.contains(Canopus.Wfs.cwfs3) should beTrue
-      set.contains(GsaoiOdgw.odgw1) should beFalse
-      set.contains(GsaoiOdgw.odgw2) should beFalse
-      set.contains(GsaoiOdgw.odgw3) should beFalse
-      set.contains(GsaoiOdgw.odgw4) should beTrue
+      set.contains(IrisOdgw.odgw1) should beFalse
+      set.contains(IrisOdgw.odgw2) should beFalse
+      set.contains(IrisOdgw.odgw3) should beFalse
+      set.contains(IrisOdgw.odgw4) should beTrue
 
       val cwfs2 = group.get(Canopus.Wfs.cwfs2).getValue.getPrimary.getValue.getSkycalcCoordinates(NoTime).getValue
       val cwfs3 = group.get(Canopus.Wfs.cwfs3).getValue.getPrimary.getValue.getSkycalcCoordinates(NoTime).getValue
-      val odgw4 = group.get(GsaoiOdgw.odgw4)  .getValue.getPrimary.getValue.getSkycalcCoordinates(NoTime).getValue
+      val odgw4 = group.get(IrisOdgw.odgw4)  .getValue.getPrimary.getValue.getSkycalcCoordinates(NoTime).getValue
 
       val cwfs2x = Coordinates.create("12:38:44.500", "-49:47:58.38")
       val cwfs3x = Coordinates.create("12:38:50.005", "-49:48:00.89")
@@ -351,7 +351,7 @@ class GemsResultsAnalyzerSpec extends MascotProgress with SpecificationLike with
     val baseRA = Angle.fromDegrees(coords.getRaDeg)
     val baseDec = Angle.fromDegrees(coords.getDecDeg)
     val base = new HmsDegCoordinates.Builder(baseRA.toOldModel, baseDec.toOldModel).build
-    val instrument = if (inst.isInstanceOf[Flamingos2]) GemsInstrument.flamingos2 else GemsInstrument.gsaoi
+    val instrument = if (inst.isInstanceOf[Flamingos2]) GemsInstrument.flamingos2 else GemsInstrument.iris
 
     val posAngles = Set(Angle.zero, Angle.fromDegrees(90), Angle.fromDegrees(180), Angle.fromDegrees(270)).asJava
 

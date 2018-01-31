@@ -6,7 +6,7 @@ import edu.gemini.ags.gems.mascot.{MascotCat, MascotProgress, Strehl}
 import edu.gemini.catalog.api.MagnitudeConstraints
 import edu.gemini.spModel.core._
 import edu.gemini.spModel.gemini.gems.Canopus
-import edu.gemini.spModel.gemini.gsaoi.{GsaoiOdgw, Gsaoi}
+import edu.gemini.spModel.gemini.iris.{IrisOdgw, Iris}
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality
 import edu.gemini.spModel.gems.GemsGuideProbeGroup
 import edu.gemini.spModel.guide.{GuideStarValidation, ValidatableGuideProbe, GuideProbe}
@@ -177,9 +177,9 @@ object GemsResultsAnalyzer {
   private def analyzeStrehl(obsContext: ObsContext, strehl: Strehl, posAngle: Angle, tiptiltGroup: GemsGuideProbeGroup, flexureGroup: GemsGuideProbeGroup, flexureStars: List[SiderealTarget], reverseOrder: Boolean): List[GemsGuideStars] = {
     val tiptiltTargetList = targetListFromStrehl(strehl)
     // XXX The TPE assumes canopus tiptilt if there are only 2 stars (one of each ODGW and CWFS),
-    // So don't add any items to the list that have only 2 stars and GSAOI as tiptilt.
+    // So don't add any items to the list that have only 2 stars and IRIS as tiptilt.
     (tiptiltGroup, tiptiltTargetList) match {
-      case (GsaoiOdgw.Group.instance, _ :: Nil)                                                  =>
+      case (IrisOdgw.Group.instance, _ :: Nil)                                                  =>
         Nil
       case _ if areAllTargetsValidInGroup(obsContext, tiptiltTargetList, tiptiltGroup, posAngle) =>
         val guideProbeTargets = assignGuideProbeTargets(obsContext, posAngle, tiptiltGroup, tiptiltTargetList, flexureGroup, flexureStars, reverseOrder)
@@ -299,7 +299,7 @@ object GemsResultsAnalyzer {
     }
 
     // Special case:
-    // If the tip tilt asterism is assigned to the GSAOI ODGW group, then the flexure star must be assigned to CWFS3.
+    // If the tip tilt asterism is assigned to the IRIS ODGW group, then the flexure star must be assigned to CWFS3.
     if (isFlexure && ("ODGW" == tiptiltGroup.getKey) && Canopus.Wfs.cwfs3.validate(toSPTarget(target), ctx) == GuideStarValidation.VALID) {
       Canopus.Wfs.cwfs3.some
     } else {
@@ -346,7 +346,7 @@ object GemsResultsAnalyzer {
 
   // Returns true if none of the other targets are assigned the given guide probe.
   //
-  // From OT-27: Only one star per GSAOI ODGW is allowed -- for example, if an asterism is formed
+  // From OT-27: Only one star per IRIS ODGW is allowed -- for example, if an asterism is formed
   // of two guide stars destined for ODGW2, then it cannot be used.
   //
   // Also for Canopus: only assign one star per cwfs
@@ -358,35 +358,35 @@ object GemsResultsAnalyzer {
     sortTargetsByBrightness(strehl.stars.map(_.target))
 
   // OT-33: If the asterism is a Canopus asterism, use R. If an ODGW asterism,
-  // see OT-22 for a mapping of GSAOI filters to J, H, and K.
+  // see OT-22 for a mapping of IRIS filters to J, H, and K.
   // If iterating over filters, I think we can assume the filter in
   // the static component as a first pass at least.
   private def bandpass(group: GemsGuideProbeGroup, inst: SPInstObsComp): BandsList =
     (group, inst) match {
-      case (GsaoiOdgw.Group.instance, gsaoi: Gsaoi) =>
-        gsaoi.getFilter.getCatalogBand.asScalaOpt.getOrElse(RBandsList)
+      case (IrisOdgw.Group.instance, iris: Iris) =>
+        iris.getFilter.getCatalogBand.asScalaOpt.getOrElse(RBandsList)
       case _ =>
         RBandsList
     }
 
   // REL-426: Multiply the average, min, and max Strehl values reported by Mascot by the following scale
-  // factors depending on the filter used in the instrument component of the observation (GSAOI, F2 in the future):
+  // factors depending on the filter used in the instrument component of the observation (IRIS, F2 in the future):
   //   0.2 in J,
   //   0.3 in H,
   //   0.4 in K
-  // See OT-22 for the mapping of GSAOI filters to JHK equivalent
+  // See OT-22 for the mapping of IRIS filters to JHK equivalent
   //
   // Update for REL-1321:
   // Multiply the average, min, and max Strehl values reported by Mascot by the following scale factors depending
-  // on the filter used in the instrument component of the observation (GSAOI, F2 and GMOS-S in the future) and
+  // on the filter used in the instrument component of the observation (IRIS, F2 and GMOS-S in the future) and
   // the conditions:
   //  J: IQ20=0.12 IQ70=0.06 IQ85=0.024 IQAny=0.01
   //  H: IQ20=0.18 IQ70=0.14 IQ85=0.06 IQAny=0.01
   //  K: IQ20=0.35 IQ70=0.18 IQ85=0.12 IQAny=0.01
   private def strehlFactor(obsContext: Option[ObsContext]): Double = {
     obsContext.map(o => (o, o.getInstrument)).collect {
-      case (ctx, gsaoi: Gsaoi) =>
-        val band = gsaoi.getFilter.getCatalogBand.asScalaOpt
+      case (ctx, iris: Iris) =>
+        val band = iris.getFilter.getCatalogBand.asScalaOpt
         val iq = Option(ctx.getConditions).map(_.iq)
         (band, iq) match {
           case (Some(SingleBand(MagnitudeBand.J)), Some(SPSiteQuality.ImageQuality.PERCENT_20)) => 0.12

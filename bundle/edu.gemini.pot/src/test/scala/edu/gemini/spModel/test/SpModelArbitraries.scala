@@ -11,7 +11,7 @@ import edu.gemini.spModel.gemini.altair.{AltairParams, InstAltair}
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2
 import edu.gemini.spModel.gemini.gmos.GmosCommonType.FPUnitMode._
 import edu.gemini.spModel.gemini.gmos.{GmosCommonType, GmosSouthType, InstGmosSouth, GmosNorthType, InstGmosNorth}
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi
+import edu.gemini.spModel.gemini.iris.Iris
 import edu.gemini.spModel.gemini.niri.{InstNIRI, Niri}
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality.{CloudCover, Conditions, ImageQuality, SkyBackground, WaterVapor}
 import edu.gemini.spModel.obs.context.ObsContext
@@ -120,13 +120,13 @@ trait SpModelArbitraries extends Arbitraries with edu.gemini.spModel.target.env.
           (_.setPosAngle(posAngle.toDegrees))
     }
 
-  implicit val arbGsaoi: Arbitrary[Gsaoi] =
+  implicit val arbIris: Arbitrary[Iris] =
     Arbitrary {
       for {
         port     <- arbitrary[IssPort]
         posAngle <- arbitrary[Angle]
       } yield
-        new Gsaoi                             <|
+        new Iris                             <|
           (_.setIssPort(port))                <|
           (_.setPosAngle(posAngle.toDegrees))
     }
@@ -153,7 +153,7 @@ trait SpModelArbitraries extends Arbitraries with edu.gemini.spModel.target.env.
         arbitrary[Flamingos2],
         arbitrary[InstGmosNorth],
         arbitrary[InstGmosSouth],
-        arbitrary[Gsaoi],
+        arbitrary[Iris],
         arbitrary[InstNIRI]
       )
     }

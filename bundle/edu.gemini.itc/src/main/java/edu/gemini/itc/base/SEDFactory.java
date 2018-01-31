@@ -2,7 +2,7 @@ package edu.gemini.itc.base;
 
 import edu.gemini.itc.flamingos2.Flamingos2;
 import edu.gemini.itc.gnirs.Gnirs;
-import edu.gemini.itc.gsaoi.Gsaoi;
+import edu.gemini.itc.iris.Iris;
 import edu.gemini.itc.nifs.Nifs;
 import edu.gemini.itc.niri.Niri;
 import edu.gemini.itc.operation.*;
@@ -192,7 +192,7 @@ public final class SEDFactory {
 
         // TODO: which instruments need this check, why only some and others not? Do all near-ir instruments need it?
         // TODO: what about Nifs and Gnirs (other near-ir instruments)?
-        if (instrument instanceof Gsaoi || instrument instanceof Niri || instrument instanceof Flamingos2) {
+        if (instrument instanceof Iris || instrument instanceof Niri || instrument instanceof Flamingos2) {
             if (sed.getStart() > instrument.getObservingStart() || sed.getEnd() < instrument.getObservingEnd()) {
                 throw new IllegalArgumentException("Shifted spectrum lies outside of observed wavelengths");
             }
@@ -255,8 +255,8 @@ public final class SEDFactory {
         final SampledSpectrumVisitor tb = new TelescopeBackgroundVisitor(instrument, tp);
         sky.accept(tb);
 
-        // FOR GSAOI and NIRI ADD AO STUFF HERE
-        if (instrument instanceof Gsaoi || instrument instanceof Niri || instrument instanceof Gnirs) {
+        // FOR IRIS and NIRI ADD AO STUFF HERE
+        if (instrument instanceof Iris || instrument instanceof Niri || instrument instanceof Gnirs) {
             // Moved section where sky/sed is convolved with instrument below Altair/Gems
             // section
             // Module 5b
@@ -264,7 +264,7 @@ public final class SEDFactory {
             // background spectra.
             // input: instrument, source and background SED
             // output: total flux of source and background.
-            // TODO: for GSAOI and NIRI convolve here, why??
+            // TODO: for IRIS and NIRI convolve here, why??
             instrument.convolveComponents(sed);
             if (ao.isDefined()) {
                 halo = Option.apply(SEDFactory.applyAoSystem(ao.get(), sky, sed));
@@ -285,13 +285,13 @@ public final class SEDFactory {
         // background spectra.
         // input: instrument, source and background SED
         // output: total flux of source and background.
-        if (!(instrument instanceof Gsaoi) && !(instrument instanceof Niri) && !(instrument instanceof Gnirs)) {
-            // TODO: for any instrument other than GSAOI and NIRI convolve here, why?
+        if (!(instrument instanceof Iris) && !(instrument instanceof Niri) && !(instrument instanceof Gnirs)) {
+            // TODO: for any instrument other than IRIS and NIRI convolve here, why?
             instrument.convolveComponents(sed);
         }
         instrument.convolveComponents(sky);
 
-        // TODO: AO (FOR NIFS DONE AT THE VERY END, WHY DIFFERENT FROM GSAOI/NIRI?)
+        // TODO: AO (FOR NIFS DONE AT THE VERY END, WHY DIFFERENT FROM IRIS/NIRI?)
         if (instrument instanceof Nifs && ao.isDefined()) {
             halo = Option.apply(SEDFactory.applyAoSystem(ao.get(), sky, sed));
         }

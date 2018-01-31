@@ -16,7 +16,7 @@ import edu.gemini.spModel.gemini.flamingos2.Flamingos2
 import edu.gemini.spModel.gemini.gmos.{InstGmosSouth, InstGmosNorth}
 import edu.gemini.spModel.gemini.gnirs.{GNIRSConstants, InstGNIRS}
 import edu.gemini.spModel.gemini.gpi.Gpi
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi
+import edu.gemini.spModel.gemini.iris.Iris
 import edu.gemini.spModel.gemini.michelle.InstMichelle
 import edu.gemini.spModel.gemini.nici.InstNICI
 import edu.gemini.spModel.gemini.nifs.InstNIFS
@@ -89,7 +89,7 @@ case class ObservationInfo(ctx: Option[ObsContext],
       case SPComponentType.INSTRUMENT_GMOSSOUTH  => new InstGmosSouth()
       case SPComponentType.INSTRUMENT_GNIRS      => new InstGNIRS()
       case SPComponentType.INSTRUMENT_GPI        => new Gpi()
-      case SPComponentType.INSTRUMENT_GSAOI      => new Gsaoi()
+      case SPComponentType.INSTRUMENT_IRIS      => new Iris()
       case SPComponentType.INSTRUMENT_MICHELLE   => new InstMichelle()
       case SPComponentType.INSTRUMENT_NICI       => new InstNICI()
       case SPComponentType.INSTRUMENT_NIFS       => new InstNIFS()

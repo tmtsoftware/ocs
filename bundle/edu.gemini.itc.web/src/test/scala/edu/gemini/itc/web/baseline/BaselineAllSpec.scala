@@ -69,14 +69,14 @@ object BaselineAllSpec extends Specification with ScalaCheck with ScalaCheckPara
     }
   }
 
-  // === GSAOI
+  // === IRIS
   {
-    implicit val arbFixture: Arbitrary[Fixture[GsaoiParameters]] = Arbitrary { Gen.oneOf(BaselineGsaoi.Fixtures) }
+    implicit val arbFixture: Arbitrary[Fixture[IrisParameters]] = Arbitrary { Gen.oneOf(BaselineIris.Fixtures) }
 
-    "GSAOI calculations" should {
+    "IRIS calculations" should {
       "match latest baseline" !
-        prop { f: Fixture[GsaoiParameters] =>
-          checkAgainstBaseline(Baseline.from(f, executeGsaoiRecipe(f)))
+        prop { f: Fixture[IrisParameters] =>
+          checkAgainstBaseline(Baseline.from(f, executeIrisRecipe(f)))
         }.set(defaultParameters.minTestsOk, minTestsCnt)
     }
   }

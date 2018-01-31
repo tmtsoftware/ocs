@@ -2,7 +2,7 @@ package edu.gemini.itc.operation;
 
 import edu.gemini.itc.base.BinningProvider;
 import edu.gemini.itc.base.Instrument;
-import edu.gemini.itc.gsaoi.Gsaoi;
+import edu.gemini.itc.iris.Iris;
 import edu.gemini.itc.niri.Niri;
 import edu.gemini.itc.shared.ApertureMethod;
 import edu.gemini.itc.shared.ObservationDetails;
@@ -41,9 +41,9 @@ public abstract class ImagingS2NCalculation implements ImagingS2NCalculatable {
         this.dark_current    = (instrument instanceof BinningProvider) ?
                 instrument.getDarkCurrent() * ((BinningProvider) instrument).getSpatialBinning() * ((BinningProvider) instrument).getSpectralBinning() :
                 instrument.getDarkCurrent();
-        // TODO: Why 1 for NIRI/GSAOI?? Is this a bug or is there a reason why in the original code those instruments did not
+        // TODO: Why 1 for NIRI/IRIS?? Is this a bug or is there a reason why in the original code those instruments did not
         // TODO: set the aperture and used a (default) value of 1?
-        this.skyAper         = (instrument instanceof Niri || instrument instanceof Gsaoi) ? 1 : ((ApertureMethod) obs.analysisMethod()).skyAperture();
+        this.skyAper         = (instrument instanceof Niri || instrument instanceof Iris) ? 1 : ((ApertureMethod) obs.analysisMethod()).skyAperture();
         // TODO: marker interface like for binning?
         this.elfinParam      = (instrument instanceof TRecs) ? ((TRecs) instrument).getExtraLowFreqNoise() : 1; // default 1 will have no effect
     }

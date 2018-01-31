@@ -93,8 +93,8 @@ object OverheadsSpec {
       () => Flamingos2BlueprintLongslit(Flamingos2Disperser.R1200JH, Nil, Flamingos2Fpu.values.apply(0)),
       obsTimes(2.85, 0.71))
       ),
-    (("gsaoi", "imaging"), (
-      () => GsaoiBlueprint(Nil),
+    (("iris", "imaging"), (
+      () => IrisBlueprint(Nil),
       obsTimes(4.69, 0.00))
       ),
     (("nifs", "ifu"), (

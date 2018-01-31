@@ -6,7 +6,7 @@ import edu.gemini.skycalc.Offset;
 import edu.gemini.shared.util.immutable.None;
 import edu.gemini.shared.util.immutable.Option;
 import edu.gemini.shared.util.immutable.Some;
-import edu.gemini.spModel.gemini.gsaoi.GsaoiOdgw;
+import edu.gemini.spModel.gemini.iris.IrisOdgw;
 import edu.gemini.spModel.guide.DefaultGuideOptions;
 import edu.gemini.spModel.guide.GuideProbe;
 import edu.gemini.spModel.guide.GuideOption;
@@ -18,8 +18,8 @@ import java.util.Set;
  * Test cases for {@link OffsetUtil}.
  */
 public class OffsetUtilTest extends TestCase {
-    private static final GuideProbe GUIDER1 = GsaoiOdgw.odgw1;
-    private static final GuideProbe GUIDER2 = GsaoiOdgw.odgw2;
+    private static final GuideProbe GUIDER1 = IrisOdgw.odgw1;
+    private static final GuideProbe GUIDER2 = IrisOdgw.odgw2;
 
     private OffsetPosList<OffsetPos> emptyPosList;
     private OffsetPosList<OffsetPos> singlePosList;
@@ -30,8 +30,8 @@ public class OffsetUtilTest extends TestCase {
 
     private OffsetPos addPosition(OffsetPosList<OffsetPos> lst, int index) {
         final OffsetPos pos = lst.addPosition(index, index);
-        pos.setLink(GUIDER1, GsaoiOdgw.odgw1.getGuideOptions().getDefaultActive());
-        pos.setLink(GUIDER2, GsaoiOdgw.odgw2.getGuideOptions().getDefaultActive());
+        pos.setLink(GUIDER1, IrisOdgw.odgw1.getGuideOptions().getDefaultActive());
+        pos.setLink(GUIDER2, IrisOdgw.odgw2.getGuideOptions().getDefaultActive());
         return pos;
     }
 

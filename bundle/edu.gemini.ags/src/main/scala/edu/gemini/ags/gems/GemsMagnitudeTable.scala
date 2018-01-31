@@ -5,7 +5,7 @@ import edu.gemini.pot.ModelConverters._
 import edu.gemini.catalog.api._
 import edu.gemini.spModel.core._
 import edu.gemini.spModel.gemini.gems.{Canopus, GemsInstrument}
-import edu.gemini.spModel.gemini.gsaoi.{Gsaoi, GsaoiOdgw}
+import edu.gemini.spModel.gemini.iris.{Iris, IrisOdgw}
 import edu.gemini.spModel.gems.GemsGuideStarType
 import edu.gemini.spModel.guide.{GuideSpeed, GuideProbe}
 import edu.gemini.spModel.obs.context.ObsContext
@@ -35,8 +35,8 @@ object GemsMagnitudeTable extends MagnitudeTable {
 
     def lookup(site: Site): Option[MagnitudeCalc] =
       ((site, probe) match {
-        case (Site.GS, odgw: GsaoiOdgw)  =>
-          Some(GsaoiOdgwMagnitudeLimitsCalculator.gemsMagnitudeConstraint(GemsGuideStarType.flexure, MagnitudeBand.H.some))
+        case (Site.GS, odgw: IrisOdgw)  =>
+          Some(IrisOdgwMagnitudeLimitsCalculator.gemsMagnitudeConstraint(GemsGuideStarType.flexure, MagnitudeBand.H.some))
 
         case (Site.GS, can: Canopus.Wfs) =>
           Some(CanopusWfsMagnitudeLimitsCalculator.gemsMagnitudeConstraint(GemsGuideStarType.tiptilt, MagnitudeBand.R.some))
@@ -49,7 +49,7 @@ object GemsMagnitudeTable extends MagnitudeTable {
   }
 
   /**
-   * GSAOI, Canopus, and F2 require special handling for magnitude limits for GeMS.
+   * IRIS, Canopus, and F2 require special handling for magnitude limits for GeMS.
    */
   trait LimitsCalculator {
     def gemsMagnitudeConstraint(starType: GemsGuideStarType, nirBand: Option[MagnitudeBand]): MagnitudeConstraints
@@ -71,13 +71,13 @@ object GemsMagnitudeTable extends MagnitudeTable {
    * We cannot include this in the GemsInstrument as this would cause dependency issues and we want to decouple these.
    */
   lazy val GemsInstrumentToMagnitudeLimitsCalculator = Map[GemsInstrument, LimitsCalculator](
-    GemsInstrument.gsaoi      -> GsaoiOdgwMagnitudeLimitsCalculator,
+    GemsInstrument.iris      -> IrisOdgwMagnitudeLimitsCalculator,
     GemsInstrument.flamingos2 -> Flamingos2OiwfsMagnitudeLimitsCalculator
   )
 
-  lazy val GsaoiOdgwMagnitudeLimitsCalculator = new LimitsCalculator {
+  lazy val IrisOdgwMagnitudeLimitsCalculator = new LimitsCalculator {
     /**
-     * The map formerly in Gsaoi.Filter.
+     * The map formerly in Iris.Filter.
      */
     private val MagnitudeLimitsMap = Map[Tuple2[GemsGuideStarType, BandsList], MagnitudeConstraints](
       (GemsGuideStarType.flexure, SingleBand(MagnitudeBand.J)) -> magLimits(SingleBand(MagnitudeBand.J), 17.2, 8.0),
@@ -89,7 +89,7 @@ object GemsMagnitudeTable extends MagnitudeTable {
     )
 
     override def gemsMagnitudeConstraint(starType: GemsGuideStarType, nirBand: Option[MagnitudeBand]): MagnitudeConstraints= {
-      val filter = nirBand.fold(Gsaoi.Filter.H)(band => Gsaoi.Filter.getFilter(band, Gsaoi.Filter.H))
+      val filter = nirBand.fold(Iris.Filter.H)(band => Iris.Filter.getFilter(band, Iris.Filter.H))
       MagnitudeLimitsMap((starType, filter.getCatalogBand.getValue))
     }
   }

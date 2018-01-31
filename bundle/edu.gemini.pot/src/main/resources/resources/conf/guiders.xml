@@ -5,7 +5,7 @@
     <probe>edu.gemini.spModel.gemini.gmos.GmosOiwfsGuideProbe</probe>
     <probe>edu.gemini.spModel.gemini.gnirs.GnirsOiwfsGuideProbe</probe>
     <probe>edu.gemini.spModel.gemini.gnirs.GnirsOiwfsGuideProbe</probe>
-    <probe>edu.gemini.spModel.gemini.gsaoi.GsaoiOdgw</probe>
+    <probe>edu.gemini.spModel.gemini.iris.IrisOdgw</probe>
     <probe>edu.gemini.spModel.gemini.nici.NiciOiwfsGuideProbe</probe>
     <probe>edu.gemini.spModel.gemini.nifs.NifsOiwfsGuideProbe</probe>
     <probe>edu.gemini.spModel.gemini.niri.NiriOiwfsGuideProbe</probe>

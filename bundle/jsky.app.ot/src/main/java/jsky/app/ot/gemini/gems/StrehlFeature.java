@@ -9,7 +9,7 @@ import edu.gemini.mascot.gui.contour.ContourPlot;
 import edu.gemini.mascot.gui.contour.StrehlContourPlot;
 import edu.gemini.shared.util.immutable.*;
 import edu.gemini.spModel.core.*;
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi;
+import edu.gemini.spModel.gemini.iris.Iris;
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality;
 import edu.gemini.spModel.guide.GuideProbe;
 import edu.gemini.spModel.obs.context.ObsContext;
@@ -251,7 +251,7 @@ public class StrehlFeature extends TpeImageFeature implements PropertyWatcher, M
 
     // REL-1321:
     // On the PE, the Strehl statistics and expected FWHM must be displayed.
-    // The approximate FWHM for each IQ bin and effective band for GSAOI are
+    // The approximate FWHM for each IQ bin and effective band for IRIS are
     // J: IQ20=0.08" IQ70=0.13" IQ85=0.15" IQAny=INDEF
     // H: IQ20=0.07" IQ70=0.10" IQ85=0.13" IQAny=INDEF
     // K: IQ20=0.06" IQ70=0.09" IQ85=0.12" IQAny=INDEF
@@ -261,9 +261,9 @@ public class StrehlFeature extends TpeImageFeature implements PropertyWatcher, M
         if (!obsContextOption.isEmpty()) {
             ObsContext obsContext = obsContextOption.getValue();
             SPInstObsComp inst = obsContext.getInstrument();
-            if (inst instanceof Gsaoi) {
-                Gsaoi gsaoi = (Gsaoi) inst;
-                Option<BandsList> band = gsaoi.getFilter().getCatalogBand();
+            if (inst instanceof Iris) {
+                Iris iris = (Iris) inst;
+                Option<BandsList> band = iris.getFilter().getCatalogBand();
                 if (!band.isEmpty()) {
                     BandsList s = band.getValue();
                     SPSiteQuality.Conditions conditions = obsContext.getConditions();
@@ -339,7 +339,7 @@ public class StrehlFeature extends TpeImageFeature implements PropertyWatcher, M
             // OT-33: For Flamingos 2, Canopus always provides tip/tilt correction
             guideProbeType = GuideProbe.Type.AOWFS;
         } else if (oiwfsCount > 1 && aowfsCount > 1) {
-            // OT-33: If there are multiple active stars for both Canopus and GSAOI ODGW, we should
+            // OT-33: If there are multiple active stars for both Canopus and IRIS ODGW, we should
             // display an error message on the TPE when the Strehl option is selected.
             // We will be updating the model to store the tip/tilt vs. flexure designation somehow.
             // At that point, we'll just use that information instead of guessing which is which.
@@ -381,7 +381,7 @@ public class StrehlFeature extends TpeImageFeature implements PropertyWatcher, M
 
 
     // OT-33: If the asterism is a Canopus asterism, use R. If an ODGW asterism,
-    // see OT-22 for a mapping of GSAOI filters to J, H, and K.
+    // see OT-22 for a mapping of IRIS filters to J, H, and K.
     // If iterating over filters, I think we can assume the filter in
     // the static component as a first pass at least.
     private BandsList getBandpass(GuideProbe.Type type) {
@@ -391,9 +391,9 @@ public class StrehlFeature extends TpeImageFeature implements PropertyWatcher, M
                     return RBandsList.instance();
                 case OIWFS:
                     SPInstObsComp inst = _iw.getInstObsComp();
-                    if (inst instanceof Gsaoi) {
-                        Gsaoi gsaoi = (Gsaoi) inst;
-                        Option<BandsList> band = gsaoi.getFilter().getCatalogBand();
+                    if (inst instanceof Iris) {
+                        Iris iris = (Iris) inst;
+                        Option<BandsList> band = iris.getFilter().getCatalogBand();
                         if (!band.isEmpty()) {
                             return band.getValue();
                         }

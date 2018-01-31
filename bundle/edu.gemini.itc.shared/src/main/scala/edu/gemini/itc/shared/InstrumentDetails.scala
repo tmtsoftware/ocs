@@ -7,7 +7,7 @@ import edu.gemini.spModel.gemini.altair.AltairParams
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2
 import edu.gemini.spModel.gemini.gmos.{GmosSouthType, GmosNorthType, GmosCommonType}
 import edu.gemini.spModel.gemini.gnirs.GNIRSParams
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi
+import edu.gemini.spModel.gemini.iris.Iris
 import edu.gemini.spModel.gemini.michelle.MichelleParams
 import edu.gemini.spModel.gemini.nifs.NIFSParams
 import edu.gemini.spModel.gemini.niri.Niri
@@ -56,9 +56,9 @@ final case class GnirsParameters(
                      wellDepth:         GNIRSParams.WellDepth,
                      altair:            Option[AltairParameters]) extends InstrumentDetails
 
-final case class GsaoiParameters(
-                     filter:            Gsaoi.Filter,
-                     readMode:          Gsaoi.ReadMode,
+final case class IrisParameters(
+                     filter:            Iris.Filter,
+                     readMode:          Iris.ReadMode,
                      gems:              GemsParameters) extends InstrumentDetails
 
 final case class MichelleParameters(
@@ -115,7 +115,7 @@ object InstrumentDetails {
     case i: AcquisitionCamParameters  => true                                       // Acq cam is imaging only
     case i: Flamingos2Parameters      => i.grism.equals(Flamingos2.Disperser.NONE)
     case i: GnirsParameters           => i.grating.isEmpty
-    case i: GsaoiParameters           => true                                       // Gsaoi is imaging only
+    case i: IrisParameters           => true                                       // Iris is imaging only
     case i: MichelleParameters        => i.grating.equals(MichelleParams.Disperser.MIRROR)
     case i: NifsParameters            => false                                      // NIFS is spectroscopy only
     case i: NiriParameters            => i.grism.equals(Niri.Disperser.NONE)

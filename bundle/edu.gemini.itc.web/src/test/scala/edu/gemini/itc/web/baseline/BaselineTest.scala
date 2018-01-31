@@ -51,7 +51,7 @@ class BaselineTest {
     executeAll(BaselineF2.Fixtures, executeF2Recipe) ++
     executeAll(BaselineGmos.Fixtures, executeGmosRecipe) ++
     executeAll(BaselineGnirs.Fixtures, executeGnirsRecipe) ++
-    executeAll(BaselineGsaoi.Fixtures, executeGsaoiRecipe) ++
+    executeAll(BaselineIris.Fixtures, executeIrisRecipe) ++
     executeAll(BaselineMichelle.Fixtures, executeMichelleRecipe) ++
     executeAll(BaselineNifs.Fixtures, executeNifsRecipe) ++
     executeAll(BaselineNiri.Fixtures, executeNiriRecipe) ++

@@ -26,8 +26,8 @@ import edu.gemini.spModel.gemini.trecs.TReCSParams
 import edu.gemini.spModel.gemini.trecs.blueprint.{SpTrecsBlueprintSpectroscopy, SpTrecsBlueprintImaging}
 import edu.gemini.spModel.gemini.niri.blueprint.SpNiriBlueprint
 import edu.gemini.spModel.gemini.niri.Niri
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi
-import edu.gemini.spModel.gemini.gsaoi.blueprint.SpGsaoiBlueprint
+import edu.gemini.spModel.gemini.iris.Iris
+import edu.gemini.spModel.gemini.iris.blueprint.SpIrisBlueprint
 import edu.gemini.spModel.gemini.texes.TexesParams
 import edu.gemini.spModel.gemini.texes.blueprint.SpTexesBlueprint
 import edu.gemini.spModel.gemini.visitor.blueprint.SpVisitorBlueprint
@@ -56,7 +56,7 @@ object SpBlueprintFactory {
       case b: GnirsBlueprintImaging         => Gnirs.imaging(b)
       case b: GnirsBlueprintSpectroscopy    => Gnirs.spectroscopy(b)
       case b: GpiBlueprint                  => GpiHandler(b)
-      case b: GsaoiBlueprint                => GsaoiHandler(b)
+      case b: IrisBlueprint                => IrisHandler(b)
       case b: MichelleBlueprintImaging      => Michelle.imaging(b)
       case b: MichelleBlueprintSpectroscopy => Michelle.spectroscopy(b)
       case b: NiciBlueprintCoronagraphic    => Nici.coronographic(b)
@@ -372,14 +372,14 @@ object SpBlueprintFactory {
 
   }
 
-  object GsaoiHandler {
+  object IrisHandler {
 
-    private def filters(fs: List[GsaoiFilter]) = spEnumList(fs, classOf[Gsaoi.Filter])
+    private def filters(fs: List[IrisFilter]) = spEnumList(fs, classOf[Iris.Filter])
 
-    def apply(b: GsaoiBlueprint):Either[String, SpGsaoiBlueprint] =
+    def apply(b: IrisBlueprint):Either[String, SpIrisBlueprint] =
       for {
         f <- filters(b.filters).right
-      } yield new SpGsaoiBlueprint(f)
+      } yield new SpIrisBlueprint(f)
 
   }
 

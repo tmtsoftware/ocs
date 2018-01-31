@@ -10,7 +10,7 @@ import edu.gemini.spModel.core.Target
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2
 import edu.gemini.spModel.gemini.gmos.{InstGmosNorth, InstGmosSouth}
 import edu.gemini.spModel.gemini.gnirs.InstGNIRS
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi
+import edu.gemini.spModel.gemini.iris.Iris
 import edu.gemini.spModel.gemini.nifs.InstNIFS
 import edu.gemini.spModel.gemini.niri.InstNIRI
 import jsky.app.ot.itc._
@@ -130,7 +130,7 @@ sealed trait ItcPanel extends GridBagPanel {
       case i: InstGmosSouth if i.getFPUnit.isIFU  => ifuGmosPanel
       case _: Flamingos2                          => apertureFixedSkyPanel // for IR instruments always use sky aperture = 1.0
       case _: InstGNIRS                           => apertureFixedSkyPanel
-      case _: Gsaoi                               => apertureFixedSkyPanel
+      case _: Iris                               => apertureFixedSkyPanel
       case _: InstNIRI                            => apertureFixedSkyPanel
       case _                                      => aperturePanel         // as default use aperture method
     }
@@ -165,7 +165,7 @@ class ItcImagingPanel(val owner: EdIteratorFolder) extends ItcPanel {
     case SPComponentType.INSTRUMENT_FLAMINGOS2  => true
     case SPComponentType.INSTRUMENT_GMOS        => true
     case SPComponentType.INSTRUMENT_GMOSSOUTH   => true
-    case SPComponentType.INSTRUMENT_GSAOI       => true
+    case SPComponentType.INSTRUMENT_IRIS       => true
     case SPComponentType.INSTRUMENT_MICHELLE    => false // may or may not be supported in OT at some point
     case SPComponentType.INSTRUMENT_NIFS        => false
     case SPComponentType.INSTRUMENT_NIRI        => true

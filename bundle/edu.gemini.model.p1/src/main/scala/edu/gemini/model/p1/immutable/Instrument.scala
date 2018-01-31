@@ -20,7 +20,7 @@ object Instrument {
   case object GmosSouth  extends Instrument(GS, "GMOSSouth", "GMOS South", "GMOS-S")
   case object Gpi        extends Instrument(GS, "GPI")
   case object Graces     extends Instrument(GN, "GRACES")
-  case object Gsaoi      extends Instrument(GS, "GSAOI")
+  case object Iris      extends Instrument(GS, "IRIS")
   case object Nici       extends Instrument(GS, "NICI")
   case object Phoenix    extends Instrument(GS, "Phoenix", "Phoenix", "PHOENIX")
   case object Trecs      extends Instrument(GS, "TReCS", "T-ReCS", "TReCS")

@@ -136,21 +136,21 @@
 
     <UIInfo
             site="GS"
-            dataObject="edu.gemini.spModel.gemini.gsaoi.Gsaoi"
+            dataObject="edu.gemini.spModel.gemini.iris.Iris"
             requires="Gems"
-            name="GSAOI"
+            name="IRIS"
             type="instrument"
             imageKey="component.gif"
-            shortDescription="The GSAOI instrument is configured with this component."
-            uiClassName="jsky.app.ot.gemini.gsaoi.GsaoiEditor"/>
+            shortDescription="The IRIS instrument is configured with this component."
+            uiClassName="jsky.app.ot.gemini.iris.IrisEditor"/>
 
     <UIInfo
             site="GS"
-            dataObject="edu.gemini.spModel.gemini.gsaoi.GsaoiSeqConfig"
-            name="GSAOI Sequence Component"
+            dataObject="edu.gemini.spModel.gemini.iris.IrisSeqConfig"
+            name="IRIS Sequence Component"
             type="iterComp"
             imageKey="seqcomp.gif"
-            shortDescription="Iterate over GSAOI configurations with this component."
+            shortDescription="Iterate over IRIS configurations with this component."
             uiClassName="jsky.app.ot.editor.EdIterGenericConfig"/>
 
     <!--<UIInfo-->

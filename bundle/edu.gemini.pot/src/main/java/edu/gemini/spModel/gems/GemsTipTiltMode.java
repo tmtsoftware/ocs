@@ -2,7 +2,7 @@ package edu.gemini.spModel.gems;
 
 /**
  * The user can constrain the search for tip tilt correction (mascot asterisms) to
- * use only Canopus CWFS, GSAOI, or both.
+ * use only Canopus CWFS, IRIS, or both.
  *
  * See OT-21
  */

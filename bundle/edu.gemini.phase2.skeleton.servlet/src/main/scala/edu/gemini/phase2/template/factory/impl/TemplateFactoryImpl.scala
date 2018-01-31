@@ -11,7 +11,7 @@ import edu.gemini.spModel.template.{Phase1Group, SpBlueprint}
 import flamingos2.{Flamingos2Mos, Flamingos2Longslit, Flamingos2Imaging}
 import gmos._
 import gnirs.{GnirsSpectroscopy, GnirsImaging}
-import gsaoi.Gsaoi
+import iris.Iris
 import michelle.{MichelleSpectroscopy, MichelleImaging}
 import nici.{NiciStandard, NiciCoronographic}
 import nifs.{Nifs, NifsAo}
@@ -28,7 +28,7 @@ import edu.gemini.spModel.gemini.niri.blueprint.SpNiriBlueprint
 import edu.gemini.spModel.obs.ObsPhase2Status
 import edu.gemini.pot.sp._
 import edu.gemini.spModel.obscomp.{SPNote, SPGroup}
-import edu.gemini.spModel.gemini.gsaoi.blueprint.SpGsaoiBlueprint
+import edu.gemini.spModel.gemini.iris.blueprint.SpIrisBlueprint
 import edu.gemini.spModel.gemini.texes.blueprint.SpTexesBlueprint
 import texes.Texes
 import edu.gemini.spModel.gemini.visitor.blueprint.SpVisitorBlueprint
@@ -87,8 +87,8 @@ case class TemplateFactoryImpl(db: TemplateDb) extends TemplateFactory {
       // GPI
       case b: SpGpiBlueprint => Right(Gpi(b))
 
-      // GSAOI
-      case b: SpGsaoiBlueprint => Right(Gsaoi(b))
+      // IRIS
+      case b: SpIrisBlueprint => Right(Iris(b))
 
       // MICHELLE
       case b: SpMichelleBlueprintImaging => Right(MichelleImaging(b))

@@ -9,7 +9,7 @@ import edu.gemini.spModel.gemini.gmos.InstGmosNorth;
 import edu.gemini.spModel.gemini.gmos.InstGmosSouth;
 import edu.gemini.spModel.gemini.gnirs.InstGNIRS;
 import edu.gemini.spModel.gemini.gpi.Gpi;
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi;
+import edu.gemini.spModel.gemini.iris.Iris;
 import edu.gemini.spModel.gemini.michelle.InstMichelle;
 import edu.gemini.spModel.gemini.nici.InstNICI;
 import edu.gemini.spModel.gemini.nifs.InstNIFS;
@@ -49,7 +49,7 @@ final class ScienceLibraryInfo {
         _libInfo.put(Flamingos2.SP_TYPE, new ScienceLibraryInfo(Site.GS, "GS-Flamingos2-library"));
         _libInfo.put(InstGmosSouth.SP_TYPE, new ScienceLibraryInfo(Site.GS, "GS-GMOS-library"));
         _libInfo.put(Gpi.SP_TYPE, new ScienceLibraryInfo(Site.GS, "GS-GPI-library"));
-        _libInfo.put(Gsaoi.SP_TYPE, new ScienceLibraryInfo(Site.GS, "GS-GSAOI-library"));
+        _libInfo.put(Iris.SP_TYPE, new ScienceLibraryInfo(Site.GS, "GS-IRIS-library"));
         _libInfo.put(InstNICI.SP_TYPE, new ScienceLibraryInfo(Site.GS, "GS-NICI-library"));
         _libInfo.put(InstPhoenix.SP_TYPE, new ScienceLibraryInfo(Site.GS, "GS-PHOENIX-library"));
         _libInfo.put(InstTReCS.SP_TYPE, new ScienceLibraryInfo(Site.GS, "GS-TReCS-library"));

@@ -13,7 +13,7 @@ import edu.gemini.spModel.gemini.altair.InstAltair;
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2OiwfsGuideProbe;
 import edu.gemini.spModel.gemini.gems.Canopus;
 import edu.gemini.spModel.gemini.gmos.GmosOiwfsGuideProbe;
-import edu.gemini.spModel.gemini.gsaoi.GsaoiOdgw;
+import edu.gemini.spModel.gemini.iris.IrisOdgw;
 import edu.gemini.spModel.gemini.nici.NiciOiwfsGuideProbe;
 import edu.gemini.spModel.gemini.niri.NiriOiwfsGuideProbe;
 import edu.gemini.spModel.guide.GuideProbe;
@@ -118,12 +118,12 @@ public final class GuideConfigTest extends TestBase {
 
     @Test public void testGeMS() throws Exception {
         testTargetEnvironment(TccNames.GeMS, create(Canopus.Wfs.values()));
-        testTargetEnvironment(TccNames.GeMS, create(Canopus.Wfs.cwfs1, Canopus.Wfs.cwfs2, GsaoiOdgw.odgw1));
+        testTargetEnvironment(TccNames.GeMS, create(Canopus.Wfs.cwfs1, Canopus.Wfs.cwfs2, IrisOdgw.odgw1));
     }
 
     @Test public void testGeMSOI() throws Exception {
         testTargetEnvironment(TccNames.GeMSOI, create(Canopus.Wfs.cwfs1, Flamingos2OiwfsGuideProbe.instance));
-        testTargetEnvironment(TccNames.GeMSOI, create(Canopus.Wfs.cwfs1, GsaoiOdgw.odgw1, Flamingos2OiwfsGuideProbe.instance));
+        testTargetEnvironment(TccNames.GeMSOI, create(Canopus.Wfs.cwfs1, IrisOdgw.odgw1, Flamingos2OiwfsGuideProbe.instance));
     }
 
     @Test public void testGeMSP1() throws Exception {

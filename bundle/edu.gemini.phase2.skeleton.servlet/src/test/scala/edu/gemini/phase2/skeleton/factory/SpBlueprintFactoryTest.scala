@@ -3,22 +3,22 @@ package edu.gemini.phase2.skeleton.factory
 import org.junit.Test
 import org.junit.Assert._
 import edu.gemini.model.p1.{mutable => M}
-import edu.gemini.model.p1.immutable.{GracesBlueprint, GsaoiBlueprint}
+import edu.gemini.model.p1.immutable.{GracesBlueprint, IrisBlueprint}
 import edu.gemini.spModel.`type`.SpTypeUtil
 import edu.gemini.pot.sp.SPComponentType
 
 class SpBlueprintFactoryTest {
   @Test
   def buildGsoai() {
-    val gsoaiBlueprint = GsaoiBlueprint(M.GsaoiFilter.J :: Nil)
+    val gsoaiBlueprint = IrisBlueprint(M.IrisFilter.J :: Nil)
     val factory = SpBlueprintFactory.create(gsoaiBlueprint)
     assertTrue(factory.isRight)
   }
 
   @Test
   def allGsoaiFiltersPresentInP2() {
-    val enumNotInOT = M.GsaoiFilter.values() map {
-      f => Option(SpTypeUtil.noExceptionValueOf(classOf[M.GsaoiFilter], f.toString))
+    val enumNotInOT = M.IrisFilter.values() map {
+      f => Option(SpTypeUtil.noExceptionValueOf(classOf[M.IrisFilter], f.toString))
     } filter {
       _.isEmpty
     }

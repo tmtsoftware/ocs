@@ -107,8 +107,8 @@ public class InstrumentSegmentBuilder {
             return new GMOSLogSegment(logData.getLogTableData(), _getObsLogOptions());
         } else if (type.equals(GNIRSLogSegment.SEG_TYPE)) {
             return new GNIRSLogSegment(logData.getLogTableData(), _getObsLogOptions());
-        } else if (type.equals(GsaoiLogSegment.SEG_TYPE)) {
-            return new GsaoiLogSegment(logData.getLogTableData(), _getObsLogOptions());
+        } else if (type.equals(IrisLogSegment.SEG_TYPE)) {
+            return new IrisLogSegment(logData.getLogTableData(), _getObsLogOptions());
         } else if (type.equals(TRECSLogSegment.SEG_TYPE)) {
             return new TRECSLogSegment(logData.getLogTableData(), _getObsLogOptions());
         } else if (type.equals(NIRILogSegment.SEG_TYPE)) {

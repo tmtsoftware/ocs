@@ -7,9 +7,9 @@ import org.specs2.mutable.Specification
 class RootSpec extends Specification {
 
   "The Root Spec" should {
-    "include Gsaoi" in {
+    "include Iris" in {
       val root = new Root(Semester(2016, A))
-      root.choices must contain(Instrument.Gsaoi)
+      root.choices must contain(Instrument.Iris)
     }
     "Texes has been removed in 2017B" in {
       val root = new Root(Semester(2018, A))

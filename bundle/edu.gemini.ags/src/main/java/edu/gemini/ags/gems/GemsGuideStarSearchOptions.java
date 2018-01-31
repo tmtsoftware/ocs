@@ -91,9 +91,9 @@ public class GemsGuideStarSearchOptions {
 
 
     public enum AnalyseChoice {
-        BOTH("Canopus and GSAOI", GemsTipTiltMode.both),
+        BOTH("Canopus and IRIS", GemsTipTiltMode.both),
         CANOPUS("Canopus", GemsTipTiltMode.canopus),
-        GSAOI("GSAOI", GemsTipTiltMode.instrument),
+        IRIS("IRIS", GemsTipTiltMode.instrument),
         ;
 
         public static AnalyseChoice DEFAULT = CANOPUS; // REL-604

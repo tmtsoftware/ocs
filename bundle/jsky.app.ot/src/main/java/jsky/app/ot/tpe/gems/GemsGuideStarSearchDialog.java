@@ -6,7 +6,7 @@ import edu.gemini.pot.sp.SPComponentType;
 import edu.gemini.shared.util.immutable.ImOption;
 import edu.gemini.shared.util.immutable.Option;
 import edu.gemini.spModel.core.SiderealTarget;
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi;
+import edu.gemini.spModel.gemini.iris.Iris;
 import edu.gemini.spModel.obs.context.ObsContext;
 import edu.gemini.spModel.obscomp.SPInstObsComp;
 import edu.gemini.spModel.target.env.TargetEnvironment;
@@ -171,9 +171,9 @@ public class GemsGuideStarSearchDialog extends JFrame {
 
         _candidateGuideStarsTable = new CandidateGuideStarsTable(_plotter);
 
-        Option<SPInstObsComp> gems = ImOption.fromScalaOpt(tpe.getContext().instrument().ifIs(SPComponentType.INSTRUMENT_GSAOI));
+        Option<SPInstObsComp> gems = ImOption.fromScalaOpt(tpe.getContext().instrument().ifIs(SPComponentType.INSTRUMENT_IRIS));
 
-        posAngleConstraint = gems.map(v -> ((Gsaoi) v).getPosAngleConstraint()).getOrElse(PosAngleConstraint.UNBOUNDED);
+        posAngleConstraint = gems.map(v -> ((Iris) v).getPosAngleConstraint()).getOrElse(PosAngleConstraint.UNBOUNDED);
         _allowPosAngleChangesCheckBox = new JCheckBox("Allow position angle adjustments", posAngleConstraint == PosAngleConstraint.UNBOUNDED);
 
         // TPE REFACTOR -- i suppose we're assuming this isn't created from
@@ -203,9 +203,9 @@ public class GemsGuideStarSearchDialog extends JFrame {
      * to reflect the change
      */
     public void updatedInstrument(InstrumentContext instrument) {
-        Option<SPInstObsComp> gems = ImOption.fromScalaOpt(instrument.ifIs(SPComponentType.INSTRUMENT_GSAOI));
-        gems.filter(i -> (((Gsaoi) i).getPosAngleConstraint() == PosAngleConstraint.UNBOUNDED) != _allowPosAngleChangesCheckBox.isSelected()).forEach( c -> {
-            _allowPosAngleChangesCheckBox.setSelected(((Gsaoi) c).getPosAngleConstraint() == PosAngleConstraint.UNBOUNDED);
+        Option<SPInstObsComp> gems = ImOption.fromScalaOpt(instrument.ifIs(SPComponentType.INSTRUMENT_IRIS));
+        gems.filter(i -> (((Iris) i).getPosAngleConstraint() == PosAngleConstraint.UNBOUNDED) != _allowPosAngleChangesCheckBox.isSelected()).forEach( c -> {
+            _allowPosAngleChangesCheckBox.setSelected(((Iris) c).getPosAngleConstraint() == PosAngleConstraint.UNBOUNDED);
             setState(State.PRE_QUERY);
         });
     }
@@ -389,12 +389,12 @@ public class GemsGuideStarSearchDialog extends JFrame {
      *
      */
     private void updateModelPosAngleConstraint(final boolean selected) {
-        Option<SPInstObsComp> gems = ImOption.fromScalaOpt(_tpe.getContext().instrument().ifIs(SPComponentType.INSTRUMENT_GSAOI));
+        Option<SPInstObsComp> gems = ImOption.fromScalaOpt(_tpe.getContext().instrument().ifIs(SPComponentType.INSTRUMENT_IRIS));
         gems.forEach(g -> {
             if (selected) {
-                ((Gsaoi) g).setPosAngleConstraint(PosAngleConstraint.UNBOUNDED);
+                ((Iris) g).setPosAngleConstraint(PosAngleConstraint.UNBOUNDED);
             } else {
-                ((Gsaoi) g).setPosAngleConstraint(PosAngleConstraint.FIXED);
+                ((Iris) g).setPosAngleConstraint(PosAngleConstraint.FIXED);
             }
             _tpe.getContext().instrument().commit();
         });

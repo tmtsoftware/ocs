@@ -22,7 +22,7 @@ import edu.gemini.spModel.gemini.gems.Gems;
 import edu.gemini.spModel.gemini.gmos.*;
 import edu.gemini.spModel.gemini.gnirs.GNIRSParams;
 import edu.gemini.spModel.gemini.gnirs.InstGNIRS;
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi;
+import edu.gemini.spModel.gemini.iris.Iris;
 import edu.gemini.spModel.gemini.nici.InstNICI;
 import edu.gemini.spModel.gemini.nifs.InstNIFS;
 import edu.gemini.spModel.gemini.niri.InstNIRI;
@@ -464,14 +464,14 @@ public class ObsQueryFunctor extends DBAbstractQueryFunctor implements Iterable<
 
                 }
 
-                // GSAOI
-                if (type.equals(Gsaoi.SP_TYPE)) {
+                // IRIS
+                if (type.equals(Iris.SP_TYPE)) {
 
-                    Gsaoi gsaoi = (Gsaoi) comp.getDataObject();
-                    ret.add(gsaoi.getFilter());
+                    Iris iris = (Iris) comp.getDataObject();
+                    ret.add(iris.getFilter());
 
                     addFromIterators(obsShell, ret,
-                            Gsaoi.FILTER_PROP);
+                            Iris.FILTER_PROP);
 
                 }
 

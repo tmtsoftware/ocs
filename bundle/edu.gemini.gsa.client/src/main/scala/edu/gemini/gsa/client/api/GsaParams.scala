@@ -24,7 +24,7 @@ object GSAInstrument {
       case Instrument.GmosSouth  => GSAInstrumentImpl("GMOS-S").some
       case Instrument.Gpi        => GSAInstrumentImpl("GPI").some
       case Instrument.Graces     => GSAInstrumentImpl("GRACES").some
-      case Instrument.Gsaoi      => GSAInstrumentImpl("GSAOI").some
+      case Instrument.Iris      => GSAInstrumentImpl("IRIS").some
       case _                     => none // Instruments not in GSA
   }
 }

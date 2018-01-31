@@ -13,7 +13,7 @@ import edu.gemini.spModel.gemini.gmos.GmosNorthType.{DisperserNorth, FPUnitNorth
 import edu.gemini.spModel.gemini.gmos.GmosSouthType.{DisperserSouth, FPUnitSouth, FilterSouth}
 import edu.gemini.spModel.gemini.gmos.{InstGmosNorth, InstGmosSouth}
 import edu.gemini.spModel.gemini.gnirs.{GNIRSParams, InstGNIRS}
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi
+import edu.gemini.spModel.gemini.iris.Iris
 import edu.gemini.spModel.gemini.inst.InstRegistry
 import edu.gemini.spModel.gemini.nici.{InstNICI, NICIParams}
 import edu.gemini.spModel.gemini.nifs.{InstNIFS, NIFSParams}
@@ -515,8 +515,8 @@ object Filter {
     object FocalPlanes extends ConfigurationFilterFactory(Flamingos2.SP_TYPE, "Focal Planes", Flamingos2.FPUnit.values.toSet)
   }
 
-  object GSAOI {
-    object Filters extends ConfigurationFilterFactory(Gsaoi.SP_TYPE, "Filters", Gsaoi.Filter.values.toSet)
+  object IRIS {
+    object Filters extends ConfigurationFilterFactory(Iris.SP_TYPE, "Filters", Iris.Filter.values.toSet)
   }
 
   object NIFS {

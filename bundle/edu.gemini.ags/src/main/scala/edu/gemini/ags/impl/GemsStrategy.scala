@@ -12,7 +12,7 @@ import edu.gemini.spModel.core.SiderealTarget
 import edu.gemini.spModel.ags.AgsStrategyKey.GemsKey
 import edu.gemini.spModel.gemini.flamingos2.{Flamingos2, Flamingos2OiwfsGuideProbe}
 import edu.gemini.spModel.gemini.gems.{Canopus, GemsInstrument}
-import edu.gemini.spModel.gemini.gsaoi.{Gsaoi, GsaoiOdgw}
+import edu.gemini.spModel.gemini.iris.{Iris, IrisOdgw}
 import edu.gemini.spModel.gems.{GemsGuideProbeGroup, GemsTipTiltMode}
 import edu.gemini.spModel.obs.context.ObsContext
 import edu.gemini.spModel.rich.shared.immutable._
@@ -43,7 +43,7 @@ trait GemsStrategy extends AgsStrategy {
 
   override def magnitudes(ctx: ObsContext, mt: MagnitudeTable): List[(GuideProbe, MagnitudeCalc)] = {
     val cans = Canopus.Wfs.values().map { cwfs => mt(ctx, cwfs).map(cwfs -> _) }.toList.flatten
-    val odgw = GsaoiOdgw.values().map { odgw => mt(ctx, odgw).map(odgw -> _) }.toList.flatten
+    val odgw = IrisOdgw.values().map { odgw => mt(ctx, odgw).map(odgw -> _) }.toList.flatten
     cans ++ odgw
   }
 
@@ -62,13 +62,13 @@ trait GemsStrategy extends AgsStrategy {
       val probeAnalysis = grp.getMembers.asScala.toList.flatMap { p => analysis(ctx, mt, p) }
       probeAnalysis.filter(hasGuideStarForProbe) match {
         case Nil =>
-          // Pick the first guide probe as representative, since we are called with either Canopus or GsaoiOdwg
+          // Pick the first guide probe as representative, since we are called with either Canopus or IrisOdwg
           ~grp.getMembers.asScala.headOption.map {gp => List(NoGuideStarForGroup(grp))}
         case lst => lst
       }
     }
 
-    mapGroup(Canopus.Wfs.Group.instance) // TODO: REL-2941 ++ mapGroup(GsaoiOdgw.Group.instance)
+    mapGroup(Canopus.Wfs.Group.instance) // TODO: REL-2941 ++ mapGroup(IrisOdgw.Group.instance)
   }
 
   override def candidates(ctx: ObsContext, mt: MagnitudeTable)(ec: ExecutionContext): Future[List[(GuideProbe, List[SiderealTarget])]] = {
@@ -109,9 +109,9 @@ trait GemsStrategy extends AgsStrategy {
 
   protected [impl] def search(tipTiltMode: GemsTipTiltMode, ctx: ObsContext, posAngles: Set[Angle], nirBand: Option[MagnitudeBand])(ec: ExecutionContext): Future[List[GemsCatalogSearchResults]] =
     ctx.getBaseCoordinates.asScalaOpt.fold(Future.successful(List.empty[GemsCatalogSearchResults])) { base =>
-      // Get the instrument: F2 or GSAOI?
+      // Get the instrument: F2 or IRIS?
       val gemsInstrument =
-        (ctx.getInstrument.getType == SPComponentType.INSTRUMENT_GSAOI) ? GemsInstrument.gsaoi | GemsInstrument.flamingos2
+        (ctx.getInstrument.getType == SPComponentType.INSTRUMENT_IRIS) ? GemsInstrument.iris | GemsInstrument.flamingos2
       // Search options
       val gemsOptions = new GemsGuideStarSearchOptions(gemsInstrument, tipTiltMode, posAngles.asJava)
 
@@ -120,7 +120,7 @@ trait GemsStrategy extends AgsStrategy {
 
       // Now check that the results are valid: there must be a valid tip-tilt and flexure star each.
       results.map { r =>
-        val AllKeys:List[GemsGuideProbeGroup] = List(Canopus.Wfs.Group.instance, GsaoiOdgw.Group.instance)
+        val AllKeys:List[GemsGuideProbeGroup] = List(Canopus.Wfs.Group.instance, IrisOdgw.Group.instance)
         val containedKeys = r.map(_.criterion.key.group)
         // Return a list only if both guide probes returned a value
         ~(containedKeys.forall(AllKeys.contains) option r)
@@ -135,7 +135,7 @@ trait GemsStrategy extends AgsStrategy {
 
   override def select(ctx: ObsContext, mt: MagnitudeTable)(ec: ExecutionContext): Future[Option[Selection]] = {
     val posAngles = ctx.getInstrument.getType match {
-      case SPComponentType.INSTRUMENT_GSAOI if ctx.getInstrument.asInstanceOf[Gsaoi].getPosAngleConstraint == PosAngleConstraint.FIXED =>
+      case SPComponentType.INSTRUMENT_IRIS if ctx.getInstrument.asInstanceOf[Iris].getPosAngleConstraint == PosAngleConstraint.FIXED =>
         Set(ctx.getPositionAngle)
       case SPComponentType.INSTRUMENT_FLAMINGOS2 if ctx.getInstrument.asInstanceOf[Flamingos2].getPosAngleConstraint == PosAngleConstraint.FIXED =>
         Set(ctx.getPositionAngle)
@@ -166,7 +166,7 @@ trait GemsStrategy extends AgsStrategy {
 
       def lim(gp: GuideProbe): Option[MagnitudeConstraints] = autoSearchConstraints(mags(gp), cond)
 
-      val odgwMagLimits = (lim(GsaoiOdgw.odgw1) /: GsaoiOdgw.values().drop(1)) { (ml, odgw) =>
+      val odgwMagLimits = (lim(IrisOdgw.odgw1) /: IrisOdgw.values().drop(1)) { (ml, odgw) =>
         (ml |@| lim(odgw))(_ union _).flatten
       }
       val canMagLimits = (lim(Canopus.Wfs.cwfs1) /: Canopus.Wfs.values().drop(1)) { (ml, can) =>
@@ -174,7 +174,7 @@ trait GemsStrategy extends AgsStrategy {
       }
 
       val canopusConstraint = canMagLimits.map(c => CatalogQuery(CanopusTipTiltId, base.toNewModel, RadiusConstraint.between(Angle.zero, Canopus.Wfs.Group.instance.getRadiusLimits.toNewModel), List(ctx.getConditions.adjust(c)), UCAC4))
-      val odgwConstraint    = odgwMagLimits.map(c => CatalogQuery(OdgwFlexureId,   base.toNewModel, RadiusConstraint.between(Angle.zero, GsaoiOdgw.Group.instance.getRadiusLimits.toNewModel), List(ctx.getConditions.adjust(c)), UCAC4))
+      val odgwConstraint    = odgwMagLimits.map(c => CatalogQuery(OdgwFlexureId,   base.toNewModel, RadiusConstraint.between(Angle.zero, IrisOdgw.Group.instance.getRadiusLimits.toNewModel), List(ctx.getConditions.adjust(c)), UCAC4))
       List(canopusConstraint, odgwConstraint).flatten
     }
 
@@ -185,7 +185,7 @@ trait GemsStrategy extends AgsStrategy {
   private def probeBands(guideProbe: GuideProbe): BandsList = if (Canopus.Wfs.Group.instance.getMembers.contains(guideProbe)) RBandsList else SingleBand(MagnitudeBand.H)
 
   override val guideProbes: List[GuideProbe] =
-    Flamingos2OiwfsGuideProbe.instance :: (GsaoiOdgw.values() ++ Canopus.Wfs.values()).toList
+    Flamingos2OiwfsGuideProbe.instance :: (IrisOdgw.values() ++ Canopus.Wfs.values()).toList
 }
 
 object GemsStrategy extends GemsStrategy {

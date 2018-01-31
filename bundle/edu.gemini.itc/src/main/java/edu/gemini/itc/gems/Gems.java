@@ -107,7 +107,7 @@ public class Gems implements AOSystem {
     // See REL-1352:
     // Instead of the current calculation based on first-principles for normal AO systems,
     // the ITC must use the following lookup table to determine the FWHM of the AO-corrected core for
-    // calculations involving GeMS (GSAOI, F2+GeMS in the future).
+    // calculations involving GeMS (IRIS, F2+GeMS in the future).
     //
     // J: IQ20=0.08'' IQ70=0.13'' IQ85=0.15"
     // H: IQ20=0.07'' IQ70=0.10'' IQ85=0.13''
@@ -118,10 +118,10 @@ public class Gems implements AOSystem {
     //
     // J, H, or K is the band selected in the menu beside where the average Strehl ratio is entered.
     //
-    // Context: The GSAOI ITC currently uses the algorithm defined here
+    // Context: The IRIS ITC currently uses the algorithm defined here
     // http://www.gemini.edu/?q=node/10269
-    // to calculate the FWHM of the AO-corrected core for GSAOI. However, this value is smaller than
-    // the measured FWHM from GSAOI data so the ITC is over-estimating the S/N.
+    // to calculate the FWHM of the AO-corrected core for IRIS. However, this value is smaller than
+    // the measured FWHM from IRIS data so the ITC is over-estimating the S/N.
     //
     // Note: The IQ table should only be applied to the Point Source mode,
     public double getAOCorrectedFWHM() {

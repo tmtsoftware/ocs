@@ -4,7 +4,7 @@
         <attachment>file.pdf</attachment>
     </meta>
     <semester half="B" year="2012"/>
-    <title>Observation with GSAOI</title>
+    <title>Observation with IRIS</title>
     <abstract></abstract>
     <scheduling></scheduling>
     <keywords/>
@@ -24,12 +24,12 @@
     <targets/>
     <conditions/>
     <blueprints>
-        <gsaoi>
-            <Gsaoi id="blueprint-0">
-                <name>Gsaoi K(short) (2.150 um) </name>
+        <iris>
+            <Iris id="blueprint-0">
+                <name>Iris K(short) (2.150 um) </name>
                 <filter>K(short) (2.150 um)</filter>
-            </Gsaoi>
-        </gsaoi>
+            </Iris>
+        </iris>
     </blueprints>
     <observations>
         <observation blueprint="blueprint-0" band="Band 1/2"/>

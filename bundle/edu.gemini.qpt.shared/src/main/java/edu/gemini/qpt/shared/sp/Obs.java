@@ -26,8 +26,8 @@ import edu.gemini.spModel.gemini.gmos.GmosSouthType;
 import edu.gemini.spModel.gemini.gnirs.GNIRSParams;
 import edu.gemini.spModel.gemini.gnirs.GnirsOiwfsGuideProbe;
 import edu.gemini.spModel.gemini.gpi.Gpi;
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi;
-import edu.gemini.spModel.gemini.gsaoi.GsaoiOdgw;
+import edu.gemini.spModel.gemini.iris.Iris;
+import edu.gemini.spModel.gemini.iris.IrisOdgw;
 import edu.gemini.spModel.gemini.nici.NICIParams;
 import edu.gemini.spModel.gemini.nici.NiciOiwfsGuideProbe;
 import edu.gemini.spModel.gemini.nifs.NIFSParams;
@@ -96,8 +96,8 @@ public final class Obs implements Serializable, Comparable<Obs> {
                     Flamingos2.Filter.class,
                     Flamingos2OiwfsGuideProbe.class,
 
-                    // GSAOI
-                    Gsaoi.Filter.class,
+                    // IRIS
+                    Iris.Filter.class,
 
                     // NIRI
                     Niri.Mask.class,
@@ -131,7 +131,7 @@ public final class Obs implements Serializable, Comparable<Obs> {
                     // REL-293: WFS
                     AltairAowfsGuider.class,
                     Canopus.Wfs.class,
-                    GsaoiOdgw.class,
+                    IrisOdgw.class,
                     PwfsGuideProbe.class,
 
                     // NIFS
@@ -276,7 +276,7 @@ public final class Obs implements Serializable, Comparable<Obs> {
         if (o instanceof GmosSouthType.FilterSouth) return true;
         if (o instanceof GNIRSParams.Filter) return true;
         if (o instanceof Gpi.Filter) return true;
-        if (o instanceof Gsaoi.Filter) return true;
+        if (o instanceof Iris.Filter) return true;
         if (o instanceof NIFSParams.Filter) return true;
         if (o instanceof NICIParams.DichroicWheel) return true;
         if (o instanceof NICIParams.Channel1FW) return true;

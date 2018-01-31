@@ -6,8 +6,8 @@ import edu.gemini.spModel.gemini.altair.AltairParams;
 import edu.gemini.spModel.gemini.altair.InstAltair;
 import edu.gemini.spModel.gemini.gems.Canopus;
 import edu.gemini.spModel.gemini.gmos.GmosOiwfsGuideProbe;
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi;
-import edu.gemini.spModel.gemini.gsaoi.GsaoiOdgw;
+import edu.gemini.spModel.gemini.iris.Iris;
+import edu.gemini.spModel.gemini.iris.IrisOdgw;
 import edu.gemini.spModel.guide.GuideProbe;
 import edu.gemini.spModel.obscomp.SPInstObsComp;
 import static edu.gemini.spModel.target.obsComp.PwfsGuideProbe.*;
@@ -24,7 +24,7 @@ import java.util.Set;
  */
 public final class GuideConfig extends ParamSet {
     private static final Set<GuideProbe> ODGW_PROBES = Collections.unmodifiableSet(
-            new HashSet<>(Arrays.asList(GsaoiOdgw.values()))
+            new HashSet<>(Arrays.asList(IrisOdgw.values()))
     );
 
     private static final Set<GuideProbe> CWFS_PROBES = Collections.unmodifiableSet(
@@ -44,7 +44,7 @@ public final class GuideConfig extends ParamSet {
     }
 
     private boolean containsOiwfs() {
-        // Hack here because the TCC, TCS, Seqexec don't consider the GSAOI
+        // Hack here because the TCC, TCS, Seqexec don't consider the IRIS
         // ODGW to be "on instrument".  Explicitly check for these probes.
         final Set<GuideProbe> gs = _oe.usedGuiders();
         gs.removeAll(ODGW_PROBES);
@@ -57,7 +57,7 @@ public final class GuideConfig extends ParamSet {
         return !gs.isEmpty();
     }
 
-    private boolean containsGsaoi() {
+    private boolean containsIris() {
         return containsOneOf(ODGW_PROBES);
     }
 
@@ -154,16 +154,16 @@ public final class GuideConfig extends ParamSet {
     }
 
     private Option<ParamSet> createGemsConfig(String guideWith) throws WdbaGlueException {
-        // Only relevant if using GSAOI
+        // Only relevant if using IRIS
         final SPInstObsComp inst = _oe.getInstrument();
         if (inst == null) return None.instance();
-        if (!Gsaoi.SP_TYPE.equals(inst.getType())) return None.instance();
+        if (!Iris.SP_TYPE.equals(inst.getType())) return None.instance();
 
-        // Only relevant if guiding with GeMS and GSAOI
+        // Only relevant if guiding with GeMS and IRIS
         if (!guideWith.contains(TccNames.GeMS)) return None.instance();
-        if (!containsGsaoi()) return None.instance();
+        if (!containsIris()) return None.instance();
 
-        final Gsaoi.OdgwSize size = ((Gsaoi) inst).getOdgwSize();
+        final Iris.OdgwSize size = ((Iris) inst).getOdgwSize();
         final ParamSet gems = new ParamSet(TccNames.GeMS);
         final ParamSet odgw = new ParamSet("odgw");
         gems.putParamSet(odgw);

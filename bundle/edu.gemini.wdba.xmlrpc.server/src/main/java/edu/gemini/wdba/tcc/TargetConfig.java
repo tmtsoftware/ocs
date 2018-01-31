@@ -4,7 +4,7 @@ import edu.gemini.shared.util.immutable.*;
 import edu.gemini.spModel.core.*;
 import edu.gemini.spModel.target.SPTarget;
 import edu.gemini.spModel.guide.GuideProbe;
-import edu.gemini.spModel.gemini.gsaoi.GsaoiOdgw;
+import edu.gemini.spModel.gemini.iris.IrisOdgw;
 import edu.gemini.spModel.gemini.gems.Canopus;
 import edu.gemini.wdba.glue.api.WdbaGlueException;
 import org.dom4j.Element;
@@ -32,7 +32,7 @@ public final class TargetConfig extends ParamSet {
     public static String getTag(final GuideProbe guider) {
         final GuideProbe.Type type = guider.getType();
 
-        if ((type == GuideProbe.Type.OIWFS) && !(guider instanceof GsaoiOdgw)) {
+        if ((type == GuideProbe.Type.OIWFS) && !(guider instanceof IrisOdgw)) {
             return GuideProbe.Type.OIWFS.name();
         }
 

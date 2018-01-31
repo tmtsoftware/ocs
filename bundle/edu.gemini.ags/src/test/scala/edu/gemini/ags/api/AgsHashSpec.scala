@@ -10,7 +10,7 @@ import edu.gemini.spModel.gemini.altair.{AltairParams, InstAltair}
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2
 import edu.gemini.spModel.gemini.gems.Gems
 import edu.gemini.spModel.gemini.gmos.{GmosCommonType, InstGmosSouth, GmosSouthType, GmosNorthType, InstGmosNorth}
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi
+import edu.gemini.spModel.gemini.iris.Iris
 import edu.gemini.spModel.gemini.niri.{InstNIRI, Niri}
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality.{CloudCover, Conditions, ImageQuality, SkyBackground, WaterVapor}
 import edu.gemini.spModel.obs.context.ObsContext
@@ -241,10 +241,10 @@ class AgsHashSpec extends Specification with ScalaCheck with edu.gemini.spModel.
 
     val GemsKey = agsKey(AgsStrategyKey.GemsKey)
 
-    "differ between GeMS GSAOI vs Flamingos2" in
+    "differ between GeMS IRIS vs Flamingos2" in
       forAll { (ctx0: ObsContext) =>
         val f    = new Flamingos2
-        val g    = new Gsaoi
+        val g    = new Iris
 
         val ctx1 = ctx0.withSite(Option(Site.GS).asGeminiOpt)
                        .withAOComponent(new Gems)

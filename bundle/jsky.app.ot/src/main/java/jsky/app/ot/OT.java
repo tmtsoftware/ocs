@@ -209,7 +209,7 @@ public final class OT {
                 jsky.app.ot.gemini.acqcam.TpeAcqCameraFeature.class,
                 jsky.app.ot.gemini.altair.Altair_WFS_Feature.class,
                 jsky.app.ot.gemini.gems.CanopusFeature.class,
-                jsky.app.ot.gemini.gsaoi.GsaoiOdgwFeature.class,
+                jsky.app.ot.gemini.iris.IrisOdgwFeature.class,
                 jsky.app.ot.gemini.gems.StrehlFeature.class,
                 jsky.app.ot.gemini.inst.OIWFS_Feature.class,
                 jsky.app.ot.gemini.tpe.TpePWFSFeature.class,

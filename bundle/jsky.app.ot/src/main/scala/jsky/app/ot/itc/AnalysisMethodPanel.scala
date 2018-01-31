@@ -10,7 +10,7 @@ import edu.gemini.spModel.gemini.gmos.GmosNorthType.FPUnitNorth
 import edu.gemini.spModel.gemini.gmos.GmosSouthType.FPUnitSouth
 import edu.gemini.spModel.gemini.gmos.{InstGmosNorth, InstGmosSouth}
 import edu.gemini.spModel.gemini.gnirs.InstGNIRS
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi
+import edu.gemini.spModel.gemini.iris.Iris
 import edu.gemini.spModel.gemini.nifs.InstNIFS
 import edu.gemini.spModel.gemini.niri.InstNIRI
 import jsky.app.ot.editor.seq.EdIteratorFolder
@@ -67,7 +67,7 @@ final class AnalysisApertureMethodPanel(owner: EdIteratorFolder, fixedSkyValue: 
   layout(sky)                           = new Constraints { gridx = 3; gridy = 1; anchor = Anchor.West; insets = new Insets(0, 0, 0, 3) }
   layout(skyUnits)                      = new Constraints { gridx = 4; gridy = 1; anchor = Anchor.West }
 
-  // IR instruments (GNIRS, NIRI, F2 and GSAOI) don't allow the user to change the sky value (OCSADV-345)
+  // IR instruments (GNIRS, NIRI, F2 and IRIS) don't allow the user to change the sky value (OCSADV-345)
   if (fixedSkyValue) {
     List(sky, skyLabel, skyUnits).foreach(_.visible = false)
   }
@@ -115,7 +115,7 @@ final class AnalysisApertureMethodPanel(owner: EdIteratorFolder, fixedSkyValue: 
   private def defaultMethod: ApertureMethod = owner.getContextInstrumentDataObject match {
     case _: InstNIRI   => AutoAperture(1.0)   // IR instruments use default of 1 for sky aperture
     case _: Flamingos2 => AutoAperture(1.0)
-    case _: Gsaoi      => AutoAperture(1.0)
+    case _: Iris      => AutoAperture(1.0)
     case _: InstGNIRS  => AutoAperture(1.0)
     case _             => AutoAperture(5.0)   // default for everything else is 5
   }

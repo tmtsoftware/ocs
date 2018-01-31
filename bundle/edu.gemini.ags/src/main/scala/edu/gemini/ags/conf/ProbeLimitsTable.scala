@@ -11,7 +11,7 @@ import edu.gemini.spModel.gemini.flamingos2.Flamingos2OiwfsGuideProbe
 import edu.gemini.spModel.gemini.gems.Canopus
 import edu.gemini.spModel.gemini.gmos.GmosOiwfsGuideProbe
 import edu.gemini.spModel.gemini.gnirs.GnirsOiwfsGuideProbe
-import edu.gemini.spModel.gemini.gsaoi.GsaoiOdgw
+import edu.gemini.spModel.gemini.iris.IrisOdgw
 import edu.gemini.spModel.gemini.nici.NiciOiwfsGuideProbe
 import edu.gemini.spModel.gemini.nifs.NifsOiwfsGuideProbe
 import edu.gemini.spModel.gemini.niri.NiriOiwfsGuideProbe
@@ -51,7 +51,7 @@ case class ProbeLimitsTable(tab: CalcMap) extends MagnitudeTable {
     // Deferring GeMS to the old implementation until we understand
     // what is supposed to happen.
     probe match {
-      case _: GsaoiOdgw   => GemsMagnitudeTable(ctx, probe)
+      case _: IrisOdgw   => GemsMagnitudeTable(ctx, probe)
       case _: Canopus.Wfs => GemsMagnitudeTable(ctx, probe)
       case _              =>
         for {

@@ -505,13 +505,13 @@ HI
                 <fpu>1.0 arcsec slit</fpu>
             </longslit>
         </gmosN>
-        <gsaoi>
-            <Gsaoi id="blueprint-16">
-                <name>GSAOI K (2.200 um)</name>
+        <iris>
+            <Iris id="blueprint-16">
+                <name>IRIS K (2.200 um)</name>
                 <visitor>false</visitor>
                 <filter>K (2.200 um)</filter>
-            </Gsaoi>
-        </gsaoi>
+            </Iris>
+        </iris>
         <visitor>
             <visitor id="blueprint-17">
                 <name>Visitor - Gemini North - DSSI</name>

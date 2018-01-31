@@ -17,7 +17,7 @@ class TestTargetVisibilityTest {
   val gnLgs = GnirsBlueprintImaging(AltairLGS(pwfs1 = false), GnirsPixelScale.PS_005, ORDER_3)
   val gnNgs = gnLgs.copy(altair = AltairNone)
   val gsNgs = GmosSBlueprintImaging(Nil)
-  val gsLgs = GsaoiBlueprint(Nil)
+  val gsLgs = IrisBlueprint(Nil)
 
   val baseTarget   = SiderealTarget(UUID.randomUUID(), "x", Coordinates.zero, CoordinatesEpoch.J_2000, None, Nil)
   val baseObsGNNgs = Observation(Some(gnNgs), None, Some(baseTarget), BAND_1_2, None)

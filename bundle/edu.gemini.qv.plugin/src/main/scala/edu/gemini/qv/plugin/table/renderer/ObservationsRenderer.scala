@@ -102,7 +102,7 @@ object EncodedObservationsRenderer extends CellRenderer {
       case SPComponentType.INSTRUMENT_GNIRS => if (o.getAO) "SA" else "S"
       case SPComponentType.INSTRUMENT_NICI => "C"
       case SPComponentType.INSTRUMENT_FLAMINGOS2 => "F2"
-      case SPComponentType.INSTRUMENT_GSAOI => "MC"
+      case SPComponentType.INSTRUMENT_IRIS => "MC"
       case SPComponentType.INSTRUMENT_TEXES => "X"
       case SPComponentType.INSTRUMENT_TRECS => "T"
       case SPComponentType.INSTRUMENT_VISITOR => "V"
@@ -190,7 +190,7 @@ object EncodedObservationsRenderer extends CellRenderer {
           o.getFocalPlanUnits.contains(NICIParams.FocalPlaneMask.CLEAR)
         case SPComponentType.INSTRUMENT_FLAMINGOS2 =>
           o.getFocalPlanUnits.contains(Flamingos2.FPUnit.FPU_NONE)
-        case SPComponentType.INSTRUMENT_GSAOI =>
+        case SPComponentType.INSTRUMENT_IRIS =>
           true
         case SPComponentType.INSTRUMENT_TEXES =>
           false

@@ -8,7 +8,7 @@ import edu.gemini.spModel.gemini.gnirs.blueprint.SpGnirsBlueprintImaging;
 import edu.gemini.spModel.gemini.gnirs.blueprint.SpGnirsBlueprintSpectroscopy;
 import edu.gemini.spModel.gemini.gpi.blueprint.SpGpiBlueprint;
 import edu.gemini.spModel.gemini.graces.blueprint.SpGracesBlueprint;
-import edu.gemini.spModel.gemini.gsaoi.blueprint.SpGsaoiBlueprint;
+import edu.gemini.spModel.gemini.iris.blueprint.SpIrisBlueprint;
 import edu.gemini.spModel.gemini.michelle.blueprint.SpMichelleBlueprintImaging;
 import edu.gemini.spModel.gemini.michelle.blueprint.SpMichelleBlueprintSpectroscopy;
 import edu.gemini.spModel.gemini.nici.blueprint.SpNiciBlueprintCoronagraphic;
@@ -66,7 +66,7 @@ public final class SpBlueprintFactory {
                 SpGnirsBlueprintSpectroscopy.class,
                 SpGpiBlueprint.class,
                 SpGracesBlueprint.class,
-                SpGsaoiBlueprint.class,
+                SpIrisBlueprint.class,
                 SpMichelleBlueprintImaging.class,
                 SpMichelleBlueprintSpectroscopy.class,
                 SpNiciBlueprintCoronagraphic.class,

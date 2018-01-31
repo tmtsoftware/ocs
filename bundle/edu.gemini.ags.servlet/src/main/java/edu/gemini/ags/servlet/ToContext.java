@@ -13,7 +13,7 @@ import edu.gemini.spModel.gemini.altair.InstAltair;
 import edu.gemini.spModel.gemini.gems.Gems;
 import edu.gemini.spModel.gemini.gmos.InstGmosNorth;
 import edu.gemini.spModel.gemini.gnirs.InstGNIRS;
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi;
+import edu.gemini.spModel.gemini.iris.Iris;
 import edu.gemini.spModel.gemini.inst.InstRegistry;
 import edu.gemini.spModel.gemini.michelle.InstMichelle;
 import edu.gemini.spModel.gemini.michelle.MichelleParams;
@@ -188,7 +188,7 @@ public enum ToContext {
 
         // --- instrument configurable with GeMS?
         AbstractDataObject aoComp = null;
-        if (inst instanceof Gsaoi) {
+        if (inst instanceof Iris) {
             aoComp = getGeMS(req);
         }
         // --- instrument configurable with Altair?

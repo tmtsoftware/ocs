@@ -7,7 +7,7 @@ import edu.gemini.spModel.gemini.gmos.InstGmosNorth;
 import edu.gemini.spModel.gemini.gmos.InstGmosSouth;
 import edu.gemini.spModel.gemini.gnirs.InstGNIRS;
 import edu.gemini.spModel.gemini.gpi.Gpi;
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi;
+import edu.gemini.spModel.gemini.iris.Iris;
 import edu.gemini.spModel.gemini.michelle.InstMichelle;
 import edu.gemini.spModel.gemini.nici.InstNICI;
 import edu.gemini.spModel.gemini.nifs.InstNIFS;
@@ -225,7 +225,7 @@ public final class ObsCatalogInfo {
             InstGmosNorth.SP_TYPE.readableStr,
             InstGmosSouth.SP_TYPE.readableStr,
             InstGNIRS.SP_TYPE.readableStr,
-            Gsaoi.SP_TYPE.readableStr,
+            Iris.SP_TYPE.readableStr,
             Gpi.SP_TYPE.readableStr,
             InstMichelle.SP_TYPE.readableStr,
             InstNICI.SP_TYPE.readableStr,
@@ -308,8 +308,8 @@ public final class ObsCatalogInfo {
             instConfigInfoList = InstMichelle.getInstConfigInfo();
             //        else if (instName.equals(InstAltair.SP_TYPE.getReadable()))
             //            instConfigInfoList = InstAltair.getInstConfigInfo();
-        else if (instName.equals(Gsaoi.SP_TYPE.readableStr))
-            instConfigInfoList = Gsaoi.getInstConfigInfo();
+        else if (instName.equals(Iris.SP_TYPE.readableStr))
+            instConfigInfoList = Iris.getInstConfigInfo();
         else if (instName.equals(VisitorInstrument.SP_TYPE.readableStr))
             instConfigInfoList = VisitorInstrument.getInstConfigInfo();
         else if (instName.equals(Gpi.SP_TYPE.readableStr))

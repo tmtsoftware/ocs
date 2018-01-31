@@ -16,7 +16,7 @@ import java.beans.*;
 import java.lang.reflect.Method;
 
 /**
- * Test cases for {@link edu.gemini.spModel.gemini.gsaoi.Gsaoi} properties.
+ * Test cases for {@link edu.gemini.spModel.gemini.iris.Iris} properties.
  */
 public abstract class BeanPropertyTestBase<B extends ISPDataObject> extends TestCase {
 

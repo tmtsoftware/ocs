@@ -6,7 +6,7 @@ import edu.gemini.itc.base._
 import edu.gemini.itc.flamingos2.Flamingos2Recipe
 import edu.gemini.itc.gmos.GmosRecipe
 import edu.gemini.itc.gnirs.GnirsRecipe
-import edu.gemini.itc.gsaoi.GsaoiRecipe
+import edu.gemini.itc.iris.IrisRecipe
 import edu.gemini.itc.nifs.NifsRecipe
 import edu.gemini.itc.niri.NiriRecipe
 import edu.gemini.itc.shared._
@@ -69,7 +69,7 @@ class ItcServiceImpl extends ItcService {
       case i: AcquisitionCamParameters    => imagingResult        (new AcqCamRecipe(p, i))
       case i: Flamingos2Parameters        => imagingResult        (new Flamingos2Recipe(p, i))
       case i: GmosParameters              => imagingResult        (new GmosRecipe(p, i))
-      case i: GsaoiParameters             => imagingResult        (new GsaoiRecipe(p, i))
+      case i: IrisParameters             => imagingResult        (new IrisRecipe(p, i))
       case i: NiriParameters              => imagingResult        (new NiriRecipe(p, i))
       case i: GnirsParameters             => imagingResult        (new GnirsRecipe(p, i))
       case _                              => ItcResult.forMessage ("Imaging with this instrument is not supported by ITC.")

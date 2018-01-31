@@ -110,8 +110,8 @@ object Baseline {
   def executeGnirsRecipe(f: Fixture[GnirsParameters]): Output =
     cookRecipe(w => new GnirsPrinter(ItcParameters(f.src, f.odp, f.ocp, f.tep, f.ins), f.ins, f.pdp, w))
 
-  def executeGsaoiRecipe(f: Fixture[GsaoiParameters]): Output =
-    cookRecipe(w => new GsaoiPrinter(ItcParameters(f.src, f.odp, f.ocp, f.tep, f.ins), f.ins, w))
+  def executeIrisRecipe(f: Fixture[IrisParameters]): Output =
+    cookRecipe(w => new IrisPrinter(ItcParameters(f.src, f.odp, f.ocp, f.tep, f.ins), f.ins, w))
 
   def executeMichelleRecipe(f: Fixture[MichelleParameters]): Output =
     cookRecipe(w => new MichellePrinter(ItcParameters(f.src, f.odp, f.ocp, f.tep, f.ins), f.ins, f.pdp, w))

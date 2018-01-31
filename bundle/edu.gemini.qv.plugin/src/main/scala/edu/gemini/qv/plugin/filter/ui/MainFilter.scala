@@ -76,7 +76,7 @@ class MainFilter(ctx: QvContext, init: Set[Filter]) extends PagedFilter(ctx, ini
     GNIRS.CrossDispersers(),
     GNIRS.Cameras(),
     GNIRS.FocalPlanes(),
-    GSAOI.Filters(),
+    IRIS.Filters(),
     NICI.FocalPlanes(),
     NICI.DichroicWheels(),
     NICI.RedFilters(),

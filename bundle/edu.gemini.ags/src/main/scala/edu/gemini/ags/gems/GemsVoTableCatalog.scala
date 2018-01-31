@@ -124,7 +124,7 @@ case class GemsVoTableCatalog(backend: VoTableBackend = ConeSearchBackend, catal
   // Returns a list of radius limits used in the criteria.
   // If inst is flamingos2, use separate limits, since the difference in size between the OIWFS and Canopus
   // areas is too large to get good results.
-  // Otherwise, for GSAOI, merge the radius limits into one, since the Canopus and GSAOI radius are both about
+  // Otherwise, for IRIS, merge the radius limits into one, since the Canopus and IRIS radius are both about
   // 1 arcmin.
   protected [gems] def getRadiusConstraints(inst: GemsInstrument, criterions: List[GemsCatalogSearchCriterion]): List[RadiusConstraint] = {
     inst match {

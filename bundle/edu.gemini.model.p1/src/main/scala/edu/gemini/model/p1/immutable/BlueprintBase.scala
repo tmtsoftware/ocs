@@ -30,7 +30,7 @@ object BlueprintBase {
     case b:M.GnirsBlueprintSpectroscopy     => GnirsBlueprintSpectroscopy(b)
 
     // GSOAI
-    case b:M.GsaoiBlueprint                 => GsaoiBlueprint(b)
+    case b:M.IrisBlueprint                 => IrisBlueprint(b)
 
     // GPI
     case b:M.GracesBlueprint                => GracesBlueprint(b)

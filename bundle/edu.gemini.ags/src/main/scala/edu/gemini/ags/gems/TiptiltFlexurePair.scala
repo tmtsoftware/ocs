@@ -10,7 +10,7 @@ case class TiptiltFlexurePair(tiptiltResults: GemsCatalogSearchResults, flexureR
 
 /**
  * Groups a pair of GemsCatalogSearchResults to be used for tiptilt and flexure stars.
- * The two results must be from different guide probe groups (Canopus, GSAOI, etc).
+ * The two results must be from different guide probe groups (Canopus, IRIS, etc).
  */
 object TiptiltFlexurePair {
   private case class TipTiltFlexure(tt: Option[GemsCatalogSearchResults], flex: Option[GemsCatalogSearchResults])

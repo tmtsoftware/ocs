@@ -113,8 +113,8 @@ and referred from Proposal.xsd. Visitor instruments must specify the site and mu
 # Version 1.0.14 - 2013A
 ########################
 
-* Added Gsoai.xsd schema for the GSOAI blueprint and filters. This includes the element GsaoiBlueprintChoice, GsaoiBlueprintNull
- GsaoiBlueprint and GsaoiFilter. GSOAI is included in the options for Blueprints and referred from Proposal.xsd
+* Added Gsoai.xsd schema for the GSOAI blueprint and filters. This includes the element IrisBlueprintChoice, IrisBlueprintNull
+ IrisBlueprint and IrisFilter. GSOAI is included in the options for Blueprints and referred from Proposal.xsd
 * UK partner was removed from Submissions.xsd
 * Added Y filter to GNIRS in the file Gnirs.xsd
 * Added ngoauthority to Itac element on file Itac.xsd

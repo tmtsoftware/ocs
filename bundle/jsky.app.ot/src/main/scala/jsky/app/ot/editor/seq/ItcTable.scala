@@ -269,8 +269,8 @@ class ItcImagingTable(val parameters: ItcParametersProvider) extends ItcTable {
         case INSTRUMENT_GMOS | INSTRUMENT_GMOSSOUTH =>
           ItcGmosImagingTableModel(keys, uniqueConfigs, inputs, results)
 
-        case INSTRUMENT_GSAOI                       =>
-          ItcGsaoiImagingTableModel(keys, uniqueConfigs, inputs, results)
+        case INSTRUMENT_IRIS                       =>
+          ItcIrisImagingTableModel(keys, uniqueConfigs, inputs, results)
 
         case INSTRUMENT_NIRI | INSTRUMENT_GNIRS     =>
           ItcGenericImagingTableModel(keys, uniqueConfigs, inputs, results, showCoadds = true)
@@ -310,7 +310,7 @@ class ItcSpectroscopyTable(val parameters: ItcParametersProvider) extends ItcTab
           // ITC results are slightly different depending on cross dispersion mode
           new ItcGnirsSpectroscopyTableModel(keys, uniqueConfigs, inputs, results, xDisp)
 
-        case INSTRUMENT_GSAOI | INSTRUMENT_NIFS | INSTRUMENT_NIRI =>
+        case INSTRUMENT_IRIS | INSTRUMENT_NIFS | INSTRUMENT_NIRI =>
           new ItcGenericSpectroscopyTableModel(keys, uniqueConfigs, inputs, results, showCoadds = true)
 
         case _                                                    =>

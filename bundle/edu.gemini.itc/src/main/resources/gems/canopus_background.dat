@@ -4,9 +4,9 @@
 # AO Fold (estimated)
 #
 # File based on measurements performed during the
-# GeMS GSAOI commissioning. Values below 1800nm are
+# GeMS IRIS commissioning. Values below 1800nm are
 # from ALTAIR background file. Values above 1800nm
-# are from the on-sky GeMS/GSAOI commissioning.
+# are from the on-sky GeMS/IRIS commissioning.
 # Data obtained 2012 April 06/07/08.
 #
 # author: Rodrigo Carrasco

@@ -11,8 +11,8 @@ import edu.gemini.shared.util.immutable.Option;
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2;
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2OiwfsGuideProbe;
 import edu.gemini.spModel.gemini.gems.Canopus;
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi;
-import edu.gemini.spModel.gemini.gsaoi.GsaoiOdgw;
+import edu.gemini.spModel.gemini.iris.Iris;
+import edu.gemini.spModel.gemini.iris.IrisOdgw;
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality;
 import edu.gemini.spModel.guide.GuideStarValidation;
 import edu.gemini.spModel.guide.ValidatableGuideProbe;
@@ -41,12 +41,12 @@ public final class GemsGuideStarRule implements IRule {
 
 
     private boolean validateObs(ObservationElements elements) {
-        // We only care about checking GSAOI observations, or F2 with GeMS.
+        // We only care about checking IRIS observations, or F2 with GeMS.
         SPInstObsComp inst = elements.getInstrument();
         if (inst == null) return false; // nothing to check
 
         SPComponentType type = inst.getType();
-        if (Gsaoi.SP_TYPE.equals(type)) return true;
+        if (Iris.SP_TYPE.equals(type)) return true;
 
         if (!Flamingos2.SP_TYPE.equals(type)) return false;
 
@@ -68,9 +68,9 @@ public final class GemsGuideStarRule implements IRule {
         P2Problems problems = new P2Problems();
         for (ISPProgramNode targetNode : elements.getTargetObsComponentNode()) {
 
-            // Check the Gsaoi guide stars.
-            if (Gsaoi.SP_TYPE.equals(elements.getInstrument().getType())) {
-                for (GsaoiOdgw odgw : GsaoiOdgw.values()) {
+            // Check the Iris guide stars.
+            if (Iris.SP_TYPE.equals(elements.getInstrument().getType())) {
+                for (IrisOdgw odgw : IrisOdgw.values()) {
                     if (!validate(odgw, ctx)) {
                         addError(problems, PREFIX + "ODGW", ODGW, ctx, odgw.getIndex(), targetNode);
                     }
@@ -109,10 +109,10 @@ public final class GemsGuideStarRule implements IRule {
                 }
             }
 
-            if (Gsaoi.SP_TYPE.equals(elements.getInstrument().getType())) {
+            if (Iris.SP_TYPE.equals(elements.getInstrument().getType())) {
                 // get # odgws
                 int odgws = 0;
-                for (GsaoiOdgw odgw : GsaoiOdgw.values()) {
+                for (IrisOdgw odgw : IrisOdgw.values()) {
                     Option<GuideProbeTargets> gpt = primaryGuideGroup.get(odgw);
                     if (!gpt.isEmpty() && !gpt.getValue().getPrimary().isEmpty()) {
                         odgws++;
@@ -132,7 +132,7 @@ public final class GemsGuideStarRule implements IRule {
                 }
 
                 /* TODO: REL-2941
-                //No flexure guide star (GSAOI ODGW or Flamingos II OIWFS) when using 2 or 3 CWFS.
+                //No flexure guide star (IRIS ODGW or Flamingos II OIWFS) when using 2 or 3 CWFS.
                 if ((cwfs == 3 || cwfs == 2) && odgws == 0) {
                     problems.addWarning(PREFIX + "Flexure", Flexure, targetNode);
                 }
@@ -147,7 +147,7 @@ public final class GemsGuideStarRule implements IRule {
                     f2oiwfs = true;
                 }
                 /* TODO: REL-2941
-                //No flexure guide star (GSAOI ODGW or Flamingos II OIWFS) when using 2 or 3 CWFS.
+                //No flexure guide star (IRIS ODGW or Flamingos II OIWFS) when using 2 or 3 CWFS.
                 if (!f2oiwfs && (cwfs == 3 || cwfs == 2)) {
                     if (gpt.isEmpty() || gpt.getValue().getPrimary().isEmpty()) {
                         problems.addWarning(PREFIX + "Flexure", Flexure, targetNode);

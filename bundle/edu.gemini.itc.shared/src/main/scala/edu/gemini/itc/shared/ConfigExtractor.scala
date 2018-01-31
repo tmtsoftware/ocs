@@ -11,7 +11,7 @@ import edu.gemini.spModel.gemini.altair.AltairParams
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2
 import edu.gemini.spModel.gemini.gmos.{GmosCommonType, GmosNorthType, GmosSouthType, InstGmosNorth}
 import edu.gemini.spModel.gemini.gnirs.GNIRSParams
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi
+import edu.gemini.spModel.gemini.iris.Iris
 import edu.gemini.spModel.gemini.nifs.NIFSParams
 import edu.gemini.spModel.gemini.niri.Niri
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality
@@ -65,7 +65,7 @@ object ConfigExtractor {
       case INSTRUMENT_FLAMINGOS2                  => extractF2(c)
       case INSTRUMENT_GNIRS                       => extractGnirs(targetEnv, probe, when, c)
       case INSTRUMENT_GMOS | INSTRUMENT_GMOSSOUTH => extractGmos(c)
-      case INSTRUMENT_GSAOI                       => extractGsaoi(c, cond)
+      case INSTRUMENT_IRIS                       => extractIris(c, cond)
       case INSTRUMENT_NIFS                        => extractNifs(targetEnv, probe, when, c)
       case INSTRUMENT_NIRI                        => extractNiri(targetEnv, probe, when, c)
       case _                                      => "Instrument is not supported".left
@@ -167,12 +167,12 @@ object ConfigExtractor {
 
   }
 
-  private def extractGsaoi(c: Config, cond: ObservingConditions): String \/ GsaoiParameters = {
+  private def extractIris(c: Config, cond: ObservingConditions): String \/ IrisParameters = {
 
-    import Gsaoi._
+    import Iris._
     import SPSiteQuality._
 
-    val error: String \/ GemsParameters = "GSAOI filter with unknown band".left
+    val error: String \/ GemsParameters = "IRIS filter with unknown band".left
 
     def closestBand(band: MagnitudeBand) =
       // pick the closest band that's supported by ITC
@@ -204,7 +204,7 @@ object ConfigExtractor {
       readMode    <- extract[ReadMode]      (c, ReadModeKey)
       gems        <- extractGems            (filter)
     } yield {
-      GsaoiParameters(filter, readMode, gems)
+      IrisParameters(filter, readMode, gems)
     }
   }
 

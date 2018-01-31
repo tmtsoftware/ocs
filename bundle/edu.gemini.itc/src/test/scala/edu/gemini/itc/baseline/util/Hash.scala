@@ -12,7 +12,7 @@ object Hash {
     case p: Flamingos2Parameters      => calc(p)
     case p: GmosParameters            => calc(p)
     case p: GnirsParameters           => calc(p)
-    case p: GsaoiParameters           => calc(p)
+    case p: IrisParameters           => calc(p)
     case p: MichelleParameters        => calc(p)
     case p: NifsParameters            => calc(p)
     case p: NiriParameters            => calc(p)
@@ -46,7 +46,7 @@ object Hash {
       calc(p.altair)
     )
 
-  def calc(p: GsaoiParameters): Int =
+  def calc(p: IrisParameters): Int =
     hash(
       p.filter.name,
       p.readMode.name,

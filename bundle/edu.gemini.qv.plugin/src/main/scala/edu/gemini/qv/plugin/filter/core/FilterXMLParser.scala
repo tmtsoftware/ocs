@@ -12,7 +12,7 @@ import edu.gemini.spModel.gemini.gmos.GmosCommonType.DetectorManufacturer
 import edu.gemini.spModel.gemini.gmos.GmosNorthType.{DisperserNorth, FPUnitNorth, FilterNorth}
 import edu.gemini.spModel.gemini.gmos.GmosSouthType.{DisperserSouth, FPUnitSouth, FilterSouth}
 import edu.gemini.spModel.gemini.gnirs.GNIRSParams
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi
+import edu.gemini.spModel.gemini.iris.Iris
 import edu.gemini.spModel.gemini.nifs.NIFSParams
 import edu.gemini.spModel.gemini.niri.Niri
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality.{CloudCover, ImageQuality, SkyBackground, WaterVapor}
@@ -158,8 +158,8 @@ object FilterXMLParser {
       case <gnirscam>{setNode}</gnirscam> => parseEnumSetNode(classOf[GNIRSParams.Camera], setNode).map(Filter.GNIRS.Cameras(_))
       case <gnirsfocplane>{setNode}</gnirsfocplane> => parseEnumSetNode(classOf[GNIRSParams.SlitWidth], setNode).map(Filter.GNIRS.FocalPlanes(_))
 
-      // GSAOI
-      case <gsaoifilt>{setNode}</gsaoifilt> => parseEnumSetNode(classOf[Gsaoi.Filter], setNode).map(Filter.GSAOI.Filters(_))
+      // IRIS
+      case <irisfilt>{setNode}</irisfilt> => parseEnumSetNode(classOf[Iris.Filter], setNode).map(Filter.IRIS.Filters(_))
 
       // F2
       case <f2disp>{setNode}</f2disp> => parseEnumSetNode(classOf[Flamingos2.Disperser], setNode).map(Filter.F2.Dispersers(_))

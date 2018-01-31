@@ -12,7 +12,7 @@ import edu.gemini.shared.util.immutable.Some;
 import edu.gemini.spModel.gemini.altair.AltairParams;
 import edu.gemini.spModel.gemini.altair.InstAltair;
 import edu.gemini.spModel.gemini.gems.Gems;
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi;
+import edu.gemini.spModel.gemini.iris.Iris;
 import edu.gemini.spModel.gemini.niri.InstNIRI;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -49,8 +49,8 @@ public final class AoConfigTest extends TestBase {
         return (InstAltair) altairObsComp.getDataObject();
     }
 
-    private Gsaoi addGsaoi() throws Exception {
-        return (Gsaoi) addInstrument(Gsaoi.SP_TYPE).getDataObject();
+    private Iris addIris() throws Exception {
+        return (Iris) addInstrument(Iris.SP_TYPE).getDataObject();
     }
 
     private InstNIRI addNiri() throws Exception {
@@ -180,7 +180,7 @@ public final class AoConfigTest extends TestBase {
     }
 
     private void testGems(Gems gems) throws Exception {
-        addGsaoi();
+        addIris();
         addGems();
         gemsObsComp.setDataObject(gems);
 
@@ -220,7 +220,7 @@ public final class AoConfigTest extends TestBase {
     }
 
     @Test public void testSouthNoGems() throws Exception {
-        addGsaoi();
+        addIris();
 
         AoConfigValidator val = new GemsAoConfigValidator();
         val.site  = Site.south;

@@ -18,7 +18,7 @@ import edu.gemini.spModel.gemini.gmos.GmosNorthType.FilterNorth;
 import edu.gemini.spModel.gemini.gmos.GmosSouthType.FilterSouth;
 import edu.gemini.spModel.gemini.gnirs.GNIRSParams;
 import edu.gemini.spModel.gemini.gpi.Gpi;
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi;
+import edu.gemini.spModel.gemini.iris.Iris;
 import edu.gemini.spModel.gemini.nici.NICIParams;
 import edu.gemini.spModel.gemini.nifs.NIFSParams;
 import edu.gemini.spModel.gemini.niri.Niri;
@@ -148,7 +148,7 @@ public final class Schedule extends BaseMutableBean implements PioSerializable, 
                         facilities.addAll(Arrays.asList(GNIRSParams.Camera.values()));
                         facilities.addAll(Arrays.asList(Gpi.Disperser.values()));
                         facilities.addAll(Arrays.asList(Gpi.Filter.values()));
-                        facilities.addAll(Arrays.asList(Gsaoi.Filter.values()));
+                        facilities.addAll(Arrays.asList(Iris.Filter.values()));
                         facilities.addAll(Arrays.asList(NICIParams.FocalPlaneMask.values()));
                         facilities.addAll(Arrays.asList(NICIParams.DichroicWheel.values()));
                         facilities.addAll(Arrays.asList(NICIParams.Channel1FW.values()));

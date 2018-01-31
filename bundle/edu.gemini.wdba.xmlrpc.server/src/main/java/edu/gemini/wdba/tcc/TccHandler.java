@@ -16,7 +16,7 @@ import edu.gemini.spModel.gemini.gmos.InstGmosNorth;
 import edu.gemini.spModel.gemini.gmos.InstGmosSouth;
 import edu.gemini.spModel.gemini.gnirs.InstGNIRS;
 import edu.gemini.spModel.gemini.gpi.Gpi;
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi;
+import edu.gemini.spModel.gemini.iris.Iris;
 import edu.gemini.spModel.gemini.michelle.InstMichelle;
 import edu.gemini.spModel.gemini.nici.InstNICI;
 import edu.gemini.spModel.gemini.nifs.InstNIFS;
@@ -105,8 +105,8 @@ public final class TccHandler implements ITccXmlRpc {
         supportMap.put(InstNICI.SP_TYPE, "edu.gemini.wdba.tcc.NICISupport");
         // Add Texes Support
         supportMap.put(InstTexes.SP_TYPE, "edu.gemini.wdba.tcc.TexesSupport");
-        // Add Gsaoi Support
-        supportMap.put(Gsaoi.SP_TYPE, "edu.gemini.wdba.tcc.GsaoiSupport");
+        // Add Iris Support
+        supportMap.put(Iris.SP_TYPE, "edu.gemini.wdba.tcc.IrisSupport");
         // Add Gpi Support
         supportMap.put(Gpi.SP_TYPE, "edu.gemini.wdba.tcc.GpiSupport");
         // Add Visitor Instrument Support

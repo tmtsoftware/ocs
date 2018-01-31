@@ -9,7 +9,7 @@ import edu.gemini.spModel.core.ProgramType
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2
 import edu.gemini.spModel.gemini.gmos.{GmosCommonType, GmosSouthType, GmosNorthType}
 import edu.gemini.spModel.gemini.gnirs.GNIRSParams
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi
+import edu.gemini.spModel.gemini.iris.Iris
 import edu.gemini.spModel.gemini.nici.NICIParams
 import edu.gemini.spModel.gemini.nifs.NIFSParams
 import edu.gemini.spModel.gemini.niri.Niri
@@ -74,7 +74,7 @@ class CategoriesFilter(ctx: QvContext, init: Set[Filter]) extends PagedFilter(ct
     GNIRS.CrossDispersers(Set[GNIRSParams.CrossDispersed]()),
     GNIRS.Cameras(Set[GNIRSParams.Camera]()),
     GNIRS.FocalPlanes(Set[GNIRSParams.SlitWidth]()),
-    GSAOI.Filters(Set[Gsaoi.Filter]()),
+    IRIS.Filters(Set[Iris.Filter]()),
     NICI.FocalPlanes(Set[NICIParams.FocalPlaneMask]()),
     NICI.DichroicWheels(Set[NICIParams.DichroicWheel]()),
     NICI.RedFilters(Set[NICIParams.Channel1FW]()),

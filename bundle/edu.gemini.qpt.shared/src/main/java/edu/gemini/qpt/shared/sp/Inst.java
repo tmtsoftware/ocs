@@ -22,8 +22,8 @@ import edu.gemini.spModel.gemini.gnirs.GNIRSParams;
 import edu.gemini.spModel.gemini.gnirs.GnirsOiwfsGuideProbe;
 import edu.gemini.spModel.gemini.gnirs.InstGNIRS;
 import edu.gemini.spModel.gemini.gpi.Gpi;
-import edu.gemini.spModel.gemini.gsaoi.Gsaoi;
-import edu.gemini.spModel.gemini.gsaoi.GsaoiOdgw;
+import edu.gemini.spModel.gemini.iris.Iris;
+import edu.gemini.spModel.gemini.iris.IrisOdgw;
 import edu.gemini.spModel.gemini.michelle.InstMichelle;
 import edu.gemini.spModel.gemini.nici.InstNICI;
 import edu.gemini.spModel.gemini.nici.NICIParams;
@@ -104,8 +104,8 @@ public enum Inst {
             new Enum<?>[0],
             join(Gpi.Disperser.values(), Gpi.Filter.values())),
 
-    GSAOI(Gsaoi.SP_TYPE, false, true, true,
-            GsaoiOdgw.values(), GsaoiOdgw.values(), Gsaoi.Filter.values()),
+    IRIS(Iris.SP_TYPE, false, true, true,
+            IrisOdgw.values(), IrisOdgw.values(), Iris.Filter.values()),
 
     MICHELLE(InstMichelle.SP_TYPE, true, false, false),
 

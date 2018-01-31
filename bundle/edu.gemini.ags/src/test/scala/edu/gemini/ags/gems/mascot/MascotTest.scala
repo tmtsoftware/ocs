@@ -77,7 +77,7 @@ class MascotTest {
 
 //    assertEquals(6, starList.size)
 //    assertEquals(41, strehlList.size)
-    // Note: change in results is due to change in MascotConf.mag_max_threshold, to include GSAOI limits
+    // Note: change in results is due to change in MascotConf.mag_max_threshold, to include IRIS limits
     assertEquals(7, starList.size)
     assertEquals(56, strehlList.size)
 
@@ -103,7 +103,7 @@ class MascotTest {
   @Test def testSelectStarsOnMag() {
     val slist = Mascot.selectStarsOnMag(allStarList)
     assertEquals(7, slist.size)
-    // Note: change in results is due to change in MascotConf.mag_max_threshold, to include GSAOI limits
+    // Note: change in results is due to change in MascotConf.mag_max_threshold, to include IRIS limits
 //    assertEquals(slist.toString, starList.toString)
   }
 }
