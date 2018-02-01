@@ -261,32 +261,32 @@
             <!--shortDescription="Iterate over bHROS configurations with this component."-->
             <!--uiClassName="jsky.app.ot.editor.EdIterGenericConfig"/>-->
 
-    <!--<UIInfo-->
-            <!--site="GN"-->
-            <!--dataObject="edu.gemini.spModel.gemini.nifs.InstNIFS"-->
-            <!--name="Near-infrared Integral-Field Spectrograph"-->
-            <!--type="instrument"-->
-            <!--imageKey="component.gif"-->
-            <!--shortDescription="The NIFS instrument is configured with this component."-->
-            <!--uiClassName="jsky.app.ot.gemini.nifs.EdCompInstNIFS"/>-->
+    <UIInfo
+            site="GN"
+            dataObject="edu.gemini.spModel.gemini.nifs.InstNIFS"
+            name="Near-infrared Integral-Field Spectrograph"
+            type="instrument"
+            imageKey="component.gif"
+            shortDescription="The NIFS instrument is configured with this component."
+            uiClassName="jsky.app.ot.gemini.nifs.EdCompInstNIFS"/>
 
-    <!--<UIInfo-->
-            <!--site="GN"-->
-            <!--dataObject="edu.gemini.spModel.gemini.nifs.InstEngNifs"-->
-            <!--name="NIFS Engineering Component"-->
-            <!--type="engComp"-->
-            <!--imageKey="component.gif"-->
-            <!--shortDescription="NIFS engineering information is configured with this component."-->
-            <!--uiClassName="jsky.app.ot.gemini.nifs.EdCompInstEngNifs"/>-->
+    <UIInfo
+            site="GN"
+            dataObject="edu.gemini.spModel.gemini.nifs.InstEngNifs"
+            name="NIFS Engineering Component"
+            type="engComp"
+            imageKey="component.gif"
+            shortDescription="NIFS engineering information is configured with this component."
+            uiClassName="jsky.app.ot.gemini.nifs.EdCompInstEngNifs"/>
 
-    <!--<UIInfo-->
-            <!--site="GN"-->
-            <!--dataObject="edu.gemini.spModel.gemini.nifs.SeqConfigNIFS"-->
-            <!--name="NIFS Sequence Component"-->
-            <!--type="iterComp"-->
-            <!--imageKey="seqcomp.gif"-->
-            <!--shortDescription="Iterate over NIFS configurations with this component."-->
-            <!--uiClassName="jsky.app.ot.editor.EdIterGenericConfig"/>-->
+    <UIInfo
+            site="GN"
+            dataObject="edu.gemini.spModel.gemini.nifs.SeqConfigNIFS"
+            name="NIFS Sequence Component"
+            type="iterComp"
+            imageKey="seqcomp.gif"
+            shortDescription="Iterate over NIFS configurations with this component."
+            uiClassName="jsky.app.ot.editor.EdIterGenericConfig"/>
 
     <!--<UIInfo-->
             <!--site="GS"-->
