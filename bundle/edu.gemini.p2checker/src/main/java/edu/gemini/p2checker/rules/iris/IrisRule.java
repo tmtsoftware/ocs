@@ -2,7 +2,7 @@ package edu.gemini.p2checker.rules.iris;
 
 import edu.gemini.p2checker.api.*;
 import edu.gemini.p2checker.util.SequenceRule;
-import edu.gemini.p2checker.rules.gems.GemsGuideStarRule;
+import edu.gemini.p2checker.rules.nfiraos.NfiraosGuideStarRule;
 import edu.gemini.spModel.config2.Config;
 import edu.gemini.spModel.gemini.iris.Iris;
 
@@ -82,7 +82,7 @@ public class IrisRule implements IRule {
     public IP2Problems check(ObservationElements elems)  {
         return (new CompositeRule(
             new IRule[] {
-                new GemsGuideStarRule(),
+                new NfiraosGuideStarRule(),
                 new SequenceRule(IRIS_RULES, null),
             },
             CompositeRule.Type.all

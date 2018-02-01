@@ -59,7 +59,7 @@ final case class GnirsParameters(
 final case class IrisParameters(
                      filter:            Iris.Filter,
                      readMode:          Iris.ReadMode,
-                     gems:              GemsParameters) extends InstrumentDetails
+                     nfiraos:              NfiraosParameters) extends InstrumentDetails
 
 final case class MichelleParameters(
                      filter:            MichelleParams.Filter,
@@ -100,7 +100,7 @@ final case class AltairParameters(
                      fieldLens:           AltairParams.FieldLens,
                      wfsMode:             AltairParams.GuideStarType)
 
-final case class GemsParameters(
+final case class NfiraosParameters(
                      avgStrehl:           Double,
                      strehlBand:          String)
 

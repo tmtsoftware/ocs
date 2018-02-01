@@ -34,7 +34,7 @@ public final class GmosSouthSupportTest extends InstrumentSupportTestBase<InstGm
 
     @Test public void testLgsPointOrig() throws Exception {
         // probably not even legal, but there it is ...
-        addGems(); verifyPointOrig(getSouthResults(), "lgs2gmos");
+        addNfiraos(); verifyPointOrig(getSouthResults(), "lgs2gmos");
     }
 
     @Test public void testLgsP1PointOrig() throws Exception {

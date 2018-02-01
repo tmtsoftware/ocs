@@ -18,7 +18,7 @@
     <xsd:complexType name="IrisBlueprintNull"/>
 
     <!--
-      IRIS Blueprint with Laser Guide Star GEMS    .
+      IRIS Blueprint with Laser Guide Star NFIRAOS    .
     -->
     <xsd:complexType name="IrisBlueprint">
         <xsd:complexContent>

@@ -198,7 +198,7 @@ public final class Flamingos2SupportTest extends InstrumentSupportTestBase<Flami
     }
 
     @Test public void testLgsPointOrig() throws Exception {
-        addGems();
+        addNfiraos();
         verifyPointOrig(getSouthResults(), "lgs2f2");
     }
 

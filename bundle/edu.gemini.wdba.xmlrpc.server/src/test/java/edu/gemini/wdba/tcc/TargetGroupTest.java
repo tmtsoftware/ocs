@@ -6,8 +6,8 @@ import edu.gemini.spModel.ext.ObservationNode;
 import edu.gemini.spModel.ext.TargetNode;
 import edu.gemini.spModel.gemini.altair.AltairAowfsGuider;
 import edu.gemini.spModel.gemini.altair.InstAltair;
-import edu.gemini.spModel.gemini.gems.Canopus;
-import edu.gemini.spModel.gemini.gems.Gems;
+import edu.gemini.spModel.gemini.nfiraos.Canopus;
+import edu.gemini.spModel.gemini.nfiraos.Nfiraos;
 import edu.gemini.spModel.gemini.gmos.GmosOiwfsGuideProbe;
 import edu.gemini.spModel.gemini.gmos.InstGmosSouth;
 import edu.gemini.spModel.gemini.iris.Iris;
@@ -241,8 +241,8 @@ public final class TargetGroupTest extends TestBase {
         testTargetEnvironment(env);
     }
 
-    @Test public void testGemsMapping() throws Exception {
-        // Create a target environment that uses Gems canopus wfs.
+    @Test public void testNfiraosMapping() throws Exception {
+        // Create a target environment that uses Nfiraos canopus wfs.
         final SPTarget cwfsTarget = new SPTarget(); cwfsTarget.setName("");
 
         final ImList<SPTarget> targetList = ImCollections.singletonList(cwfsTarget);
@@ -250,10 +250,10 @@ public final class TargetGroupTest extends TestBase {
 
         final TargetEnvironment env = TargetEnvironment.create(base).putPrimaryGuideProbeTargets(gt);
 
-        // Now, we need to add Gems or the guide targets are
+        // Now, we need to add Nfiraos or the guide targets are
         // not enabled and not sent to the TCC.
-        final ISPObsComponent gemsComp = odb.getFactory().createObsComponent(prog, Gems.SP_TYPE, null);
-        obs.addObsComponent(gemsComp);
+        final ISPObsComponent nfiraosComp = odb.getFactory().createObsComponent(prog, Nfiraos.SP_TYPE, null);
+        obs.addObsComponent(nfiraosComp);
 
         // Now do the test.  The CWFS? keys do not get mapped.  They
         // are CWFS1, CWFS2, etc.

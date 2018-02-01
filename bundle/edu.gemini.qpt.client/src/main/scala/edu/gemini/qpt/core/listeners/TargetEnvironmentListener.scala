@@ -5,7 +5,7 @@ import edu.gemini.qpt.core.Marker
 import edu.gemini.qpt.core.Variant
 import edu.gemini.qpt.core.util.MarkerManager
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2OiwfsGuideProbe
-import edu.gemini.spModel.gemini.gems.Canopus
+import edu.gemini.spModel.gemini.nfiraos.Canopus
 import edu.gemini.spModel.gemini.iris.IrisOdgw
 import edu.gemini.spModel.gemini.nifs.NifsOiwfsGuideProbe
 import edu.gemini.spModel.guide.GuideProbe
@@ -27,9 +27,9 @@ object TargetEnvironmentListener {
   private val odgwGuiders: Set[GuideProbe]    = IrisOdgw.values().toSet
 
   private val irisGuiders: Set[GuideProbe]  = canopusGuiders ++ odgwGuiders
-  private val f2GemsGuiders: Set[GuideProbe] = canopusGuiders + Flamingos2OiwfsGuideProbe.instance
-  private def isGemsConfiguration(s: Set[GuideProbe]): Boolean =
-    s.subsetOf(irisGuiders) || s.subsetOf(f2GemsGuiders)
+  private val f2NfiraosGuiders: Set[GuideProbe] = canopusGuiders + Flamingos2OiwfsGuideProbe.instance
+  private def isNfiraosConfiguration(s: Set[GuideProbe]): Boolean =
+    s.subsetOf(irisGuiders) || s.subsetOf(f2NfiraosGuiders)
 }
 
 import TargetEnvironmentListener._
@@ -68,7 +68,7 @@ class TargetEnvironmentListener extends MarkerModelListener[Variant] {
       // 4. Primary group uses NIFS + OIWFS.
 
       // UPDATE SW: let's ignore multiple groups (case 1) for now, they are
-      // mostly a GeMS phenomenon. We'll just work with the primary guide group,
+      // mostly a Nfiraos phenomenon. We'll just work with the primary guide group,
       // if any. That may well be what they want anyway.
 
       def addGuideGroupWarnings(guideGroup: GuideGroup): Unit = {
@@ -91,9 +91,9 @@ class TargetEnvironmentListener extends MarkerModelListener[Variant] {
             if (count > 1) markerManager.addMarker(false, this, Marker.Severity.Notice, s"Multiple ${guideProbe.getKey} options.", variant, a)
         }
 
-        // Case 2: multiple guiders in use (which is okay for Gems)
+        // Case 2: multiple guiders in use (which is okay for Nfiraos)
         val allGuideProbesEmployed = guideProbeTargetCounts.map(_._1).toSet
-        if ((allGuideProbesEmployed.size > 1) && !isGemsConfiguration(allGuideProbesEmployed)) {
+        if ((allGuideProbesEmployed.size > 1) && !isNfiraosConfiguration(allGuideProbesEmployed)) {
           val probes = allGuideProbesEmployed.map(_.getKey).toList.sorted.mkString(", ")
           markerManager.addMarker(false, this, Marker.Severity.Warning, s"Multiple guide probes in use: $probes", variant, a)
         }

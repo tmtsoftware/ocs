@@ -1,14 +1,14 @@
 package edu.gemini.ags.conf
 
 import edu.gemini.ags.api.AgsMagnitude.{MagnitudeCalc, MagnitudeTable}
-import edu.gemini.ags.gems.GemsMagnitudeTable
+import edu.gemini.ags.nfiraos.NfiraosMagnitudeTable
 import edu.gemini.spModel.core.Site
 import edu.gemini.spModel.core.Site.{GN, GS}
 
 import edu.gemini.spModel.gemini.altair.AltairParams.Mode._
 import edu.gemini.spModel.gemini.altair.{InstAltair, AltairAowfsGuider}
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2OiwfsGuideProbe
-import edu.gemini.spModel.gemini.gems.Canopus
+import edu.gemini.spModel.gemini.nfiraos.Canopus
 import edu.gemini.spModel.gemini.gmos.GmosOiwfsGuideProbe
 import edu.gemini.spModel.gemini.gnirs.GnirsOiwfsGuideProbe
 import edu.gemini.spModel.gemini.iris.IrisOdgw
@@ -48,11 +48,11 @@ object ProbeLimitsTable {
 case class ProbeLimitsTable(tab: CalcMap) extends MagnitudeTable {
 
   def apply(ctx: ObsContext, probe: GuideProbe): Option[MagnitudeCalc] =
-    // Deferring GeMS to the old implementation until we understand
+    // Deferring Nfiraos to the old implementation until we understand
     // what is supposed to happen.
     probe match {
-      case _: IrisOdgw   => GemsMagnitudeTable(ctx, probe)
-      case _: Canopus.Wfs => GemsMagnitudeTable(ctx, probe)
+      case _: IrisOdgw   => NfiraosMagnitudeTable(ctx, probe)
+      case _: Canopus.Wfs => NfiraosMagnitudeTable(ctx, probe)
       case _              =>
         for {
           s  <- ctx.getSite.asScalaOpt

@@ -125,19 +125,19 @@
             <!--uiClassName="jsky.app.ot.gemini.altair.EdCompInstAltair"/>-->
 
     <UIInfo
-            id="Gems"
+            id="Nfiraos"
             site="GS"
-            dataObject="edu.gemini.spModel.gemini.gems.Gems"
-            name="GeMS Adaptive Optics"
+            dataObject="edu.gemini.spModel.gemini.nfiraos.Nfiraos"
+            name="Nfiraos Adaptive Optics"
             type="ao"
             imageKey="component.gif"
-            shortDescription="The GeMS Adaptive Optics system is configured with this component."
-            uiClassName="jsky.app.ot.gemini.gems.GemsEditor"/>
+            shortDescription="The Nfiraos Adaptive Optics system is configured with this component."
+            uiClassName="jsky.app.ot.gemini.nfiraos.NfiraosEditor"/>
 
     <UIInfo
             site="GS"
             dataObject="edu.gemini.spModel.gemini.iris.Iris"
-            requires="Gems"
+            requires="Nfiraos"
             name="IRIS"
             type="instrument"
             imageKey="component.gif"

@@ -20,7 +20,7 @@ import static edu.gemini.pot.sp.SPComponentBroadType.*;
 public enum SPComponentType implements Serializable {
 
     AO_ALTAIR(AO, "Altair", "Altair Adaptive Optics"),
-    AO_GEMS(AO, "GeMS", "GeMS Adaptive Optics"),
+    AO_NFIRAOS(AO, "Nfiraos", "Nfiraos Adaptive Optics"),
 
     CONFLICT_FOLDER(CONFLICT, "Folder", "Conflict Folder"),
 

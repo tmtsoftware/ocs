@@ -1,7 +1,7 @@
 package edu.gemini.itc.web.html;
 
 import edu.gemini.itc.base.ImagingResult;
-import edu.gemini.itc.gems.Gems;
+import edu.gemini.itc.nfiraos.Nfiraos;
 import edu.gemini.itc.iris.Camera;
 import edu.gemini.itc.iris.Iris;
 import edu.gemini.itc.iris.IrisRecipe;
@@ -39,7 +39,7 @@ public final class IrisPrinter extends PrinterBase {
 
         _println("");
 
-        _println((HtmlPrinter.printSummary((Gems) result.aoSystem().get())));
+        _println((HtmlPrinter.printSummary((Nfiraos) result.aoSystem().get())));
 
         _print(CalculatablePrinter.getTextResult(result.sfCalc(), false));
         _println(String.format("derived image halo size (FWHM) for a point source = %.2f arcsec.\n", result.iqCalc().getImageQuality()));
@@ -56,7 +56,7 @@ public final class IrisPrinter extends PrinterBase {
         _println(HtmlPrinter.printParameterSummary(result.source()));
         _println(irisToString(instrument));
         _println(printTeleParametersSummary(result));
-        _println(HtmlPrinter.printParameterSummary((Gems) result.aoSystem().get()));
+        _println(HtmlPrinter.printParameterSummary((Nfiraos) result.aoSystem().get()));
         _println(HtmlPrinter.printParameterSummary(result.conditions()));
         _println(HtmlPrinter.printParameterSummary(result.observation()));
 
@@ -68,7 +68,7 @@ public final class IrisPrinter extends PrinterBase {
         sb.append("<LI>");
         sb.append(result.telescope().getMirrorCoating().displayValue());
         sb.append(" mirror coating.\n");
-        sb.append("<LI>wavefront sensor: gems\n");
+        sb.append("<LI>wavefront sensor: nfiraos\n");
         return sb.toString();
     }
 

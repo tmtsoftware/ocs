@@ -10,7 +10,7 @@ import edu.gemini.spModel.gemini.altair.InstAltair;
 import edu.gemini.spModel.gemini.bhros.InstBHROS;
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2;
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2OiwfsGuideProbe;
-import edu.gemini.spModel.gemini.gems.Canopus;
+import edu.gemini.spModel.gemini.nfiraos.Canopus;
 import edu.gemini.spModel.gemini.gmos.*;
 import edu.gemini.spModel.gemini.gmos.GmosNorthType.DisperserNorth;
 import edu.gemini.spModel.gemini.gmos.GmosNorthType.FPUnitNorth;

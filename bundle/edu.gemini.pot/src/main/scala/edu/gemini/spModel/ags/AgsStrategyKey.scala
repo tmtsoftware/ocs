@@ -20,9 +20,9 @@ object AgsStrategyKey {
     val id = "F2_OIWFS"
   }
 
-  case object GemsKey extends AgsStrategyKey {
-    val id = "GEMS" // TODO: was GemsAgs in GemsAgsStrategy. Does this matter?
-    override def displayName = "GeMS AGS"
+  case object NfiraosKey extends AgsStrategyKey {
+    val id = "NFIRAOS" // TODO: was NfiraosAgs in NfiraosAgsStrategy. Does this matter?
+    override def displayName = "Nfiraos AGS"
   }
 
   case object GmosNorthOiwfsKey extends AgsStrategyKey {
@@ -76,7 +76,7 @@ object AgsStrategyKey {
   val All = List(
     AltairAowfsKey,
     Flamingos2OiwfsKey,
-    GemsKey,
+    NfiraosKey,
     GmosNorthOiwfsKey,
     GmosSouthOiwfsKey,
     GnirsOiwfsKey,

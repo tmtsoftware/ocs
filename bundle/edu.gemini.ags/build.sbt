@@ -32,7 +32,7 @@ OsgiKeys.bundleSymbolicName := name.value
 OsgiKeys.dynamicImportPackage := Seq("")
 
 OsgiKeys.exportPackage := Seq(
-  "edu.gemini.ags.gems.*",
+  "edu.gemini.ags.nfiraos.*",
   "edu.gemini.ags.api.*",
   "edu.gemini.ags.conf.*")
 

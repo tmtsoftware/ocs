@@ -1,7 +1,7 @@
 package edu.gemini.itc.base;
 
 /**
- * Common interface for AO systems (Gems and Altair).
+ * Common interface for AO systems (Nfiraos and Altair).
  */
 public interface AOSystem {
 

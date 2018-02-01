@@ -7,7 +7,7 @@ import edu.gemini.spModel.core.Site
 import edu.gemini.spModel.data.{IOffsetPosListProvider, ISPDataObject}
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality.Conditions
-import edu.gemini.spModel.gemini.gems.Gems
+import edu.gemini.spModel.gemini.nfiraos.Nfiraos
 import edu.gemini.spModel.gemini.altair.InstAltair
 import edu.gemini.spModel.obs.context.ObsContext
 import edu.gemini.spModel.obscomp.SPInstObsComp
@@ -194,7 +194,7 @@ case class TpeContext(node: Option[ISPNode]) {
   val instrument = new InstrumentContext(obsShell)
   val siteQuality = new BasicObsComponentContext[SPSiteQuality](obsShell, SPTreeUtil.findObsCondNode)
   val altair = new BasicObsComponentContext[InstAltair](obsShell, SPTreeUtil.findObsComponent(_, InstAltair.SP_TYPE))
-  val gems = new BasicObsComponentContext[Gems](obsShell, SPTreeUtil.findObsComponent(_, Gems.SP_TYPE))
+  val nfiraos = new BasicObsComponentContext[Nfiraos](obsShell, SPTreeUtil.findObsComponent(_, Nfiraos.SP_TYPE))
   val offsets = new AllOffsetListContext(obsShell, node)
 
   def obsContext: Option[ObsContext] = siteQuality.dataObject.flatMap(sq => obsContextWithConditions(sq.conditions))
@@ -205,7 +205,7 @@ case class TpeContext(node: Option[ISPNode]) {
     s <- obsShell
     t <- targets.env
     i <- instrument.dataObject
-    ao = (gems.dataObject orElse altair.dataObject).orNull
+    ao = (nfiraos.dataObject orElse altair.dataObject).orNull
     obs = s.getDataObject.asInstanceOf[SPObservation]
   } yield ObsContext.create(obs.getAgsStrategyOverride, t, i, site, c, offsets.scienceOffsetsJava, ao, obs.getSchedulingBlock)
 

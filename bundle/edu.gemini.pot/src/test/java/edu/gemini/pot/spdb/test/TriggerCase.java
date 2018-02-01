@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 public class TriggerCase extends SpdbBaseTestCase {
     private static final Logger LOG = Logger.getLogger(TriggerCase.class.getName());
 
-    private static final SPComponentType NON_TRIGGER_TYPE = SPComponentType.AO_GEMS; // SPComponentType.getInstance("non_trigger", "non_trigger", "no trigger");
+    private static final SPComponentType NON_TRIGGER_TYPE = SPComponentType.AO_NFIRAOS; // SPComponentType.getInstance("non_trigger", "non_trigger", "no trigger");
     private static final SPComponentType TRIGGER_TYPE = SPComponentType.INSTRUMENT_FLAMINGOS2; // SPComponentType.getInstance("trigger", "trigger", "trigger");
 
     public static final class ProgramDataObject implements ISPDataObject {

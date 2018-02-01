@@ -6,7 +6,7 @@ import java.awt.geom.{Area, Point2D, Rectangle2D}
 import edu.gemini.pot.ModelConverters._
 import edu.gemini.shared.util.immutable.ImPolygon
 import edu.gemini.spModel.core._
-import edu.gemini.spModel.gemini.gems.Gems
+import edu.gemini.spModel.gemini.nfiraos.Nfiraos
 import edu.gemini.spModel.inst.ProbeArmGeometry
 import edu.gemini.spModel.inst.ProbeArmGeometry.ArmAdjustment
 import edu.gemini.spModel.obs.context.ObsContext
@@ -81,15 +81,15 @@ object F2OiwfsProbeArm extends ProbeArmGeometry {
   override def armAdjustment(ctx: ObsContext, guideStar: Coordinates, offset: Offset): Option[ArmAdjustment] = {
     import ProbeArmGeometry._
 
-    val gemsFlag = ctx.getAOComponent.asScalaOpt.fold(false){ ao =>
+    val nfiraosFlag = ctx.getAOComponent.asScalaOpt.fold(false){ ao =>
       val aoNarrowType = ao.getNarrowType
-      aoNarrowType.equals(Gems.SP_TYPE.narrowType)
+      aoNarrowType.equals(Nfiraos.SP_TYPE.narrowType)
     }
 
     val flamingos2  = ctx.getInstrument.asInstanceOf[Flamingos2]
-    val flip        = flamingos2.getFlipConfig(gemsFlag)
+    val flip        = flamingos2.getFlipConfig(nfiraosFlag)
     val posAngle    = ctx.getPositionAngle
-    val fovRotation = flamingos2.getRotationConfig(gemsFlag).toNewModel
+    val fovRotation = flamingos2.getRotationConfig(nfiraosFlag).toNewModel
     guideStarOffset(ctx, guideStar).map { gsOffset =>
       val angle = armAngle(posAngle, fovRotation, gsOffset, offset, flip, flamingos2.getLyotWheel.getPlateScale)
       ArmAdjustment(angle, gsOffset)

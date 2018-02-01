@@ -10,7 +10,7 @@ import edu.gemini.spModel.core.*;
 import edu.gemini.spModel.data.AbstractDataObject;
 import edu.gemini.spModel.gemini.altair.AltairParams;
 import edu.gemini.spModel.gemini.altair.InstAltair;
-import edu.gemini.spModel.gemini.gems.Gems;
+import edu.gemini.spModel.gemini.nfiraos.Nfiraos;
 import edu.gemini.spModel.gemini.gmos.InstGmosNorth;
 import edu.gemini.spModel.gemini.gnirs.InstGNIRS;
 import edu.gemini.spModel.gemini.iris.Iris;
@@ -186,10 +186,10 @@ public enum ToContext {
             ((PosAngleConstraintAware) inst).setPosAngleConstraint(pac);
         } // otherwise pac is ignored!
 
-        // --- instrument configurable with GeMS?
+        // --- instrument configurable with Nfiraos?
         AbstractDataObject aoComp = null;
         if (inst instanceof Iris) {
-            aoComp = getGeMS(req);
+            aoComp = getNfiraos(req);
         }
         // --- instrument configurable with Altair?
         else if (inst instanceof InstGNIRS ||
@@ -220,9 +220,9 @@ public enum ToContext {
         return ObsContext.create(env, inst, site, conds, Collections.emptySet(), aoComp, new Some<>(sb));
     }
 
-    private Gems getGeMS(final HttpServletRequest req) throws RequestException {
-        final Gems gems = new Gems();
-        return gems;
+    private Nfiraos getNfiraos(final HttpServletRequest req) throws RequestException {
+        final Nfiraos nfiraos = new Nfiraos();
+        return nfiraos;
     }
 
     private InstAltair getAltair(HttpServletRequest req) throws RequestException {

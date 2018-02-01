@@ -24,10 +24,10 @@ public enum Flamingos2Config implements ConfigApply {
     private static final Logger LOG = Logger.getLogger(Flamingos2Config.class.getName());
 
 
-    public static final String FLAMINGOS2_UP_GEMS = "flamingos2UpGems";
-    public static final String FLAMINGOS2_SIDE_GEMS = "flamingos2SideGems";
-    public static final String FLAMINGOS2_UP_NOGEMS = "flamingos2UpNoGems";
-    public static final String FLAMINGOS2_SIDE_NOGEMS = "flamingos2SideNoGems";
+    public static final String FLAMINGOS2_UP_NFIRAOS = "flamingos2UpNfiraos";
+    public static final String FLAMINGOS2_SIDE_NFIRAOS = "flamingos2SideNfiraos";
+    public static final String FLAMINGOS2_UP_NONFIRAOS = "flamingos2UpNoNfiraos";
+    public static final String FLAMINGOS2_SIDE_NONFIRAOS = "flamingos2SideNoNfiraos";
     public static final String FLAMINGOS2_ROTATION = "rotation";
     public static final String FLAMINGOS2_FLIP = "flip";
 
@@ -76,21 +76,21 @@ public enum Flamingos2Config implements ConfigApply {
         Angle angle = angleOpt.getValue();
 
 
-        IssPort port = (FLAMINGOS2_SIDE_NOGEMS == key) || (FLAMINGOS2_SIDE_GEMS == key) ? IssPort.SIDE_LOOKING : IssPort.UP_LOOKING;
-        if ((FLAMINGOS2_SIDE_GEMS == key) || (FLAMINGOS2_UP_GEMS == key)) {
-            LOG.log(Level.INFO, "Set Flamingos2 " + port.displayValue() + " with GeMS: rotation = " + angle + ", p/q flip = " + flip);
+        IssPort port = (FLAMINGOS2_SIDE_NONFIRAOS == key) || (FLAMINGOS2_SIDE_NFIRAOS == key) ? IssPort.SIDE_LOOKING : IssPort.UP_LOOKING;
+        if ((FLAMINGOS2_SIDE_NFIRAOS == key) || (FLAMINGOS2_UP_NFIRAOS == key)) {
+            LOG.log(Level.INFO, "Set Flamingos2 " + port.displayValue() + " with Nfiraos: rotation = " + angle + ", p/q flip = " + flip);
             Flamingos2.setFlipRotationConfig(port, true, angle, flip);
         } else {
-            LOG.log(Level.INFO, "Set Flamingos2 " + port.displayValue() + " without GeMS: rotation = " + angle + ", p/q flip = " + flip);
+            LOG.log(Level.INFO, "Set Flamingos2 " + port.displayValue() + " without Nfiraos: rotation = " + angle + ", p/q flip = " + flip);
             Flamingos2.setFlipRotationConfig(port, false, angle, flip);
         }
     }
 
     @Override
     public void apply(ModelConfig config) {
-        setFlamingos(FLAMINGOS2_UP_GEMS, config);
-        setFlamingos(FLAMINGOS2_SIDE_GEMS, config);
-        setFlamingos(FLAMINGOS2_UP_NOGEMS, config);
-        setFlamingos(FLAMINGOS2_SIDE_NOGEMS, config);
+        setFlamingos(FLAMINGOS2_UP_NFIRAOS, config);
+        setFlamingos(FLAMINGOS2_SIDE_NFIRAOS, config);
+        setFlamingos(FLAMINGOS2_UP_NONFIRAOS, config);
+        setFlamingos(FLAMINGOS2_SIDE_NONFIRAOS, config);
     }
 }

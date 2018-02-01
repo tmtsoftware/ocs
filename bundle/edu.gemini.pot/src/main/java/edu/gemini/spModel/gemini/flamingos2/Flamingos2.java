@@ -215,11 +215,11 @@ public final class Flamingos2 extends ParallacticAngleSupportInst
         LOW("f/32 MCAO low background", "f/32 low", 0.805, 0.09) {
             @Override public boolean isObsolete() { return true; }
         },
-        GEMS("f/33 (Gems)", "f/33 Gems", 0.784, 0.09) {
+        NFIRAOS("f/33 (Nfiraos)", "f/33 Nfiraos", 0.784, 0.09) {
             @Override public boolean isObsolete() { return true; }
         },
-        GEMS_UNDER("f/33 (GeMS under-sized)", "GeMS under", 0.784, 0.09),
-        GEMS_OVER("f/33 (GeMS over-sized)", "GeMS over", 0.784, 0.09),
+        NFIRAOS_UNDER("f/33 (Nfiraos under-sized)", "Nfiraos under", 0.784, 0.09),
+        NFIRAOS_OVER("f/33 (Nfiraos over-sized)", "Nfiraos over", 0.784, 0.09),
         H1("Hartmann A (H1)"),
         H2("Hartmann B (H2)");
 
@@ -646,33 +646,33 @@ public final class Flamingos2 extends ParallacticAngleSupportInst
      * Set the configuration for rotation and flip
      *
      * @param port the port to which this config applies
-     * @param gems whether this config applies with(true) or without(false) gems
+     * @param nfiraos whether this config applies with(true) or without(false) nfiraos
      * @param rotation rotation Angle
      * @param flip whether to flip X axis or not
      */
-    public static synchronized void setFlipRotationConfig(IssPort port, boolean gems, Angle rotation, boolean flip){
-        FOV_ROTATION.get(port)[gems?1:0]=rotation;
-        FLIP.get(port)[gems?1:0]=flip;
+    public static synchronized void setFlipRotationConfig(IssPort port, boolean nfiraos, Angle rotation, boolean flip){
+        FOV_ROTATION.get(port)[nfiraos?1:0]=rotation;
+        FLIP.get(port)[nfiraos?1:0]=flip;
     }
 
     /**
      * Get whether to flip or not
      *
-     * @param gems get config with or without gems
+     * @param nfiraos get config with or without nfiraos
      * @return true, flip, false, dont flip
      */
-    public synchronized boolean getFlipConfig(boolean gems){
-        return FLIP.get(getIssPort())[gems?1:0];
+    public synchronized boolean getFlipConfig(boolean nfiraos){
+        return FLIP.get(getIssPort())[nfiraos?1:0];
     }
 
     /**
      * Get the angle by which to rotate the FOVs
      *
-     * @param gems get config with or without gems
+     * @param nfiraos get config with or without nfiraos
      * @return  the rotation angle
      */
-    public synchronized Angle getRotationConfig(boolean gems){
-        return FOV_ROTATION.get(getIssPort())[gems?1:0];
+    public synchronized Angle getRotationConfig(boolean nfiraos){
+        return FOV_ROTATION.get(getIssPort())[nfiraos?1:0];
     }
     // Pre-imaging flag
     public static final boolean DEFAULT_IS_MOS_PREIMAGING = false;

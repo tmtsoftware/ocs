@@ -1,6 +1,6 @@
 package edu.gemini.mascot.gui.contour
 
-import edu.gemini.ags.gems.mascot.Strehl
+import edu.gemini.ags.nfiraos.mascot.Strehl
 import breeze.linalg._
 import breeze.util._
 

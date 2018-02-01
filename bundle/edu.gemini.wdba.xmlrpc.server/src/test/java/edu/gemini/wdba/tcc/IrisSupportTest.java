@@ -3,7 +3,7 @@ package edu.gemini.wdba.tcc;
 import edu.gemini.shared.util.immutable.*;
 import edu.gemini.spModel.ext.ObservationNode;
 import edu.gemini.spModel.ext.TargetNode;
-import edu.gemini.spModel.gemini.gems.Canopus;
+import edu.gemini.spModel.gemini.nfiraos.Canopus;
 import edu.gemini.spModel.gemini.iris.Iris;
 import edu.gemini.spModel.gemini.iris.IrisOdgw;
 import edu.gemini.spModel.guide.GuideProbe;
@@ -86,10 +86,10 @@ public final class IrisSupportTest extends InstrumentSupportTestBase<Iris> {
         final Element pset = (Element) tccFieldConfig.selectSingleNode("//paramset[@name='guideConfig']");
         if (pset == null) fail("missing 'guideConfig' paramset");
 
-        final Element gems = (Element) pset.selectSingleNode("paramset[@name='GeMS']");
-        if (gems == null) return None.STRING;
+        final Element nfiraos = (Element) pset.selectSingleNode("paramset[@name='Nfiraos']");
+        if (nfiraos == null) return None.STRING;
 
-        final Element odgw = (Element) gems.selectSingleNode("paramset[@name='odgw']");
+        final Element odgw = (Element) nfiraos.selectSingleNode("paramset[@name='odgw']");
         if (odgw == null) return None.STRING;
 
         final Element size = (Element) odgw.selectSingleNode("param[@name='size']");
@@ -123,7 +123,7 @@ public final class IrisSupportTest extends InstrumentSupportTestBase<Iris> {
         verify(none);
     }
 
-    @Test public void testNotGems() throws Exception {
+    @Test public void testNotNfiraos() throws Exception {
         setTargetEnv(PwfsGuideProbe.pwfs1);
         final Option<Iris.OdgwSize> none = None.instance();
         verify(none);

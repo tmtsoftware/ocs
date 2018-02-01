@@ -6,7 +6,7 @@ import java.beans.PropertyDescriptor
 
 import edu.gemini.spModel.core.SiderealTarget
 import edu.gemini.spModel.data.config.{DefaultParameter, IParameter}
-import edu.gemini.spModel.gemini.gems.Canopus
+import edu.gemini.spModel.gemini.nfiraos.Canopus
 import edu.gemini.spModel.gemini.iris.Iris._
 import edu.gemini.spModel.gemini.iris.Iris.Filter._
 import edu.gemini.spModel.gemini.seqcomp.SeqRepeatOffset

@@ -7,7 +7,7 @@ import edu.gemini.ags.api.AgsAnalysis
 import edu.gemini.qpt.core.Marker.Severity
 import edu.gemini.qpt.core.Variant
 import edu.gemini.qpt.core.util.MarkerManager
-import edu.gemini.spModel.gemini.gems.Canopus
+import edu.gemini.spModel.gemini.nfiraos.Canopus
 import edu.gemini.spModel.gemini.iris.IrisOdgw
 import edu.gemini.spModel.guide.GuideProbeGroup
 

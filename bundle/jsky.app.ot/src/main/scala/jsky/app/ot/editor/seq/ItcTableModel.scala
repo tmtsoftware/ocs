@@ -188,13 +188,13 @@ case class ItcGmosImagingTableModel(keys: List[ItemKey], uniqueSteps: List[ItcUn
 
 case class ItcIrisImagingTableModel(keys: List[ItemKey], uniqueSteps: List[ItcUniqueConfig], inputs: List[String\/ItcParameters], res: List[Future[ItcService.Result]]) extends ItcImagingTableModel {
   val headers = HeadersWithCoadds ++ List(
-    Column("Strehl", (_, i, _) => gems(i), tooltip = "Estimated Strehl and band")
+    Column("Strehl", (_, i, _) => nfiraos(i), tooltip = "Estimated Strehl and band")
   )
   val results = PeakColumns ++ SNColumns
 
-  def gems(i: String \/ ItcParameters): Option[String] = i.toOption.map { inputs =>
-    val gems = inputs.instrument.asInstanceOf[IrisParameters].gems
-    f"${gems.avgStrehl}%.2f ${gems.strehlBand}"
+  def nfiraos(i: String \/ ItcParameters): Option[String] = i.toOption.map { inputs =>
+    val nfiraos = inputs.instrument.asInstanceOf[IrisParameters].nfiraos
+    f"${nfiraos.avgStrehl}%.2f ${nfiraos.strehlBand}"
   }
 
 }

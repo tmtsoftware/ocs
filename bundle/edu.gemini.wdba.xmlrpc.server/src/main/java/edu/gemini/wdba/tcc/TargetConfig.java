@@ -5,7 +5,7 @@ import edu.gemini.spModel.core.*;
 import edu.gemini.spModel.target.SPTarget;
 import edu.gemini.spModel.guide.GuideProbe;
 import edu.gemini.spModel.gemini.iris.IrisOdgw;
-import edu.gemini.spModel.gemini.gems.Canopus;
+import edu.gemini.spModel.gemini.nfiraos.Canopus;
 import edu.gemini.wdba.glue.api.WdbaGlueException;
 import org.dom4j.Element;
 

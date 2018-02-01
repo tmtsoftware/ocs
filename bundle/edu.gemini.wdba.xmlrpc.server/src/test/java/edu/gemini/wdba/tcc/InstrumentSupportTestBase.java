@@ -9,7 +9,7 @@ import edu.gemini.pot.sp.SPComponentType;
 import edu.gemini.spModel.data.ISPDataObject;
 import edu.gemini.spModel.gemini.altair.AltairParams;
 import edu.gemini.spModel.gemini.altair.InstAltair;
-import edu.gemini.spModel.gemini.gems.Gems;
+import edu.gemini.spModel.gemini.nfiraos.Nfiraos;
 import edu.gemini.spModel.guide.GuideProbe;
 import edu.gemini.spModel.target.SPTarget;
 import edu.gemini.spModel.target.env.GuideGroup;
@@ -102,8 +102,8 @@ public abstract class InstrumentSupportTestBase<T extends ISPDataObject> extends
         return p;
     }
 
-    protected ObsComponentPair<Gems> addGems() throws Exception {
-        return new ObsComponentPair<>(Gems.SP_TYPE);
+    protected ObsComponentPair<Nfiraos> addNfiraos() throws Exception {
+        return new ObsComponentPair<>(Nfiraos.SP_TYPE);
     }
 
     protected T getInstrument() throws Exception {

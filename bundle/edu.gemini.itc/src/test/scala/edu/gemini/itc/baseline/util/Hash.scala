@@ -50,7 +50,7 @@ object Hash {
     hash(
       p.filter.name,
       p.readMode.name,
-      calc(p.gems)
+      calc(p.nfiraos)
     )
 
   def calc(p: MichelleParameters): Int =
@@ -149,7 +149,7 @@ object Hash {
       alt.wfsMode.name
     )
 
-  def calc(alt: GemsParameters): Int =
+  def calc(alt: NfiraosParameters): Int =
     hash(
       f"${alt.avgStrehl}%.2f",
       alt.strehlBand

@@ -3,7 +3,7 @@ package edu.gemini.itc.web.html;
 import edu.gemini.itc.altair.Altair;
 import edu.gemini.itc.base.Instrument;
 import edu.gemini.itc.base.TransmissionElement;
-import edu.gemini.itc.gems.Gems;
+import edu.gemini.itc.nfiraos.Nfiraos;
 import edu.gemini.itc.shared.*;
 import edu.gemini.spModel.gemini.altair.AltairParams;
 import edu.gemini.spModel.telescope.IssPort;
@@ -134,12 +134,12 @@ public final class HtmlPrinter {
         return sb.toString();
     }
 
-    public static String printSummary(final Gems gems) {
-        String s = String.format("r0(" + gems.getWavelength() + "nm) = %.3f m\n", gems.getr0());
-        s += String.format("Average Strehl = %.3f%%\n", gems.getAvgStrehl() * 100);
+    public static String printSummary(final Nfiraos nfiraos) {
+        String s = String.format("r0(" + nfiraos.getWavelength() + "nm) = %.3f m\n", nfiraos.getr0());
+        s += String.format("Average Strehl = %.3f%%\n", nfiraos.getAvgStrehl() * 100);
         s += "FWHM of an AO-corrected core = ";
         try {
-            s += String.format("%.3f arcsec\n", gems.getAOCorrectedFWHM(true));
+            s += String.format("%.3f arcsec\n", nfiraos.getAOCorrectedFWHM(true));
         } catch (IllegalArgumentException ex) {
             s += "<span style=\"color:red; font-style:italic;\">Error: " + ex.getMessage() + "</span>\n";
         }
@@ -147,10 +147,10 @@ public final class HtmlPrinter {
         return s;
     }
 
-    public static String printParameterSummary(final Gems gems) {
+    public static String printParameterSummary(final Nfiraos nfiraos) {
         return
-            "Average Strehl:\t" + gems.getAvgStrehl() + "\n" +
-            "Strehl Band:\t" + gems.getStrehlBand() + "\n\n";
+            "Average Strehl:\t" + nfiraos.getAvgStrehl() + "\n" +
+            "Strehl Band:\t" + nfiraos.getStrehlBand() + "\n\n";
     }
 
     public static String opticalComponentsToString(final Instrument instrument) {

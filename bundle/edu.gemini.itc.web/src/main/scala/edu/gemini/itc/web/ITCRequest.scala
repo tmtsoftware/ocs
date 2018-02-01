@@ -185,8 +185,8 @@ object ITCRequest {
   def irisParameters(r: ITCRequest): IrisParameters = {
     val filter      = r.enumParameter(classOf[Iris.Filter])
     val readMode    = r.enumParameter(classOf[Iris.ReadMode])
-    val gems        = gemsParameters(r)
-    IrisParameters(filter, readMode, gems)
+    val nfiraos        = nfiraosParameters(r)
+    IrisParameters(filter, readMode, nfiraos)
   }
 
   def michelleParameters(r: ITCRequest): MichelleParameters = {
@@ -250,10 +250,10 @@ object ITCRequest {
     }
   }
 
-  def gemsParameters(r: ITCRequest): GemsParameters = {
+  def nfiraosParameters(r: ITCRequest): NfiraosParameters = {
     val avgStrehl  = r.doubleParameter("avgStrehl") / 100.0
     val strehlBand = r.parameter("strehlBand")
-    GemsParameters(avgStrehl, strehlBand)
+    NfiraosParameters(avgStrehl, strehlBand)
   }
 
   def observationParameters(r: ITCRequest, i: InstrumentDetails): ObservationDetails = {

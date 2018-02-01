@@ -844,7 +844,7 @@ object QueryResultsFrame extends Frame with PreferredSizeFrame {
   def showOn(obsCtx: ObsContext) {
     AgsRegistrar.currentStrategy(obsCtx).foreach { strategy =>
       val mt = ProbeLimitsTable.loadOrThrow()
-      // TODO Use only the first query, GEMS isn't supported yet OCSADV-242, OCSADV-239
+      // TODO Use only the first query, NFIRAOS isn't supported yet OCSADV-242, OCSADV-239
       strategy.catalogQueries(obsCtx, mt).headOption.foreach {
         case q: ConeSearchCatalogQuery =>
           showWithQuery(obsCtx, mt, q.copy(magnitudeConstraints = Nil))

@@ -10,7 +10,7 @@ import edu.gemini.spModel.config2.ConfigSequence;
 import edu.gemini.spModel.data.AbstractDataObject;
 import edu.gemini.spModel.gemini.altair.InstAltair;
 import edu.gemini.spModel.gemini.calunit.smartgcal.CalibrationProviderHolder;
-import edu.gemini.spModel.gemini.gems.Gems;
+import edu.gemini.spModel.gemini.nfiraos.Nfiraos;
 import edu.gemini.spModel.gemini.obscomp.SPProgram;
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality;
 import edu.gemini.spModel.obs.SPObservation;
@@ -126,8 +126,8 @@ public class ObservationElements implements Serializable {
         return !_aoComponent.isEmpty() &&  InstAltair.SP_TYPE.equals(_aoComponent.getValue().getType());
     }
 
-    public boolean hasGems(){
-        return !_aoComponent.isEmpty() &&  Gems.SP_TYPE.equals(_aoComponent.getValue().getType());
+    public boolean hasNfiraos(){
+        return !_aoComponent.isEmpty() &&  Nfiraos.SP_TYPE.equals(_aoComponent.getValue().getType());
     }
 
     public Option<TargetObsComp> getTargetObsComp() {

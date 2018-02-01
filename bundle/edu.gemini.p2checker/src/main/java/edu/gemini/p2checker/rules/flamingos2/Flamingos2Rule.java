@@ -2,7 +2,7 @@
 package edu.gemini.p2checker.rules.flamingos2;
 
 import edu.gemini.p2checker.api.*;
-import edu.gemini.p2checker.rules.gems.GemsGuideStarRule;
+import edu.gemini.p2checker.rules.nfiraos.NfiraosGuideStarRule;
 import edu.gemini.p2checker.util.AbstractConfigRule;
 import edu.gemini.p2checker.util.MdfConfigRule;
 import edu.gemini.p2checker.util.NoPOffsetWithSlitRule;
@@ -112,7 +112,7 @@ public final class Flamingos2Rule implements IRule {
     public IP2Problems check(ObservationElements elements)  {
         return (new CompositeRule(
             new IRule[] {
-                new GemsGuideStarRule(),
+                new NfiraosGuideStarRule(),
                 new SequenceRule(FLAM2_RULES, null),
             },
             CompositeRule.Type.all

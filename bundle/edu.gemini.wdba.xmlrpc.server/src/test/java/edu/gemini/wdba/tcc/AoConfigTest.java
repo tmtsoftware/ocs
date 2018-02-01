@@ -11,7 +11,7 @@ import edu.gemini.shared.util.immutable.Option;
 import edu.gemini.shared.util.immutable.Some;
 import edu.gemini.spModel.gemini.altair.AltairParams;
 import edu.gemini.spModel.gemini.altair.InstAltair;
-import edu.gemini.spModel.gemini.gems.Gems;
+import edu.gemini.spModel.gemini.nfiraos.Nfiraos;
 import edu.gemini.spModel.gemini.iris.Iris;
 import edu.gemini.spModel.gemini.niri.InstNIRI;
 import org.dom4j.Document;
@@ -28,7 +28,7 @@ import java.util.List;
  */
 public final class AoConfigTest extends TestBase {
 
-    private ISPObsComponent gemsObsComp;
+    private ISPObsComponent nfiraosObsComp;
     private ISPObsComponent altairObsComp;
 
     private ISPObsComponent addInstrument(SPComponentType type) throws Exception {
@@ -37,10 +37,10 @@ public final class AoConfigTest extends TestBase {
         return instObsComp;
     }
 
-    private Gems addGems() throws Exception {
-        gemsObsComp = odb.getFactory().createObsComponent(prog, Gems.SP_TYPE, null);
-        obs.addObsComponent(gemsObsComp);
-        return (Gems) gemsObsComp.getDataObject();
+    private Nfiraos addNfiraos() throws Exception {
+        nfiraosObsComp = odb.getFactory().createObsComponent(prog, Nfiraos.SP_TYPE, null);
+        obs.addObsComponent(nfiraosObsComp);
+        return (Nfiraos) nfiraosObsComp.getDataObject();
     }
 
     private InstAltair addAltair() throws Exception {
@@ -89,7 +89,7 @@ public final class AoConfigTest extends TestBase {
         Option<Element> getGaosElement(Document doc) {
             if (TccNames.NO_AO.equals(name)) return None.instance();
 
-            String type = site == Site.north ? TccNames.GAOS : "gems";
+            String type = site == Site.north ? TccNames.GAOS : "nfiraos";
             Element e = getSubconfig(doc, type);
             if (e == null) return None.instance();
             return new Some<>(e);
@@ -131,18 +131,18 @@ public final class AoConfigTest extends TestBase {
         }
     }
 
-    class GemsAoConfigValidator extends AoConfigValidator {
-        Gems gems;
+    class NfiraosAoConfigValidator extends AoConfigValidator {
+        Nfiraos nfiraos;
 
         protected void validate(Document doc, Element gaosElement) {
-            String adc = getParam(gaosElement, AOConfig.GEMS_GAOS_ADC);
-            assertEquals(gems.getAdc().sequenceValue(), adc);
+            String adc = getParam(gaosElement, AOConfig.NFIRAOS_GAOS_ADC);
+            assertEquals(nfiraos.getAdc().sequenceValue(), adc);
 
-            String dich = getParam(gaosElement, AOConfig.GEMS_GAOS_DICHROIC);
-            assertEquals(gems.getDichroicBeamsplitter().sequenceValue(), dich);
+            String dich = getParam(gaosElement, AOConfig.NFIRAOS_GAOS_DICHROIC);
+            assertEquals(nfiraos.getDichroicBeamsplitter().sequenceValue(), dich);
 
-            String ast = getParam(gaosElement, AOConfig.GEMS_GAOS_ASTROMETRIC);
-            assertEquals(gems.getAstrometricMode().sequenceValue(), ast);
+            String ast = getParam(gaosElement, AOConfig.NFIRAOS_GAOS_ASTROMETRIC);
+            assertEquals(nfiraos.getAstrometricMode().sequenceValue(), ast);
         }
     }
 
@@ -179,50 +179,50 @@ public final class AoConfigTest extends TestBase {
         }
     }
 
-    private void testGems(Gems gems) throws Exception {
+    private void testNfiraos(Nfiraos nfiraos) throws Exception {
         addIris();
-        addGems();
-        gemsObsComp.setDataObject(gems);
+        addNfiraos();
+        nfiraosObsComp.setDataObject(nfiraos);
 
-        GemsAoConfigValidator val = new GemsAoConfigValidator();
+        NfiraosAoConfigValidator val = new NfiraosAoConfigValidator();
         val.site  = Site.south;
-        val.name  = TccNames.GEMS_GAOS;
-        val.gems  = gems;
+        val.name  = TccNames.NFIRAOS_GAOS;
+        val.nfiraos  = nfiraos;
         val.validate();
     }
 
-    @Test public void testGemsDefault() throws Exception {
-        testGems(new Gems());
+    @Test public void testNfiraosDefault() throws Exception {
+        testNfiraos(new Nfiraos());
     }
 
-    @Test public void testGemsAdc() throws Exception {
-        Gems gems = new Gems();
-        for (Gems.Adc adc : Gems.Adc.values()) {
-            gems.setAdc(adc);
-            testGems(gems);
+    @Test public void testNfiraosAdc() throws Exception {
+        Nfiraos nfiraos = new Nfiraos();
+        for (Nfiraos.Adc adc : Nfiraos.Adc.values()) {
+            nfiraos.setAdc(adc);
+            testNfiraos(nfiraos);
         }
     }
 
-    @Test public void testGemsDichroic() throws Exception {
-        Gems gems = new Gems();
-        for (Gems.DichroicBeamsplitter bs : Gems.DichroicBeamsplitter.values()) {
-            gems.setDichroicBeamsplitter(bs);
-            testGems(gems);
+    @Test public void testNfiraosDichroic() throws Exception {
+        Nfiraos nfiraos = new Nfiraos();
+        for (Nfiraos.DichroicBeamsplitter bs : Nfiraos.DichroicBeamsplitter.values()) {
+            nfiraos.setDichroicBeamsplitter(bs);
+            testNfiraos(nfiraos);
         }
     }
 
-    @Test public void testGemsAstrometric() throws Exception {
-        Gems gems = new Gems();
-        for (Gems.AstrometricMode am : Gems.AstrometricMode.values()) {
-            gems.setAstrometricMode(am);
-            testGems(gems);
+    @Test public void testNfiraosAstrometric() throws Exception {
+        Nfiraos nfiraos = new Nfiraos();
+        for (Nfiraos.AstrometricMode am : Nfiraos.AstrometricMode.values()) {
+            nfiraos.setAstrometricMode(am);
+            testNfiraos(nfiraos);
         }
     }
 
-    @Test public void testSouthNoGems() throws Exception {
+    @Test public void testSouthNoNfiraos() throws Exception {
         addIris();
 
-        AoConfigValidator val = new GemsAoConfigValidator();
+        AoConfigValidator val = new NfiraosAoConfigValidator();
         val.site  = Site.south;
         val.name  = TccNames.NO_AO;
         val.validate();

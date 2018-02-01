@@ -15,7 +15,7 @@ import Scalaz._
 
 /**
  * This code is a conglomeration of some methods from the edu.gemini.ags package's impl/package.scala file
- * and edu.gemini.ags.gems.GemsUtils4Java. Eventually, as this code may be useful in other places, the
+ * and edu.gemini.ags.nfiraos.NfiraosUtils4Java. Eventually, as this code may be useful in other places, the
  * original files should be removed and these converters used instead.
  */
 object ModelConverters {

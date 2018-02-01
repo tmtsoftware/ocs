@@ -4,7 +4,7 @@ import edu.gemini.ags.api.AgsGuideQuality._
 import edu.gemini.ags.api.AgsMagnitude.MagnitudeTable
 import edu.gemini.ags.api.{AgsAnalysis, AgsRegistrar}
 import edu.gemini.p2checker.api.{P2Problems, IP2Problems, Problem, ObservationElements, IRule}
-import edu.gemini.spModel.gemini.gems.Canopus
+import edu.gemini.spModel.gemini.nfiraos.Canopus
 import edu.gemini.spModel.gemini.iris.IrisOdgw
 import edu.gemini.spModel.guide.GuideProbeGroup
 import edu.gemini.spModel.obs.SPObservation

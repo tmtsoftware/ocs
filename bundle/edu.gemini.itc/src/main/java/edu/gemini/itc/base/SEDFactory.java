@@ -257,7 +257,7 @@ public final class SEDFactory {
 
         // FOR IRIS and NIRI ADD AO STUFF HERE
         if (instrument instanceof Iris || instrument instanceof Niri || instrument instanceof Gnirs) {
-            // Moved section where sky/sed is convolved with instrument below Altair/Gems
+            // Moved section where sky/sed is convolved with instrument below Altair/Nfiraos
             // section
             // Module 5b
             // The instrument with its detectors modifies the source and

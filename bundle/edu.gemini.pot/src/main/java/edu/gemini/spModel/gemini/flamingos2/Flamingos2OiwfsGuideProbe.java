@@ -7,7 +7,7 @@ import edu.gemini.shared.util.immutable.Option;
 import edu.gemini.shared.util.immutable.Some;
 import edu.gemini.spModel.core.BandsList;
 import edu.gemini.spModel.core.RBandsList;
-import edu.gemini.spModel.gems.GemsGuideProbeGroup;
+import edu.gemini.spModel.nfiraos.NfiraosGuideProbeGroup;
 import edu.gemini.spModel.guide.*;
 import edu.gemini.spModel.obs.context.ObsContext;
 import edu.gemini.spModel.target.SPTarget;
@@ -113,7 +113,7 @@ public enum Flamingos2OiwfsGuideProbe implements GuideProbe, ValidatableGuidePro
      * Gets the group of Flamingos guide stars.
      * See OT-21.
      */
-    public enum Group implements GemsGuideProbeGroup {
+    public enum Group implements NfiraosGuideProbeGroup {
         instance;
 
         public Angle getRadiusLimits() {

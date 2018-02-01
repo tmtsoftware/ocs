@@ -16,8 +16,8 @@ public class GuideStarSupport {
     static boolean supportsAutoGuideStarSelection(TpeContext ctx) {
         if (ctx.isEmpty() || ctx.instrument().isEmpty()) return false;
 
-        //Special handling for GEMS
-        if (hasGemsComponent(ctx)) return true;
+        //Special handling for NFIRAOS
+        if (hasNfiraosComponent(ctx)) return true;
 
         if (!ctx.instrument().isDefined()) return false;
 
@@ -34,13 +34,13 @@ public class GuideStarSupport {
         return !ctx.instrument().is(Gpi.SP_TYPE);
     }
 
-    // Returns true if the observation has a gems component
-    public static boolean hasGemsComponent(ISPNode node) {
-        return hasGemsComponent(TpeContext.apply(node));
+    // Returns true if the observation has a nfiraos component
+    public static boolean hasNfiraosComponent(ISPNode node) {
+        return hasNfiraosComponent(TpeContext.apply(node));
     }
 
-    static boolean hasGemsComponent(TpeContext ctx) {
-        return ctx.gems().isDefined();
+    static boolean hasNfiraosComponent(TpeContext ctx) {
+        return ctx.nfiraos().isDefined();
     }
 
 }

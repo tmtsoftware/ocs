@@ -18,7 +18,7 @@ import edu.gemini.spModel.data.config.ISysConfig;
 import edu.gemini.spModel.gemini.altair.AltairParams;
 import edu.gemini.spModel.gemini.altair.InstAltair;
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2;
-import edu.gemini.spModel.gemini.gems.Gems;
+import edu.gemini.spModel.gemini.nfiraos.Nfiraos;
 import edu.gemini.spModel.gemini.gmos.*;
 import edu.gemini.spModel.gemini.gnirs.GNIRSParams;
 import edu.gemini.spModel.gemini.gnirs.InstGNIRS;
@@ -378,7 +378,7 @@ public class ObsQueryFunctor extends DBAbstractQueryFunctor implements Iterable<
         for (ISPObsComponent comp: obsShell.getObsComponents()) {
             SPComponentType type = comp.getType();
 
-            if (Gems.SP_TYPE.equals(type))
+            if (Nfiraos.SP_TYPE.equals(type))
                 continue; // REL-293
 
             // There will be zero or one.
@@ -605,7 +605,7 @@ public class ObsQueryFunctor extends DBAbstractQueryFunctor implements Iterable<
     }
 
     /**
-     * Look for Altair with LGS or Gems
+     * Look for Altair with LGS or Nfiraos
      *
      * @param obsShell
      * @return true if LGS is used by this observation
@@ -625,7 +625,7 @@ public class ObsQueryFunctor extends DBAbstractQueryFunctor implements Iterable<
                     AltairParams.GuideStarType gs = altair.getGuideStarType();
                     if (gs == AltairParams.GuideStarType.LGS) return true;
                 }
-                if (type.equals(Gems.SP_TYPE)) {
+                if (type.equals(Nfiraos.SP_TYPE)) {
                     return true;
                 }
 

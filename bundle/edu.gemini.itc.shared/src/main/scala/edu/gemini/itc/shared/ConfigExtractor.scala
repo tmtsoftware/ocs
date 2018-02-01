@@ -172,39 +172,39 @@ object ConfigExtractor {
     import Iris._
     import SPSiteQuality._
 
-    val error: String \/ GemsParameters = "IRIS filter with unknown band".left
+    val error: String \/ NfiraosParameters = "IRIS filter with unknown band".left
 
     def closestBand(band: MagnitudeBand) =
       // pick the closest band that's supported by ITC
       List(MagnitudeBand.J, MagnitudeBand.H, MagnitudeBand.K).minBy(b => Math.abs(b.center.toNanometers - band.center.toNanometers))
 
 
-    // a rudimentary approximation for the expected GeMS performance
-    // http://www.gemini.edu/sciops/instruments/gems/gems-performance
+    // a rudimentary approximation for the expected Nfiraos performance
+    // http://www.gemini.edu/sciops/instruments/nfiraos/nfiraos-performance
     // TODO: here we should use the avg Strehl values calculated by the Mascot / AGS algorithms for better results
-    def extractGems(filter: Filter): String \/ GemsParameters =
+    def extractNfiraos(filter: Filter): String \/ NfiraosParameters =
       filter.getCatalogBand.asScalaOpt.fold(error) { band =>
         (band, cond.iq) match {
-          case (SingleBand(MagnitudeBand.J), ImageQuality.PERCENT_20) => GemsParameters(0.10, "J").right
-          case (SingleBand(MagnitudeBand.J), ImageQuality.PERCENT_70) => GemsParameters(0.05, "J").right
-          case (SingleBand(MagnitudeBand.J), ImageQuality.PERCENT_85) => GemsParameters(0.02, "J").right
-          case (SingleBand(MagnitudeBand.H), ImageQuality.PERCENT_20) => GemsParameters(0.15, "H").right
-          case (SingleBand(MagnitudeBand.H), ImageQuality.PERCENT_70) => GemsParameters(0.10, "H").right
-          case (SingleBand(MagnitudeBand.H), ImageQuality.PERCENT_85) => GemsParameters(0.05, "H").right
-          case (SingleBand(MagnitudeBand.K), ImageQuality.PERCENT_20) => GemsParameters(0.30, "K").right
-          case (SingleBand(MagnitudeBand.K), ImageQuality.PERCENT_70) => GemsParameters(0.15, "K").right
-          case (SingleBand(MagnitudeBand.K), ImageQuality.PERCENT_85) => GemsParameters(0.10, "K").right
-          case (_, ImageQuality.ANY)             => "GeMS cannot be used in IQ=Any conditions".left
-          case _                                 => "ITC GeMS only supports J, H and K band".left
+          case (SingleBand(MagnitudeBand.J), ImageQuality.PERCENT_20) => NfiraosParameters(0.10, "J").right
+          case (SingleBand(MagnitudeBand.J), ImageQuality.PERCENT_70) => NfiraosParameters(0.05, "J").right
+          case (SingleBand(MagnitudeBand.J), ImageQuality.PERCENT_85) => NfiraosParameters(0.02, "J").right
+          case (SingleBand(MagnitudeBand.H), ImageQuality.PERCENT_20) => NfiraosParameters(0.15, "H").right
+          case (SingleBand(MagnitudeBand.H), ImageQuality.PERCENT_70) => NfiraosParameters(0.10, "H").right
+          case (SingleBand(MagnitudeBand.H), ImageQuality.PERCENT_85) => NfiraosParameters(0.05, "H").right
+          case (SingleBand(MagnitudeBand.K), ImageQuality.PERCENT_20) => NfiraosParameters(0.30, "K").right
+          case (SingleBand(MagnitudeBand.K), ImageQuality.PERCENT_70) => NfiraosParameters(0.15, "K").right
+          case (SingleBand(MagnitudeBand.K), ImageQuality.PERCENT_85) => NfiraosParameters(0.10, "K").right
+          case (_, ImageQuality.ANY)             => "Nfiraos cannot be used in IQ=Any conditions".left
+          case _                                 => "ITC Nfiraos only supports J, H and K band".left
         }
     }
 
     for {
       filter      <- extract[Filter]        (c, FilterKey)
       readMode    <- extract[ReadMode]      (c, ReadModeKey)
-      gems        <- extractGems            (filter)
+      nfiraos        <- extractNfiraos            (filter)
     } yield {
-      IrisParameters(filter, readMode, gems)
+      IrisParameters(filter, readMode, nfiraos)
     }
   }
 

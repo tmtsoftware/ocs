@@ -89,13 +89,13 @@ case class ObsConstraint private(types: Types, inst: Option[SPComponentType]) ex
     require(t.broadType == INSTRUMENT, "Not an instrument type: " + t)
     t match {
 
-      // Acq Cam can be with GeMS or Altair
-      case INSTRUMENT_ACQCAM => ts.retainOnly(AO, AO_GEMS, AO_ALTAIR)
+      // Acq Cam can be with Nfiraos or Altair
+      case INSTRUMENT_ACQCAM => ts.retainOnly(AO, AO_NFIRAOS, AO_ALTAIR)
 
-      // These can only use GEMS
+      // These can only use NFIRAOS
       case INSTRUMENT_FLAMINGOS2
          | INSTRUMENT_GMOSSOUTH
-         | INSTRUMENT_IRIS  => ts.retainOnly(AO, AO_GEMS)
+         | INSTRUMENT_IRIS  => ts.retainOnly(AO, AO_NFIRAOS)
 
       // These can only use Altair
       case INSTRUMENT_GNIRS
@@ -114,7 +114,7 @@ case class ObsConstraint private(types: Types, inst: Option[SPComponentType]) ex
   def constrainInstrument(t: SPComponentType, ts: Types) = {
     require(t.broadType == AO, "Not an AO type: " + t)
     t match {
-      case AO_GEMS   => ts.retainOnly(INSTRUMENT, INSTRUMENT_ACQCAM, INSTRUMENT_FLAMINGOS2, INSTRUMENT_GMOSSOUTH, INSTRUMENT_IRIS)
+      case AO_NFIRAOS   => ts.retainOnly(INSTRUMENT, INSTRUMENT_ACQCAM, INSTRUMENT_FLAMINGOS2, INSTRUMENT_GMOSSOUTH, INSTRUMENT_IRIS)
       case AO_ALTAIR => ts.retainOnly(INSTRUMENT, INSTRUMENT_ACQCAM, INSTRUMENT_GNIRS, INSTRUMENT_NIFS, INSTRUMENT_NIRI, INSTRUMENT_GMOS)
     }
   }

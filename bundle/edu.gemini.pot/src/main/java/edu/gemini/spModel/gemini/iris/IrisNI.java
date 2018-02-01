@@ -8,7 +8,7 @@ import edu.gemini.pot.sp.ISPObsComponent;
 import edu.gemini.pot.sp.SPComponentType;
 import edu.gemini.spModel.config.IConfigBuilder;
 import edu.gemini.spModel.data.ISPDataObject;
-import edu.gemini.spModel.gemini.gems.Gems;
+import edu.gemini.spModel.gemini.nfiraos.Nfiraos;
 import edu.gemini.spModel.gemini.inst.DefaultInstNodeInitializer;
 import edu.gemini.spModel.obscomp.SPInstObsComp;
 
@@ -30,6 +30,6 @@ public final class IrisNI extends DefaultInstNodeInitializer {
     }
 
     @Override public Collection<ISPDataObject> createFriends() {
-        return Collections.<ISPDataObject>singletonList(new Gems());
+        return Collections.<ISPDataObject>singletonList(new Nfiraos());
     }
 }

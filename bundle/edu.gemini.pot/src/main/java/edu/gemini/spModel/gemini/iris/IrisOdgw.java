@@ -5,7 +5,7 @@ import edu.gemini.skycalc.Coordinates;
 import edu.gemini.shared.util.immutable.*;
 import edu.gemini.spModel.core.BandsList;
 import edu.gemini.spModel.core.RBandsList;
-import edu.gemini.spModel.gems.GemsGuideProbeGroup;
+import edu.gemini.spModel.nfiraos.NfiraosGuideProbeGroup;
 import edu.gemini.spModel.guide.*;
 import edu.gemini.spModel.obs.context.ObsContext;
 import edu.gemini.spModel.target.SPTarget;
@@ -28,7 +28,7 @@ public enum IrisOdgw implements ValidatableGuideProbe {
      * Group of IrisOdgw, with support for selecting and optimizing
      * {@link TargetEnvironment target environments}.
      */
-    public enum Group implements SelectableGuideProbeGroup, OptimizableGuideProbeGroup, GemsGuideProbeGroup {
+    public enum Group implements SelectableGuideProbeGroup, OptimizableGuideProbeGroup, NfiraosGuideProbeGroup {
         instance;
 
         @Override public String getKey() {

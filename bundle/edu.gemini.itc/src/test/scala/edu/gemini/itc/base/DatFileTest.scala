@@ -180,7 +180,7 @@ class DatFileTest {
 
   @Test
   def parseFile3(): Unit = {
-    val data = DatFile.arrays("/gems/canopus_background.dat")
+    val data = DatFile.arrays("/nfiraos/canopus_background.dat")
     assert(data.size == 2)
     assert(data(1).size == 4201)
     assert(data(0).size == 4201)

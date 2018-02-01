@@ -2,7 +2,7 @@ package edu.gemini.itc.altair;
 
 import edu.gemini.itc.base.AOSystem;
 import edu.gemini.itc.base.SampledSpectrumVisitor;
-import edu.gemini.itc.gems.GemsFluxAttenuationVisitor;
+import edu.gemini.itc.nfiraos.NfiraosFluxAttenuationVisitor;
 import edu.gemini.itc.shared.AltairParameters;
 import edu.gemini.spModel.gemini.altair.AltairParams;
 
@@ -91,7 +91,7 @@ public class Altair implements AOSystem {
     }
 
     public SampledSpectrumVisitor getHaloFluxAttenuationVisitor() {
-        return new GemsFluxAttenuationVisitor(1 - getStrehl());
+        return new NfiraosFluxAttenuationVisitor(1 - getStrehl());
     }
 
     public double getr0() {

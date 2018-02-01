@@ -22,7 +22,7 @@ import edu.gemini.spModel.smartgcal.repository.CalibrationResourceRepository;
 import edu.gemini.spModel.smartgcal.repository.CalibrationUpdater;
 import edu.gemini.util.security.auth.keychain.KeyChain;
 import jsky.app.ot.modelconfig.Flamingos2Config;
-import jsky.app.ot.modelconfig.GemsConfig;
+import jsky.app.ot.modelconfig.NfiraosConfig;
 import jsky.app.ot.modelconfig.ModelConfig;
 import jsky.app.ot.too.TooPoll;
 import jsky.app.ot.tpe.TelescopePosEditor;
@@ -208,9 +208,9 @@ public final class OT {
                 jsky.app.ot.gemini.tpe.EdIterOffsetFeature.class,
                 jsky.app.ot.gemini.acqcam.TpeAcqCameraFeature.class,
                 jsky.app.ot.gemini.altair.Altair_WFS_Feature.class,
-                jsky.app.ot.gemini.gems.CanopusFeature.class,
+                jsky.app.ot.gemini.nfiraos.CanopusFeature.class,
                 jsky.app.ot.gemini.iris.IrisOdgwFeature.class,
-                jsky.app.ot.gemini.gems.StrehlFeature.class,
+                jsky.app.ot.gemini.nfiraos.StrehlFeature.class,
                 jsky.app.ot.gemini.inst.OIWFS_Feature.class,
                 jsky.app.ot.gemini.tpe.TpePWFSFeature.class,
                 jsky.app.ot.gemini.inst.SciAreaFeature.class,
@@ -314,7 +314,7 @@ public final class OT {
         try {
             final Option<ModelConfig> mc = ModelConfig.load();
             mc.foreach(modelConfig -> {
-                GemsConfig.instance.apply(modelConfig);
+                NfiraosConfig.instance.apply(modelConfig);
                 Flamingos2Config.instance.apply(modelConfig);
             });
         } catch (IOException ex) {

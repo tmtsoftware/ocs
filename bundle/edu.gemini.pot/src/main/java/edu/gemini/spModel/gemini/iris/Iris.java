@@ -19,7 +19,7 @@ import edu.gemini.spModel.data.config.ISysConfig;
 import edu.gemini.spModel.data.config.StringParameter;
 import edu.gemini.spModel.data.property.PropertyProvider;
 import edu.gemini.spModel.data.property.PropertySupport;
-import edu.gemini.spModel.gemini.gems.Canopus;
+import edu.gemini.spModel.gemini.nfiraos.Canopus;
 import edu.gemini.spModel.guide.GuideOption;
 import edu.gemini.spModel.guide.GuideProbe;
 import edu.gemini.spModel.guide.GuideProbeProvider;

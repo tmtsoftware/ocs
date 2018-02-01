@@ -18,7 +18,7 @@ import edu.gemini.spModel.gemini.altair.AltairParams.GuideStarType;
 import edu.gemini.spModel.gemini.altair.InstAltair;
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2;
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2OiwfsGuideProbe;
-import edu.gemini.spModel.gemini.gems.Canopus;
+import edu.gemini.spModel.gemini.nfiraos.Canopus;
 import edu.gemini.spModel.gemini.gmos.GmosCommonType;
 import edu.gemini.spModel.gemini.gmos.GmosNorthType;
 import edu.gemini.spModel.gemini.gmos.GmosOiwfsGuideProbe;

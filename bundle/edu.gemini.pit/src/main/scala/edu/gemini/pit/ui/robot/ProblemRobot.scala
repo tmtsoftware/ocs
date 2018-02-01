@@ -89,7 +89,7 @@ class ProblemRobot(s: ShellAdvisor) extends Robot {
           TacProblems(p, s).all ++
           List(incompleteInvestigator, missingObsElementCheck, cfCheck, emptyTargetCheck,
             emptyEphemerisCheck, singlePointEphemerisCheck, initialEphemerisCheck, finalEphemerisCheck, altairLgsCheck,
-            badGuiding, cwfsCorrectionsIssue, badVisibility, iffyVisibility, minTimeCheck, wrongSite, band3Orphan2, gpiCheck, lgsIQ70Check, lgsGemsIQ85Check,
+            badGuiding, cwfsCorrectionsIssue, badVisibility, iffyVisibility, minTimeCheck, wrongSite, band3Orphan2, gpiCheck, lgsIQ70Check, lgsNfiraosIQ85Check,
             lgsCC50Check, texesCCCheck, texesWVCheck, gmosWVCheck, gmosR600Check, band3IQ, band3LGS, band3RapidToO, sbIrObservation).flatten
       ps.sorted
     }
@@ -221,7 +221,7 @@ class ProblemRobot(s: ShellAdvisor) extends Robot {
     // TODO: Remove this if the laser is repaired.
     private lazy val altairLgsCheck = for {
       o <- p.observations
-      b <- o.blueprint if bpIsLgs(b) && !bpIsGemsLgs(b)
+      b <- o.blueprint if bpIsLgs(b) && !bpIsNfiraosLgs(b)
     } yield new Problem(Severity.Error, "Altair Laser Guidestar is currently not offered.", "Observations", s.inObsListView(o.band, _.Fixes.fixBlueprint(b)))
 
     def aoPerspectiveIsLgs(ao: AoPerspective): Boolean = ao match {
@@ -240,8 +240,8 @@ class ProblemRobot(s: ShellAdvisor) extends Robot {
         case _                             => AoNone
       })
 
-    // NOTE: This needs to be maintained for any future instruments that use GeMS.
-    def bpIsGemsLgs(b: BlueprintBase): Boolean =
+    // NOTE: This needs to be maintained for any future instruments that use Nfiraos.
+    def bpIsNfiraosLgs(b: BlueprintBase): Boolean =
       b match {
         case a: IrisBlueprint => aoPerspectiveIsLgs(a.ao)
         case _                 => false
@@ -251,15 +251,15 @@ class ProblemRobot(s: ShellAdvisor) extends Robot {
       o  <- p.observations
       c  <- o.condition
       b  <- o.blueprint
-      if bpIsLgs(b) && (!bpIsGemsLgs(b)) && (!List(ImageQuality.IQ70, ImageQuality.BEST).contains(c.iq))
+      if bpIsLgs(b) && (!bpIsNfiraosLgs(b)) && (!List(ImageQuality.IQ70, ImageQuality.BEST).contains(c.iq))
     } yield new Problem(Severity.Error, s"LGS requires IQ70 or better.", "Observations", s.inObsListView(o.band, _.Fixes.fixConditions(c)))
 
-    private val lgsGemsIQ85Check = for {
+    private val lgsNfiraosIQ85Check = for {
       o <- p.observations
       c <- o.condition
       b <- o.blueprint
-      if bpIsGemsLgs(b) && (!List(ImageQuality.IQ85, ImageQuality.IQ70, ImageQuality.BEST).contains(c.iq))
-    } yield new Problem(Severity.Error, s"GeMS LGS requires IQ85 or better.", "Observations", s.inObsListView(o.band, _.Fixes.fixConditions(c)))
+      if bpIsNfiraosLgs(b) && (!List(ImageQuality.IQ85, ImageQuality.IQ70, ImageQuality.BEST).contains(c.iq))
+    } yield new Problem(Severity.Error, s"Nfiraos LGS requires IQ85 or better.", "Observations", s.inObsListView(o.band, _.Fixes.fixConditions(c)))
 
     private val lgsCC50Check = for {
       o  <- p.observations

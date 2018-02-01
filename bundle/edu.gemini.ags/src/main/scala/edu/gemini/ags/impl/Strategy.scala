@@ -7,7 +7,7 @@ import edu.gemini.spModel.ags.AgsStrategyKey
 import edu.gemini.spModel.ags.AgsStrategyKey._
 import edu.gemini.spModel.core.{NiciBandsList, Site}
 import edu.gemini.spModel.gemini.altair.{AltairParams, InstAltair}
-import edu.gemini.spModel.gemini.gems.Canopus
+import edu.gemini.spModel.gemini.nfiraos.Canopus
 import edu.gemini.spModel.gemini.nici.NiciOiwfsGuideProbe
 import edu.gemini.spModel.guide.{GuideProbe, GuideProbeUtil}
 import edu.gemini.spModel.obs.context.ObsContext
@@ -42,7 +42,7 @@ object Strategy {
   val All = List(
     AltairAowfs,
     Flamingos2Oiwfs,
-    GemsStrategy,
+    NfiraosStrategy,
     GmosNorthOiwfs,
     GmosSouthOiwfs,
     GnirsOiwfs,
@@ -81,7 +81,7 @@ object Strategy {
     SPComponentType.INSTRUMENT_ACQCAM     -> const(List(Pwfs1North, Pwfs2North, Pwfs1South, Pwfs2South)),
 
     SPComponentType.INSTRUMENT_FLAMINGOS2 -> ((ctx: ObsContext) =>
-      List(GemsStrategy) ++ oiStategies(ctx, Flamingos2Oiwfs)
+      List(NfiraosStrategy) ++ oiStategies(ctx, Flamingos2Oiwfs)
     ),
 
     SPComponentType.INSTRUMENT_GMOS       -> ((ctx: ObsContext) => {
@@ -98,7 +98,7 @@ object Strategy {
     SPComponentType.INSTRUMENT_GMOSSOUTH  -> ((ctx: ObsContext) => oiStategies(ctx, GmosSouthOiwfs)),
 
     SPComponentType.INSTRUMENT_GNIRS      -> const(List(AltairAowfs, Pwfs2North, Pwfs1North, GnirsOiwfs)),
-    SPComponentType.INSTRUMENT_IRIS      -> const(List(GemsStrategy) ++ List(Pwfs1South)),
+    SPComponentType.INSTRUMENT_IRIS      -> const(List(NfiraosStrategy) ++ List(Pwfs1South)),
     SPComponentType.INSTRUMENT_MICHELLE   -> const(List(Pwfs2North, Pwfs1North)),
     SPComponentType.INSTRUMENT_NICI       -> const(List(NiciOiwfs, Pwfs2South, Pwfs1South)),
     SPComponentType.INSTRUMENT_NIFS       -> const(List(AltairAowfs, Pwfs2North, Pwfs1North, NifsOiwfs)),
@@ -114,7 +114,7 @@ object Strategy {
     s match {
       case SingleProbeStrategy(_, params, _) => isAvailable(params.guideProbe)
       case ScienceTargetStrategy(_, gp, _)   => isAvailable(gp)
-      case GemsStrategy                      => isAvailable(Canopus.Wfs.cwfs3) // any canopus would serve
+      case NfiraosStrategy                      => isAvailable(Canopus.Wfs.cwfs3) // any canopus would serve
       case _                                 => false
     }
   }

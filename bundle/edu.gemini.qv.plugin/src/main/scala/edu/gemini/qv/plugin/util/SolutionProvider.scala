@@ -147,7 +147,7 @@ sealed class SolutionProvider(site: Site) extends Publisher {
 
   // Note: See note for minElevationFor()
   private def minDurationFor(n: Night, o: Obs) =
-    if (o.getLGS && n.site == Site.GS) TimeUtils.minutes(60)  // minimal science time for GeMS (LGS + site = GS): 60 minutes
+    if (o.getLGS && n.site == Site.GS) TimeUtils.minutes(60)  // minimal science time for Nfiraos (LGS + site = GS): 60 minutes
     else if (o.getLGS) TimeUtils.minutes(30)                  // minimal science time for Altair + LGS: 30 minutes
     else TimeUtils.minutes(30)                                // minimal science time for everything else: 30 minutes
 

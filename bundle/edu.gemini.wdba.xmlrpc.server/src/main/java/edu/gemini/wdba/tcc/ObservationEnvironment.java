@@ -9,7 +9,7 @@ import edu.gemini.spModel.data.ISPDataObject;
 import edu.gemini.spModel.ext.*;
 import edu.gemini.spModel.gemini.altair.AltairParams;
 import edu.gemini.spModel.gemini.altair.InstAltair;
-import edu.gemini.spModel.gemini.gems.Gems;
+import edu.gemini.spModel.gemini.nfiraos.Nfiraos;
 import edu.gemini.spModel.gemini.seqcomp.SeqRepeatOffsetBase;
 import edu.gemini.spModel.guide.GuideProbe;
 import edu.gemini.spModel.guide.GuideProbeUtil;
@@ -176,8 +176,8 @@ public final class ObservationEnvironment {
             return altair.getGuideStarType() == AltairParams.GuideStarType.LGS ? AoAspect.lgs : AoAspect.ngs;
         }
 
-        Gems gems = getGemsConfig();
-        return (gems == null) ? AoAspect.none : AoAspect.lgs;
+        Nfiraos nfiraos = getNfiraosConfig();
+        return (nfiraos == null) ? AoAspect.none : AoAspect.lgs;
     }
 
     public boolean isAltair() {
@@ -190,14 +190,14 @@ public final class ObservationEnvironment {
         return (InstAltair) _ao.getValue();
     }
 
-    public boolean isGems() {
-        return getGemsConfig() != null;
+    public boolean isNfiraos() {
+        return getNfiraosConfig() != null;
     }
 
-    public Gems getGemsConfig() {
+    public Nfiraos getNfiraosConfig() {
         if (_ao.isEmpty()) return null;
-        if (!_ao.getValue().getType().equals(Gems.SP_TYPE)) return null;
-        return (Gems) _ao.getValue();
+        if (!_ao.getValue().getType().equals(Nfiraos.SP_TYPE)) return null;
+        return (Nfiraos) _ao.getValue();
     }
 
     public ISPObservation getObservation() {

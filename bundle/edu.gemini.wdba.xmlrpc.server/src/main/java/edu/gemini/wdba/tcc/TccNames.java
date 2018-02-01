@@ -44,11 +44,11 @@ public final class TccNames {
     public static final String FOCUS_OFFSET = "focusOffset";
     public static final String FORMAT = "format";
     public static final String GAOS = "gaos";
-    public static final String GeMSP1 = "GeMS-P1";
-    public static final String GeMS = "GeMS";
-    public static final String GEMS_GAOS = "GemsGaos";
-    public static final String GeMSOI = "GeMS-OI";
-    public static final String GeMSP1OI = "GeMS-P1-OI";
+    public static final String NfiraosP1 = "Nfiraos-P1";
+    public static final String Nfiraos = "Nfiraos";
+    public static final String NFIRAOS_GAOS = "NfiraosGaos";
+    public static final String NfiraosOI = "Nfiraos-OI";
+    public static final String NfiraosP1OI = "Nfiraos-P1-OI";
     public static final String GMOS_OIWFS = "GMOS OIWFS";
     public static final String GUIDE = "guide";
     public static final String GUIDE_CONFIG = "guideConfig";

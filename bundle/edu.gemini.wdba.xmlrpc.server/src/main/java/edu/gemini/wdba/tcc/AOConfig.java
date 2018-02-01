@@ -2,7 +2,7 @@ package edu.gemini.wdba.tcc;
 
 import edu.gemini.spModel.gemini.altair.AltairParams;
 import edu.gemini.spModel.gemini.altair.InstAltair;
-import edu.gemini.spModel.gemini.gems.Gems;
+import edu.gemini.spModel.gemini.nfiraos.Nfiraos;
 import edu.gemini.wdba.glue.api.WdbaGlueException;
 
 /**
@@ -25,9 +25,9 @@ public class AOConfig extends ParamSet {
     public static final String LGS_CONFIG_NAME = "LGS+TTGS";
     public static final String NGS_CONFIG_NAME = "NGS";
 
-    public static final String GEMS_GAOS_ADC         = "adc";
-    public static final String GEMS_GAOS_DICHROIC    = "dichroicBeamsplitter";
-    public static final String GEMS_GAOS_ASTROMETRIC = "astrometricMode";
+    public static final String NFIRAOS_GAOS_ADC         = "adc";
+    public static final String NFIRAOS_GAOS_DICHROIC    = "dichroicBeamsplitter";
+    public static final String NFIRAOS_GAOS_ASTROMETRIC = "astrometricMode";
 
     // Default values
     private static final String DEFAULT_NGS_GSMAG = "11.0";
@@ -59,8 +59,8 @@ public class AOConfig extends ParamSet {
 
         // If in south, no AO yet
         if (_oe.isSouth()) {
-            addAttribute(TYPE, "gems");
-            buildGems();
+            addAttribute(TYPE, "nfiraos");
+            buildNfiraos();
         } else {
             addAttribute(TYPE, TccNames.GAOS);
             buildAltair();
@@ -68,17 +68,17 @@ public class AOConfig extends ParamSet {
         return true;
     }
 
-    private void buildGems() throws WdbaGlueException {
-        Gems gems = _oe.getGemsConfig();
-        if (gems == null) {
+    private void buildNfiraos() throws WdbaGlueException {
+        Nfiraos nfiraos = _oe.getNfiraosConfig();
+        if (nfiraos == null) {
             _setConfigName(TccNames.NO_AO);
             return;
         }
 
-        _setConfigName(TccNames.GEMS_GAOS);
-        putParameter(GEMS_GAOS_ADC,         gems.getAdc().sequenceValue());
-        putParameter(GEMS_GAOS_DICHROIC,    gems.getDichroicBeamsplitter().sequenceValue());
-        putParameter(GEMS_GAOS_ASTROMETRIC, gems.getAstrometricMode().sequenceValue());
+        _setConfigName(TccNames.NFIRAOS_GAOS);
+        putParameter(NFIRAOS_GAOS_ADC,         nfiraos.getAdc().sequenceValue());
+        putParameter(NFIRAOS_GAOS_DICHROIC,    nfiraos.getDichroicBeamsplitter().sequenceValue());
+        putParameter(NFIRAOS_GAOS_ASTROMETRIC, nfiraos.getAstrometricMode().sequenceValue());
     }
 
     private void buildAltair() throws WdbaGlueException {

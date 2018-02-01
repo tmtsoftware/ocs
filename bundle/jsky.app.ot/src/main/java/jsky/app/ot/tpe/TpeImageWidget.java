@@ -17,7 +17,7 @@ import edu.gemini.spModel.target.offset.OffsetPosBase;
 import edu.gemini.spModel.telescope.PosAngleConstraint;
 import edu.gemini.spModel.telescope.PosAngleConstraintAware;
 import edu.gemini.spModel.util.Angle;
-import jsky.app.ot.tpe.gems.GemsGuideStarSearchDialog;
+import jsky.app.ot.tpe.nfiraos.NfiraosGuideStarSearchDialog;
 import jsky.app.ot.util.OtColor;
 import jsky.app.ot.util.PolygonD;
 import jsky.util.gui.Resources;
@@ -81,8 +81,8 @@ public class TpeImageWidget extends CatalogImageDisplay implements MouseInputLis
     // Base pos not visible
     private boolean _baseOutOfView = false;
 
-    // Dialog for GeMS manual guide star selection
-    private GemsGuideStarSearchDialog _gemsGuideStarSearchDialog;
+    // Dialog for Nfiraos manual guide star selection
+    private NfiraosGuideStarSearchDialog _nfiraosGuideStarSearchDialog;
 
     // Action to use to show the guide star search window
     private final AbstractAction _manualGuideStarAction = new AbstractAction(
@@ -618,8 +618,8 @@ public class TpeImageWidget extends CatalogImageDisplay implements MouseInputLis
         if (_ctx.instrument().isDefined()) {
             // This is bad but it is the only way to link changes from the instrument
             // to the dialog box, talk about side-effects
-            if (_gemsGuideStarSearchDialog != null) {
-                _gemsGuideStarSearchDialog.updatedInstrument(ctx.instrument());
+            if (_nfiraosGuideStarSearchDialog != null) {
+                _nfiraosGuideStarSearchDialog.updatedInstrument(ctx.instrument());
             }
             _ctx.instrument().get().addPropertyChangeListener(this);
             setPosAngle(_ctx.instrument().get().getPosAngleDegrees());
@@ -1001,8 +1001,8 @@ public class TpeImageWidget extends CatalogImageDisplay implements MouseInputLis
 
     // manual guide star selection dialog
     public void manualGuideStarSearch() {
-        if (GuideStarSupport.hasGemsComponent(_ctx)) {
-            showGemsGuideStarSearchDialog();
+        if (GuideStarSupport.hasNfiraosComponent(_ctx)) {
+            showNfiraosGuideStarSearchDialog();
         } else {
             openCatalogNavigator();
         }
@@ -1012,15 +1012,15 @@ public class TpeImageWidget extends CatalogImageDisplay implements MouseInputLis
         QueryResultsFrame.instance().showOn(this, _ctx);
     }
 
-    private void showGemsGuideStarSearchDialog() {
-        if (_gemsGuideStarSearchDialog == null) {
-            _gemsGuideStarSearchDialog = new GemsGuideStarSearchDialog(this, scala.concurrent.ExecutionContext$.MODULE$.global());
+    private void showNfiraosGuideStarSearchDialog() {
+        if (_nfiraosGuideStarSearchDialog == null) {
+            _nfiraosGuideStarSearchDialog = new NfiraosGuideStarSearchDialog(this, scala.concurrent.ExecutionContext$.MODULE$.global());
         } else {
-            _gemsGuideStarSearchDialog.reset();
-            _gemsGuideStarSearchDialog.setVisible(true);
+            _nfiraosGuideStarSearchDialog.reset();
+            _nfiraosGuideStarSearchDialog.setVisible(true);
         }
         try {
-            _gemsGuideStarSearchDialog.query();
+            _nfiraosGuideStarSearchDialog.query();
         } catch (Exception e) {
             DialogUtil.error(e);
         }

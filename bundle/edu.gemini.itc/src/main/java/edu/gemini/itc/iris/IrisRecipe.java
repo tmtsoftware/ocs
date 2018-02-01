@@ -1,7 +1,7 @@
 package edu.gemini.itc.iris;
 
 import edu.gemini.itc.base.*;
-import edu.gemini.itc.gems.Gems;
+import edu.gemini.itc.nfiraos.Nfiraos;
 import edu.gemini.itc.operation.*;
 import edu.gemini.itc.shared.*;
 import scala.Some;
@@ -53,15 +53,15 @@ public final class IrisRecipe implements ImagingRecipe {
         final ImageQualityCalculatable IQcalc = ImageQualityCalculationFactory.getCalculationInstance(_sdParameters, _obsConditionParameters, _telescope, instrument);
         IQcalc.calculate();
 
-        // Gems specific section
-        final Gems gems = new Gems(instrument.getEffectiveWavelength(),
+        // Nfiraos specific section
+        final Nfiraos nfiraos = new Nfiraos(instrument.getEffectiveWavelength(),
                 IQcalc.getImageQuality(),
-                _irisParameters.gems().avgStrehl(),
-                _irisParameters.gems().strehlBand(),
+                _irisParameters.nfiraos().avgStrehl(),
+                _irisParameters.nfiraos().strehlBand(),
                 _obsConditionParameters.iq(),
                 _sdParameters);
 
-        final SEDFactory.SourceResult calcSource = SEDFactory.calculate(instrument, _sdParameters, _obsConditionParameters, _telescope, new Some<>(gems));
+        final SEDFactory.SourceResult calcSource = SEDFactory.calculate(instrument, _sdParameters, _obsConditionParameters, _telescope, new Some<>(nfiraos));
 
 
         // End of the Spectral energy distribution portion of the ITC.
@@ -81,12 +81,12 @@ public final class IrisRecipe implements ImagingRecipe {
         final double sky_integral = calcSource.sky.getIntegral();
         final double halo_integral = calcSource.halo.get().getIntegral();
 
-        // if gems is used we need to calculate both a core and halo
+        // if nfiraos is used we need to calculate both a core and halo
         // source_fraction
         // halo first
         final SourceFraction SFcalc;
         final SourceFraction SFcalcHalo;
-        final double im_qual = gems.getAOCorrectedFWHM();
+        final double im_qual = nfiraos.getAOCorrectedFWHM();
         if (_obsDetailParameters.isAutoAperture()) {
             SFcalcHalo  = SourceFractionFactory.calculate(_sdParameters.isUniform(), false, 1.18 * im_qual, instrument.getPixelSize(), IQcalc.getImageQuality());
             SFcalc      = SourceFractionFactory.calculate(_sdParameters.isUniform(), _obsDetailParameters.isAutoAperture(), 1.18 * im_qual, instrument.getPixelSize(), im_qual);
@@ -110,7 +110,7 @@ public final class IrisRecipe implements ImagingRecipe {
         IS2Ncalc.setSecondarySourceFraction(halo_source_fraction);
         IS2Ncalc.calculate();
 
-        return ImagingResult.apply(p, instrument, IQcalc, SFcalc, peak_pixel_count, IS2Ncalc, gems);
+        return ImagingResult.apply(p, instrument, IQcalc, SFcalc, peak_pixel_count, IS2Ncalc, nfiraos);
     }
 
 

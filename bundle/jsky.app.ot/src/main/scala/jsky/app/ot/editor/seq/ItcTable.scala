@@ -185,7 +185,7 @@ trait ItcTable extends Table with TableColumnsAdjuster {
       obsContext  <- ObsContext.create(observation).asScalaOpt
       agsStrategy <- AgsRegistrar.currentStrategy(obsContext)
 
-    // Except for Gems we have only one guider, so in order to decide the "type" (AOWFS, OIWFS, PWFS)
+    // Except for Nfiraos we have only one guider, so in order to decide the "type" (AOWFS, OIWFS, PWFS)
     // we take a shortcut here and just look at the first guider we get from the strategy.
     } yield agsStrategy.guideProbes.headOption
 

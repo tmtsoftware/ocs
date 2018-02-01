@@ -1,7 +1,7 @@
 package edu.gemini.itc.baseline
 
 import edu.gemini.itc.baseline.util._
-import edu.gemini.itc.shared.{IrisParameters, GemsParameters}
+import edu.gemini.itc.shared.{IrisParameters, NfiraosParameters}
 import edu.gemini.spModel.gemini.iris.Iris
 
 /**
@@ -15,7 +15,7 @@ object BaselineIris  {
     new IrisParameters(
       Iris.Filter.Z,
       Iris.ReadMode.BRIGHT,
-      Gems
+      Nfiraos
     )
   ))
 
@@ -23,10 +23,10 @@ object BaselineIris  {
     new IrisParameters(
       Iris.Filter.J,
       Iris.ReadMode.FAINT,
-      Gems
+      Nfiraos
     )
   ))
 
-  private lazy val Gems = new GemsParameters(0.3, "K")
+  private lazy val Nfiraos = new NfiraosParameters(0.3, "K")
 
 }

@@ -4,7 +4,7 @@ import edu.gemini.shared.util.immutable.*;
 import edu.gemini.spModel.gemini.altair.AltairAowfsGuider;
 import edu.gemini.spModel.gemini.altair.AltairParams;
 import edu.gemini.spModel.gemini.altair.InstAltair;
-import edu.gemini.spModel.gemini.gems.Canopus;
+import edu.gemini.spModel.gemini.nfiraos.Canopus;
 import edu.gemini.spModel.gemini.gmos.GmosOiwfsGuideProbe;
 import edu.gemini.spModel.gemini.iris.Iris;
 import edu.gemini.spModel.gemini.iris.IrisOdgw;
@@ -61,7 +61,7 @@ public final class GuideConfig extends ParamSet {
         return containsOneOf(ODGW_PROBES);
     }
 
-    private boolean containsGems() {
+    private boolean containsNfiraos() {
         return containsOneOf(CWFS_PROBES);
     }
 
@@ -83,11 +83,11 @@ public final class GuideConfig extends ParamSet {
         return TccNames.AO;
     }
 
-    private String _getGeMSGuideConfig() {
+    private String _getNfiraosGuideConfig() {
         if (containsOiwfs()) {
-            return contains(pwfs1) ? TccNames.GeMSP1OI : TccNames.GeMSOI;
+            return contains(pwfs1) ? TccNames.NfiraosP1OI : TccNames.NfiraosOI;
         }
-        return contains(pwfs1) ? TccNames.GeMSP1 : TccNames.GeMS;
+        return contains(pwfs1) ? TccNames.NfiraosP1 : TccNames.Nfiraos;
     }
 
     private String _getOIGuideConfig() {
@@ -127,8 +127,8 @@ public final class GuideConfig extends ParamSet {
             guideName = TccNames.AOP1;
         } else if (isAltairOi()) {
             guideName = TccNames.AOOI;
-        } else if (containsGems()) {
-            guideName = _getGeMSGuideConfig();
+        } else if (containsNfiraos()) {
+            guideName = _getNfiraosGuideConfig();
         } else if (containsOiwfs()) {
             guideName = _getOIGuideConfig();
         } else {
@@ -145,30 +145,30 @@ public final class GuideConfig extends ParamSet {
         final String guideWith = guideName();
         putParameter(TccNames.GUIDE_WITH, guideWith);
 
-        // Hack in special configuration for GeMS.  Ideally this would be
+        // Hack in special configuration for Nfiraos.  Ideally this would be
         // relegated to something in the _oe I suppose.  Some day all of this
         // TCC xml stuff should just go away and die.
-        createGemsConfig(guideWith).foreach(this::putParamSet);
+        createNfiraosConfig(guideWith).foreach(this::putParamSet);
 
         return true;
     }
 
-    private Option<ParamSet> createGemsConfig(String guideWith) throws WdbaGlueException {
+    private Option<ParamSet> createNfiraosConfig(String guideWith) throws WdbaGlueException {
         // Only relevant if using IRIS
         final SPInstObsComp inst = _oe.getInstrument();
         if (inst == null) return None.instance();
         if (!Iris.SP_TYPE.equals(inst.getType())) return None.instance();
 
-        // Only relevant if guiding with GeMS and IRIS
-        if (!guideWith.contains(TccNames.GeMS)) return None.instance();
+        // Only relevant if guiding with Nfiraos and IRIS
+        if (!guideWith.contains(TccNames.Nfiraos)) return None.instance();
         if (!containsIris()) return None.instance();
 
         final Iris.OdgwSize size = ((Iris) inst).getOdgwSize();
-        final ParamSet gems = new ParamSet(TccNames.GeMS);
+        final ParamSet nfiraos = new ParamSet(TccNames.Nfiraos);
         final ParamSet odgw = new ParamSet("odgw");
-        gems.putParamSet(odgw);
+        nfiraos.putParamSet(odgw);
         odgw.putParameter("size", size.displayValue());
-        return new Some<>(gems);
+        return new Some<>(nfiraos);
     }
 
 }
