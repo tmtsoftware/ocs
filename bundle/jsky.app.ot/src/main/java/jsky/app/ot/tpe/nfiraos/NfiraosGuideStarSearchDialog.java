@@ -132,7 +132,7 @@ public class NfiraosGuideStarSearchDialog extends JFrame {
 
     // Context dependent message (title)
     private final JLabel _actionLabel = new JLabel();
-    private final JLabel _manualSelectionLabel = new JLabel("<html><body><p style='font-style:italic'>To manually add a target to a manual guide group, select one of the +CWFS1/2/3 options in the Position Editor and then click on a guide star.</p></body></html>");
+    private final JLabel _manualSelectionLabel = new JLabel("<html><body><p style='font-style:italic'>To manually add a target to a manual guide group, select one of the +OIWFS1/2/3 options in the Position Editor and then click on a guide star.</p></body></html>");
 
     private final JComboBox<CatalogChoice> _catalogComboBox = new JComboBox<>(CatalogChoice.values());
     private final JComboBox<NirBandChoice> _nirBandComboBox = new JComboBox<>(NirBandChoice.values());

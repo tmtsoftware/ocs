@@ -346,7 +346,7 @@ public class TpePWFSFeature extends WFS_FeatureBase implements PropertyWatcher {
      * @param tx     translate resulting figure by this amount of pixels in X
      * @param ty     translate resulting figure by this amount of pixels in Y
      */
-    public void calcWfs(int wfs, double x, double y, double xc, double yc, double mm2Pix,
+    public void caloiwfs(int wfs, double x, double y, double xc, double yc, double mm2Pix,
                                double tx, double ty, final Point2D.Double nodChopOffset, final Double flipRA) {
         tx += nodChopOffset.x;
         ty += nodChopOffset.y;
@@ -657,11 +657,11 @@ public class TpePWFSFeature extends WFS_FeatureBase implements PropertyWatcher {
                 Angle.rotatePoint(pp, _posAngle);
                 bx = baseScreenPos.x - pp.x + pfXOffset;
                 by = baseScreenPos.y - pp.y + pfYOffset;
-                calcWfs(probeIndex, screenPos.x, screenPos.y, bx, by, mm2Pixels, pp.x - offsetX, pp.y - offsetY, _nodChopOffset, _flipRA);
+                caloiwfs(probeIndex, screenPos.x, screenPos.y, bx, by, mm2Pixels, pp.x - offsetX, pp.y - offsetY, _nodChopOffset, _flipRA);
             } else {
                 bx = basePosX + pfXOffset;
                 by = basePosY + pfYOffset;
-                calcWfs(probeIndex, screenPos.x, screenPos.y, bx, by, mm2Pixels, 0., 0., _nodChopOffset, _flipRA);
+                caloiwfs(probeIndex, screenPos.x, screenPos.y, bx, by, mm2Pixels, 0., 0., _nodChopOffset, _flipRA);
             }
         }
     }

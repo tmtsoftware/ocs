@@ -3,7 +3,7 @@ package edu.gemini.ags.nfiraos
 import edu.gemini.catalog.api._
 import edu.gemini.shared.util.immutable.{None => JNone}
 import edu.gemini.spModel.core._
-import edu.gemini.spModel.gemini.nfiraos.{Canopus, NfiraosInstrument}
+import edu.gemini.spModel.gemini.nfiraos.{Nfiraos, NfiraosInstrument}
 import edu.gemini.spModel.gemini.iris.{IrisOdgw, Iris}
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality
 import edu.gemini.spModel.nfiraos.{NfiraosGuideStarType, NfiraosTipTiltMode}
@@ -39,18 +39,18 @@ class NfiraosGuideSearchOptionsSpec extends Specification {
       criteria should be size 2
       criteria.head.key should beEqualTo(NfiraosCatalogSearchKey(NfiraosGuideStarType.tiptilt, IrisOdgw.Group.instance))
       criteria.head.criterion.magConstraint should beEqualTo(MagnitudeConstraints(SingleBand(MagnitudeBand.H), FaintnessConstraint(14.5), Some(SaturationConstraint(7.3))))
-      criteria(1).key should beEqualTo(NfiraosCatalogSearchKey(NfiraosGuideStarType.flexure, Canopus.Wfs.Group.instance))
+      criteria(1).key should beEqualTo(NfiraosCatalogSearchKey(NfiraosGuideStarType.flexure, NfiraosOiwfs.Wfs.Group.instance))
       criteria(1).criterion.magConstraint should beEqualTo(MagnitudeConstraints(RBandsList, FaintnessConstraint(16.8), Some(SaturationConstraint(9.3))))
     }
-    "provide search options for iris in canopus tip tilt mode" in {
+    "provide search options for iris in nfiraos tip tilt mode" in {
       val instrument = NfiraosInstrument.iris
-      val tipTiltMode = NfiraosTipTiltMode.canopus
+      val tipTiltMode = NfiraosTipTiltMode.nfiraos
 
       val options = new NfiraosGuideStarSearchOptions(instrument, tipTiltMode, posAngles)
       val criteria = options.searchCriteria(ctx, None).asScala
 
       criteria should be size 2
-      criteria.head.key should beEqualTo(NfiraosCatalogSearchKey(NfiraosGuideStarType.tiptilt, Canopus.Wfs.Group.instance))
+      criteria.head.key should beEqualTo(NfiraosCatalogSearchKey(NfiraosGuideStarType.tiptilt, NfiraosOiwfs.Wfs.Group.instance))
       criteria.head.criterion.magConstraint should beEqualTo(MagnitudeConstraints(RBandsList, FaintnessConstraint(16.8), Some(SaturationConstraint(9.3))))
       criteria(1).key should beEqualTo(NfiraosCatalogSearchKey(NfiraosGuideStarType.flexure, IrisOdgw.Group.instance))
       criteria(1).criterion.magConstraint should beEqualTo(MagnitudeConstraints(SingleBand(MagnitudeBand.H), FaintnessConstraint(17.0), Some(SaturationConstraint(8))))
@@ -64,13 +64,13 @@ class NfiraosGuideSearchOptionsSpec extends Specification {
       val criteria = options.searchCriteria(ctx, None).asScala
 
       criteria should be size 4
-      criteria.head.key should beEqualTo(NfiraosCatalogSearchKey(NfiraosGuideStarType.tiptilt, Canopus.Wfs.Group.instance))
+      criteria.head.key should beEqualTo(NfiraosCatalogSearchKey(NfiraosGuideStarType.tiptilt, NfiraosOiwfs.Wfs.Group.instance))
       criteria.head.criterion.magConstraint should beEqualTo(MagnitudeConstraints(RBandsList, FaintnessConstraint(16.8), Some(SaturationConstraint(9.3))))
       criteria(1).key should beEqualTo(NfiraosCatalogSearchKey(NfiraosGuideStarType.flexure, IrisOdgw.Group.instance))
       criteria(1).criterion.magConstraint should beEqualTo(MagnitudeConstraints(SingleBand(MagnitudeBand.H), FaintnessConstraint(17.0), Some(SaturationConstraint(8))))
       criteria(2).key should beEqualTo(NfiraosCatalogSearchKey(NfiraosGuideStarType.tiptilt, IrisOdgw.Group.instance))
       criteria(2).criterion.magConstraint should beEqualTo(MagnitudeConstraints(SingleBand(MagnitudeBand.H), FaintnessConstraint(14.5), Some(SaturationConstraint(7.3))))
-      criteria(3).key should beEqualTo(NfiraosCatalogSearchKey(NfiraosGuideStarType.flexure, Canopus.Wfs.Group.instance))
+      criteria(3).key should beEqualTo(NfiraosCatalogSearchKey(NfiraosGuideStarType.flexure, NfiraosOiwfs.Wfs.Group.instance))
       criteria(3).criterion.magConstraint should beEqualTo(MagnitudeConstraints(RBandsList, FaintnessConstraint(16.8), Some(SaturationConstraint(9.3))))
     }
   }

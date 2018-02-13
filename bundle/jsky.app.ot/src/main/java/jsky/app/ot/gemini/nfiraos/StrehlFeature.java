@@ -336,14 +336,14 @@ public class StrehlFeature extends TpeImageFeature implements PropertyWatcher, M
             }
         }
         if ("Flamingos2".equals(ctx.getInstrument().getNarrowType())) {
-            // OT-33: For Flamingos 2, Canopus always provides tip/tilt correction
+            // OT-33: For Flamingos 2, Nfiraos always provides tip/tilt correction
             guideProbeType = GuideProbe.Type.AOWFS;
         } else if (oiwfsCount > 1 && aowfsCount > 1) {
-            // OT-33: If there are multiple active stars for both Canopus and IRIS ODGW, we should
+            // OT-33: If there are multiple active stars for both Nfiraos and IRIS ODGW, we should
             // display an error message on the TPE when the Strehl option is selected.
             // We will be updating the model to store the tip/tilt vs. flexure designation somehow.
             // At that point, we'll just use that information instead of guessing which is which.
-            message = TpeMessage.warningMessage("Strehl: Error: Both ODGW and CWFS guide stars defined");
+            message = TpeMessage.warningMessage("Strehl: Error: Both ODGW and OIWFS guide stars defined");
             targetListError = true;
             return new ArrayList<>();
         } else if (oiwfsCount > 1) {
@@ -380,7 +380,7 @@ public class StrehlFeature extends TpeImageFeature implements PropertyWatcher, M
     }
 
 
-    // OT-33: If the asterism is a Canopus asterism, use R. If an ODGW asterism,
+    // OT-33: If the asterism is a Nfiraos asterism, use R. If an ODGW asterism,
     // see OT-22 for a mapping of IRIS filters to J, H, and K.
     // If iterating over filters, I think we can assume the filter in
     // the static component as a first pass at least.

@@ -6,8 +6,8 @@ import edu.gemini.spModel.ext.ObservationNode;
 import edu.gemini.spModel.ext.TargetNode;
 import edu.gemini.spModel.gemini.altair.AltairAowfsGuider;
 import edu.gemini.spModel.gemini.altair.InstAltair;
-import edu.gemini.spModel.gemini.nfiraos.Canopus;
 import edu.gemini.spModel.gemini.nfiraos.Nfiraos;
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs;
 import edu.gemini.spModel.gemini.gmos.GmosOiwfsGuideProbe;
 import edu.gemini.spModel.gemini.gmos.InstGmosSouth;
 import edu.gemini.spModel.gemini.iris.Iris;
@@ -242,11 +242,11 @@ public final class TargetGroupTest extends TestBase {
     }
 
     @Test public void testNfiraosMapping() throws Exception {
-        // Create a target environment that uses Nfiraos canopus wfs.
-        final SPTarget cwfsTarget = new SPTarget(); cwfsTarget.setName("");
+        // Create a target environment that uses Nfiraos nfiraos wfs.
+        final SPTarget oiwfsTarget = new SPTarget(); oiwfsTarget.setName("");
 
-        final ImList<SPTarget> targetList = ImCollections.singletonList(cwfsTarget);
-        final GuideProbeTargets gt = GuideProbeTargets.create(Canopus.Wfs.cwfs1, targetList);
+        final ImList<SPTarget> targetList = ImCollections.singletonList(oiwfsTarget);
+        final GuideProbeTargets gt = GuideProbeTargets.create(NfiraosOiwfs.Wfs.oiwfs1, targetList);
 
         final TargetEnvironment env = TargetEnvironment.create(base).putPrimaryGuideProbeTargets(gt);
 
@@ -255,10 +255,10 @@ public final class TargetGroupTest extends TestBase {
         final ISPObsComponent nfiraosComp = odb.getFactory().createObsComponent(prog, Nfiraos.SP_TYPE, null);
         obs.addObsComponent(nfiraosComp);
 
-        // Now do the test.  The CWFS? keys do not get mapped.  They
-        // are CWFS1, CWFS2, etc.
-        // So the target name then defaults to "CWFS1 (1)"
-        nameMap.putTargetName(cwfsTarget, "CWFS1 (1)");
+        // Now do the test.  The OIWFS? keys do not get mapped.  They
+        // are OIWFS1, OIWFS2, etc.
+        // So the target name then defaults to "OIWFS1 (1)"
+        nameMap.putTargetName(oiwfsTarget, "OIWFS1 (1)");
         testTargetEnvironment(env);
     }
 

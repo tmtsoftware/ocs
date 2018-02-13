@@ -5,7 +5,7 @@ import java.util.logging.Logger
 import edu.gemini.ags.nfiraos.mascot.{MascotCat, MascotProgress, Strehl}
 import edu.gemini.catalog.api.MagnitudeConstraints
 import edu.gemini.spModel.core._
-import edu.gemini.spModel.gemini.nfiraos.Canopus
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs
 import edu.gemini.spModel.gemini.iris.{Iris, IrisOdgw}
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality
 import edu.gemini.spModel.guide.{GuideProbe, GuideStarValidation, ValidatableGuideProbe}
@@ -113,8 +113,8 @@ object NfiraosResultsAnalyzer {
             val band = bandpass(tiptiltGroup, obsContext.getInstrument)
             val factor = strehlFactor(obsContext.some)
 
-            // tiptiltTargetsList should only contain Canopus WFS stars, so asterisms should only consist of these.
-            // Thus shouldContinue will only be called for Canopus WFS stars.
+            // tiptiltTargetsList should only contain Nfiraos WFS stars, so asterisms should only consist of these.
+            // Thus shouldContinue will only be called for Nfiraos WFS stars.
             val asterisms = MascotCat.findBestAsterismInTargetsList(tiptiltTargetsList, base.ra.toAngle.toDegrees, base.dec.toDegrees, band, factor, shouldContinue)
             val analyzedStars = asterisms.strehlList.map(analyzeAtAngles(obsContext, posAngles, _, flexureTargetsList, flexureGroup, tiptiltGroup))
             stars ::: analyzedStars.flatten
@@ -158,8 +158,8 @@ object NfiraosResultsAnalyzer {
       val flexureList = filter(obsContext, flexureSkyObjectList, flexureGroup, posAngle)
       val flexureStars = sortTargetsByBrightness(flexureList)
 
-      val guideStars = if ("CWFS" == tiptiltGroup.getKey) {
-        // try different order of cwfs1 and cwfs2
+      val guideStars = if ("OIWFS" == tiptiltGroup.getKey) {
+        // try different order of oiwfs1 and oiwfs2
         NfiraosResultsAnalyzer.instance.analyzeStrehl(obsContext, strehl, posAngle, tiptiltGroup, flexureGroup, flexureStars, reverseOrder = true) ::: NfiraosResultsAnalyzer.instance.analyzeStrehl(obsContext, strehl, posAngle, tiptiltGroup, flexureGroup, flexureStars, reverseOrder = false)
       } else {
         NfiraosResultsAnalyzer.instance.analyzeStrehl(obsContext, strehl, posAngle, tiptiltGroup, flexureGroup, flexureStars, reverseOrder = true)
@@ -173,10 +173,10 @@ object NfiraosResultsAnalyzer {
   // angle or if no flexure star can be found, an empty list is returned.
   //
   // If reverseOrder is true, reverse the order in which guide probes are tried (to make sure to get all
-  // combinations of cwfs1 and cwfs2, since cwfs3 is otherwise fixed)
+  // combinations of oiwfs1 and oiwfs2, since oiwfs3 is otherwise fixed)
   private def analyzeStrehl(obsContext: ObsContext, strehl: Strehl, posAngle: Angle, tiptiltGroup: NfiraosGuideProbeGroup, flexureGroup: NfiraosGuideProbeGroup, flexureStars: List[SiderealTarget], reverseOrder: Boolean): List[NfiraosGuideStars] = {
     val tiptiltTargetList = targetListFromStrehl(strehl)
-    // XXX The TPE assumes canopus tiptilt if there are only 2 stars (one of each ODGW and CWFS),
+    // XXX The TPE assumes nfiraos tiptilt if there are only 2 stars (one of each ODGW and OIWFS),
     // So don't add any items to the list that have only 2 stars and IRIS as tiptilt.
     (tiptiltGroup, tiptiltTargetList) match {
       case (IrisOdgw.Group.instance, _ :: Nil)                                                  =>
@@ -196,7 +196,7 @@ object NfiraosResultsAnalyzer {
   // Returns a list of GuideProbeTargets for the given tiptilt targets and flexure star.
   //
   // If reverseOrder is true, reverse the order in which guide probes are tried (to make sure to get all
-  // combinations of cwfs1 and cwfs2, since cwfs3 is otherwise fixed)
+  // combinations of oiwfs1 and oiwfs2, since oiwfs3 is otherwise fixed)
   private def assignGuideProbeTargets(obsContext: ObsContext, posAngle: Angle, tiptiltGroup: NfiraosGuideProbeGroup, tiptiltTargetList: List[SiderealTarget], flexureGroup: NfiraosGuideProbeGroup, flexureStars: List[SiderealTarget], reverseOrder: Boolean): List[GuideProbeTargets] = {
     // assign guide probes for tiptilt asterism
     def addTipTiltGuideProbeTargets(targets: List[SiderealTarget], result: List[GuideProbeTargets], obsContext: ObsContext):(ObsContext, List[GuideProbeTargets]) = targets match {
@@ -215,7 +215,7 @@ object NfiraosResultsAnalyzer {
     // addTipTiltGuideProbeTargets(tiptiltTargetList, Nil, obsContext)._2
     //
     // Remove everything below replacing it with the above line.  Get rid of
-    // "tiptiltGroup" since it is always CanopusWfs.group.instance.  Git rid
+    // "tiptiltGroup" since it is always IrisOiwfsWfs.group.instance.  Git rid
     // of flexureGroup, flexureStars  Propagate changes ...
     val tipTiltGuideProbeTargets = addTipTiltGuideProbeTargets(tiptiltTargetList, Nil, obsContext)
 
@@ -239,14 +239,14 @@ object NfiraosResultsAnalyzer {
   // Returns the GuideProbeTargets object for the given tiptilt target.
   //
   // If reverseOrder is true, reverse the order in which guide probes are tried (to make sure to get all
-  // combinations of cwfs1 and cwfs2, since cwfs3 is otherwise fixed)
+  // combinations of oiwfs1 and oiwfs2, since oiwfs3 is otherwise fixed)
   private def assignGuideProbeTarget(obsContext: ObsContext, posAngle: Angle, group: NfiraosGuideProbeGroup, target: SiderealTarget, tiptiltGroup: NfiraosGuideProbeGroup, otherTargets: List[GuideProbeTargets], tiptiltTargetList: List[SiderealTarget], reverseOrder: Boolean): Option[GuideProbeTargets] = {
-    // First try to assign cwfs3 to the brightest star, if applicable (assignCwfs3ToBrightest arg = true)
-    val probe = guideProbe(obsContext, target, group, posAngle, tiptiltGroup, otherTargets, tiptiltTargetList, assignCwfs3ToBrightest = true, reverseOrder = reverseOrder)
+    // First try to assign oiwfs3 to the brightest star, if applicable (assignOiwfs3ToBrightest arg = true)
+    val probe = guideProbe(obsContext, target, group, posAngle, tiptiltGroup, otherTargets, tiptiltTargetList, assignOiwfs3ToBrightest = true, reverseOrder = reverseOrder)
     val gp = probe match {
-      case None if "CWFS" == tiptiltGroup.getKey =>
-        // if that didn't work, try to assign cwfs3 to the second brightest star (assignCwfs3ToBrightest arg = false)
-        guideProbe(obsContext, target, group, posAngle, tiptiltGroup, otherTargets, tiptiltTargetList, assignCwfs3ToBrightest = false, reverseOrder = reverseOrder)
+      case None if "OIWFS" == tiptiltGroup.getKey =>
+        // if that didn't work, try to assign oiwfs3 to the second brightest star (assignOiwfs3ToBrightest arg = false)
+        guideProbe(obsContext, target, group, posAngle, tiptiltGroup, otherTargets, tiptiltTargetList, assignOiwfs3ToBrightest = false, reverseOrder = reverseOrder)
       case                                     _ =>
         probe
     }
@@ -277,11 +277,11 @@ object NfiraosResultsAnalyzer {
   // Returns the first valid guide probe for the given target in the given guide probe group at the given
   // position angle. Note that if tiptiltGroup != group, we're looking for a flexure star, otherwise a
   // tiptilt star.
-  // If assignCwfs3ToBrightest is true, the brightest star (in tiptiltTargetList) is assigned to cwfs3,
+  // If assignOiwfs3ToBrightest is true, the brightest star (in tiptiltTargetList) is assigned to oiwfs3,
   // otherwise the second brightest (OT-27).
   // If reverseOrder is true, reverse the order in which guide probes are tried (to make sure to get all
-  // combinations of cwfs1 and cwfs2, since cwfs3 is otherwise fixed)
-  private def guideProbe(obsContext: ObsContext, target: SiderealTarget, group: NfiraosGuideProbeGroup, posAngle: Angle, tiptiltGroup: NfiraosGuideProbeGroup, otherTargets: List[GuideProbeTargets], tiptiltTargetList: List[SiderealTarget], assignCwfs3ToBrightest: Boolean, reverseOrder: Boolean): Option[ValidatableGuideProbe] = {
+  // combinations of oiwfs1 and oiwfs2, since oiwfs3 is otherwise fixed)
+  private def guideProbe(obsContext: ObsContext, target: SiderealTarget, group: NfiraosGuideProbeGroup, posAngle: Angle, tiptiltGroup: NfiraosGuideProbeGroup, otherTargets: List[GuideProbeTargets], tiptiltTargetList: List[SiderealTarget], assignOiwfs3ToBrightest: Boolean, reverseOrder: Boolean): Option[ValidatableGuideProbe] = {
     val ctx = obsContext.withPositionAngle(posAngle)
     val isFlexure = tiptiltGroup != group
     val isTiptilt = !isFlexure
@@ -289,8 +289,8 @@ object NfiraosResultsAnalyzer {
     def isValidGuideProbe(guideProbe: GuideProbe):Boolean = {
       val valid = validate(ctx, target, guideProbe)
       val otherTargetsValid = checkOtherTargets(guideProbe, otherTargets)
-      if (valid && otherTargetsValid && isTiptilt && "CWFS" == tiptiltGroup.getKey) {
-        checkCwfs3Rule(guideProbe, target, tiptiltTargetList, assignCwfs3ToBrightest)
+      if (valid && otherTargetsValid && isTiptilt && "OIWFS" == tiptiltGroup.getKey) {
+        checkOiwfs3Rule(guideProbe, target, tiptiltTargetList, assignOiwfs3ToBrightest)
       } else if (valid && isTiptilt) {
         otherTargetsValid
       } else {
@@ -299,9 +299,9 @@ object NfiraosResultsAnalyzer {
     }
 
     // Special case:
-    // If the tip tilt asterism is assigned to the IRIS ODGW group, then the flexure star must be assigned to CWFS3.
-    if (isFlexure && ("ODGW" == tiptiltGroup.getKey) && Canopus.Wfs.cwfs3.validate(toSPTarget(target), ctx) == GuideStarValidation.VALID) {
-      Canopus.Wfs.cwfs3.some
+    // If the tip tilt asterism is assigned to the IRIS ODGW group, then the flexure star must be assigned to OIWFS3.
+    if (isFlexure && ("ODGW" == tiptiltGroup.getKey) && NfiraosOiwfs.Wfs.oiwfs3.validate(toSPTarget(target), ctx) == GuideStarValidation.VALID) {
+      NfiraosOiwfs.Wfs.oiwfs3.some
     } else {
       val members = if (reverseOrder) group.getMembers.asScala.toList.reverse else group.getMembers.asScala.toList
       members.find(isValidGuideProbe)
@@ -311,35 +311,35 @@ object NfiraosResultsAnalyzer {
   // Returns true if the given target is valid for the given guide probe
   private def validate(ctx: ObsContext, target: SiderealTarget, guideProbe: GuideProbe): Boolean =
     guideProbe match {
-      case wfs: Canopus.Wfs          =>
-        // Additional check for mag range (for cwfs1 and cwfs2, since different than cwfs3 and group range)
-        val canopusWfsCalculator = NfiraosMagnitudeTable.CanopusWfsMagnitudeLimitsCalculator
-        wfs.validate(toSPTarget(target), ctx) == GuideStarValidation.VALID && containsMagnitudeInLimits(target, canopusWfsCalculator.getNominalMagnitudeConstraints(wfs))
+      case wfs: NfiraosOiwfs.Wfs          =>
+        // Additional check for mag range (for oiwfs1 and oiwfs2, since different than oiwfs3 and group range)
+        val irisOiwfsWfsCalculator = NfiraosMagnitudeTable.IrisOiwfsWfsMagnitudeLimitsCalculator
+        wfs.validate(toSPTarget(target), ctx) == GuideStarValidation.VALID && containsMagnitudeInLimits(target, irisOiwfsWfsCalculator.getNominalMagnitudeConstraints(wfs))
       case vp: ValidatableGuideProbe =>
         vp.validate(toSPTarget(target), ctx) == GuideStarValidation.VALID
       case _                         =>
         true
     }
 
-  // Returns true if the given cwfs guide probe can be assigned to the given target according to the rules in OT-27.
-  // If assignCwfs3ToBrightest is true, the brightest star in the asterism (in tiptiltTargetList) is assigned to cwfs3,
+  // Returns true if the given oiwfs guide probe can be assigned to the given target according to the rules in OT-27.
+  // If assignOiwfs3ToBrightest is true, the brightest star in the asterism (in tiptiltTargetList) is assigned to oiwfs3,
   // otherwise the second brightest (OT-27).
-  private def checkCwfs3Rule(guideProbe: GuideProbe, target: SiderealTarget, tiptiltTargetList: List[SiderealTarget], assignCwfs3ToBrightest: Boolean): Boolean = {
-    val isCwfs3 = guideProbe == Canopus.Wfs.cwfs3
+  private def checkOiwfs3Rule(guideProbe: GuideProbe, target: SiderealTarget, tiptiltTargetList: List[SiderealTarget], assignOiwfs3ToBrightest: Boolean): Boolean = {
+    val isOiwfs3 = guideProbe == NfiraosOiwfs.Wfs.oiwfs3
     // sort, put brightest stars first
     val targets = sortTargetsByBrightness(tiptiltTargetList)
     targets match {
       case Nil                                                                      =>
-        isCwfs3 // no asterism
+        isOiwfs3 // no asterism
       case _ :: Nil                                                                 =>
-        isCwfs3 // single star asterism must be cwfs3
-      case brightest :: secondBrightest :: _ if isCwfs3 && assignCwfs3ToBrightest   =>
+        isOiwfs3 // single star asterism must be oiwfs3
+      case brightest :: secondBrightest :: _ if isOiwfs3 && assignOiwfs3ToBrightest   =>
         brightest == target
-      case brightest :: secondBrightest :: _ if isCwfs3 && !assignCwfs3ToBrightest  =>
+      case brightest :: secondBrightest :: _ if isOiwfs3 && !assignOiwfs3ToBrightest  =>
         secondBrightest == target
-      case brightest :: secondBrightest :: _ if !isCwfs3 && assignCwfs3ToBrightest  =>
+      case brightest :: secondBrightest :: _ if !isOiwfs3 && assignOiwfs3ToBrightest  =>
         brightest != target
-      case brightest :: secondBrightest :: _ if !isCwfs3 && !assignCwfs3ToBrightest =>
+      case brightest :: secondBrightest :: _ if !isOiwfs3 && !assignOiwfs3ToBrightest =>
         secondBrightest != target
     }
   }
@@ -349,7 +349,7 @@ object NfiraosResultsAnalyzer {
   // From OT-27: Only one star per IRIS ODGW is allowed -- for example, if an asterism is formed
   // of two guide stars destined for ODGW2, then it cannot be used.
   //
-  // Also for Canopus: only assign one star per cwfs
+  // Also for Nfiraos: only assign one star per oiwfs
   private def checkOtherTargets(guideProbe: GuideProbe, otherTargets: List[GuideProbeTargets]): Boolean =
     !otherTargets.exists(_.getGuider == guideProbe)
 
@@ -357,7 +357,7 @@ object NfiraosResultsAnalyzer {
   private def targetListFromStrehl(strehl: Strehl): List[SiderealTarget] =
     sortTargetsByBrightness(strehl.stars.map(_.target))
 
-  // OT-33: If the asterism is a Canopus asterism, use R. If an ODGW asterism,
+  // OT-33: If the asterism is a Nfiraos asterism, use R. If an ODGW asterism,
   // see OT-22 for a mapping of IRIS filters to J, H, and K.
   // If iterating over filters, I think we can assume the filter in
   // the static component as a first pass at least.

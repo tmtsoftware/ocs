@@ -32,7 +32,7 @@ public enum NfiraosInstrument {
         }
 
         public List<NfiraosTipTiltMode> getTipTiltOptions() {
-            return Arrays.asList(NfiraosTipTiltMode.canopus, NfiraosTipTiltMode.instrument, NfiraosTipTiltMode.both);
+            return Arrays.asList(NfiraosTipTiltMode.nfiraos, NfiraosTipTiltMode.instrument, NfiraosTipTiltMode.both);
         }
     },
 
@@ -46,7 +46,7 @@ public enum NfiraosInstrument {
         }
 
         public List<NfiraosTipTiltMode> getTipTiltOptions() {
-            return Arrays.asList(NfiraosTipTiltMode.canopus);
+            return Arrays.asList(NfiraosTipTiltMode.nfiraos);
         }
     };
 

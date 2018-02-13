@@ -3,7 +3,7 @@ package edu.gemini.wdba.tcc;
 import edu.gemini.shared.util.immutable.*;
 import edu.gemini.spModel.ext.ObservationNode;
 import edu.gemini.spModel.ext.TargetNode;
-import edu.gemini.spModel.gemini.nfiraos.Canopus;
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs;
 import edu.gemini.spModel.gemini.iris.Iris;
 import edu.gemini.spModel.gemini.iris.IrisOdgw;
 import edu.gemini.spModel.guide.GuideProbe;
@@ -107,18 +107,18 @@ public final class IrisSupportTest extends InstrumentSupportTestBase<Iris> {
     }
 
     @Test public void testDefaultGuideConfig() throws Exception {
-        setTargetEnv(Canopus.Wfs.cwfs1, IrisOdgw.odgw1);
+        setTargetEnv(NfiraosOiwfs.Wfs.oiwfs1, IrisOdgw.odgw1);
         verify(Iris.OdgwSize.DEFAULT);
     }
 
     @Test public void testExplicitGuideConfig() throws Exception {
-        setTargetEnv(Canopus.Wfs.cwfs1, IrisOdgw.odgw1);
+        setTargetEnv(NfiraosOiwfs.Wfs.oiwfs1, IrisOdgw.odgw1);
         setOdgw(Iris.OdgwSize.SIZE_8);
         verify(Iris.OdgwSize.SIZE_8);
     }
 
     @Test public void testNoIris() throws Exception {
-        setTargetEnv(Canopus.Wfs.cwfs1);
+        setTargetEnv(NfiraosOiwfs.Wfs.oiwfs1);
         final Option<Iris.OdgwSize> none = None.instance();
         verify(none);
     }

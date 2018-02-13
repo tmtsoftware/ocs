@@ -3,7 +3,7 @@ package jsky.app.ot.gemini.nfiraos;
 import edu.gemini.shared.util.immutable.Option;
 import edu.gemini.shared.util.immutable.Some;
 import edu.gemini.shared.util.immutable.None;
-import edu.gemini.spModel.gemini.nfiraos.Canopus;
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs;
 import edu.gemini.spModel.guide.GuideProbe;
 import edu.gemini.spModel.obs.context.ObsContext;
 import edu.gemini.spModel.obscomp.SPInstObsComp;
@@ -30,9 +30,9 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Draws the Canopus AO field of view and probe ranges.
+ * Draws the Nfiraos AO field of view and probe ranges.
  */
-public final class CanopusFeature extends TpeImageFeature implements PropertyWatcher, TpeModeSensitive, TpeDragSensitive {
+public final class NfiraosFeature extends TpeImageFeature implements PropertyWatcher, TpeModeSensitive, TpeDragSensitive {
 
     private AffineTransform trans;
     private boolean isEmpty;
@@ -45,7 +45,7 @@ public final class CanopusFeature extends TpeImageFeature implements PropertyWat
     private static final Composite BLOCKED = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5F);
 
     // Property used to control drawing of the probe ranges.
-    private static final BasicPropertyList props = new BasicPropertyList(CanopusFeature.class.getName());
+    private static final BasicPropertyList props = new BasicPropertyList(NfiraosFeature.class.getName());
     private static final String PROP_SHOW_RANGES = "Show Probe Ranges";
     static {
         props.registerBooleanProperty(PROP_SHOW_RANGES, true);
@@ -72,8 +72,8 @@ public final class CanopusFeature extends TpeImageFeature implements PropertyWat
     /**
      * Construct the feature with its name and description.
      */
-    public CanopusFeature() {
-        super("Canopus", "Show the field of view of the Canopus WFS probes.");
+    public NfiraosFeature() {
+        super("Nfiraos", "Show the field of view of the Nfiraos WFS probes.");
     }
 
     /**
@@ -242,7 +242,7 @@ public final class CanopusFeature extends TpeImageFeature implements PropertyWat
         ObsContext ctx = ctxOpt.getValue();
 
         // Draw the AO window itself.  A circle.
-        Area a = Canopus.Wfs.cwfs3.probeRange(ctx);
+        Area a = NfiraosOiwfs.Wfs.oiwfs3.probeRange(ctx);
         isEmpty = a.isEmpty();
         if (isEmpty) return;
 
@@ -252,8 +252,8 @@ public final class CanopusFeature extends TpeImageFeature implements PropertyWat
 
         // Draw the probe 1 and probe 2 ranges.
         if (getDrawProbeRanges()) {
-            Area a1 = new Area(flipArea(Canopus.Wfs.cwfs1.probeRange(ctx))).createTransformedArea(trans);
-            Area a2 = new Area(flipArea(Canopus.Wfs.cwfs2.probeRange(ctx))).createTransformedArea(trans);
+            Area a1 = new Area(flipArea(NfiraosOiwfs.Wfs.oiwfs1.probeRange(ctx))).createTransformedArea(trans);
+            Area a2 = new Area(flipArea(NfiraosOiwfs.Wfs.oiwfs2.probeRange(ctx))).createTransformedArea(trans);
             g2d.setColor(OtColor.makeTransparent(AO_FOV_COLOR, 0.3));
 
             if (rangeMode.show1()) g2d.draw(a1);
@@ -271,16 +271,16 @@ public final class CanopusFeature extends TpeImageFeature implements PropertyWat
             g2d.setPaint(p);
         }
 
-        drawProbeArm(g2d, ctx, Canopus.Wfs.cwfs1);
-        drawProbeArm(g2d, ctx, Canopus.Wfs.cwfs2);
-        // cwfs3 probe arm is not displayed
-//        drawProbeArm(g2d, tii, ctx, Canopus.Wfs.cwfs3);
+        drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs1);
+        drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs2);
+        // oiwfs3 probe arm is not displayed
+//        drawProbeArm(g2d, tii, ctx, NfiraosOiwfs.Wfs.oiwfs3);
 
         g2d.setColor(c);
     }
 
     // draw the probe arm for the given wfs
-    private void drawProbeArm(Graphics2D g2d, ObsContext ctx, Canopus.Wfs wfs) {
+    private void drawProbeArm(Graphics2D g2d, ObsContext ctx, NfiraosOiwfs.Wfs wfs) {
         wfs.probeArm(ctx, true).foreach(a -> {
             if (a != null) {
                 Shape s = trans.createTransformedShape(flipArea(a));
@@ -318,9 +318,9 @@ public final class CanopusFeature extends TpeImageFeature implements PropertyWat
 
         TpeGuidePosCreatableItem item = (TpeGuidePosCreatableItem) value;
         GuideProbe guider = item.getGuideProbe();
-        if (guider == Canopus.Wfs.cwfs1) {
+        if (guider == NfiraosOiwfs.Wfs.oiwfs1) {
             setRangeDisplayMode(RangeDisplayMode.probe1);
-        } else if (guider == Canopus.Wfs.cwfs2) {
+        } else if (guider == NfiraosOiwfs.Wfs.oiwfs2) {
             setRangeDisplayMode(RangeDisplayMode.probe2);
         } else {
             setRangeDisplayMode(RangeDisplayMode.both);
@@ -342,9 +342,9 @@ public final class CanopusFeature extends TpeImageFeature implements PropertyWat
             return;
         }
 
-        if (containsTarget(env, Canopus.Wfs.cwfs1, target)) {
+        if (containsTarget(env, NfiraosOiwfs.Wfs.oiwfs1, target)) {
             setRangeDisplayMode(RangeDisplayMode.probe1);
-        } else if (containsTarget(env, Canopus.Wfs.cwfs2, target)) {
+        } else if (containsTarget(env, NfiraosOiwfs.Wfs.oiwfs2, target)) {
             setRangeDisplayMode(RangeDisplayMode.probe2);
         } else {
             setRangeDisplayMode(RangeDisplayMode.both);
@@ -384,12 +384,12 @@ public final class CanopusFeature extends TpeImageFeature implements PropertyWat
     public Option<Component> getKey() {
         JPanel pan = new JPanel(new GridBagLayout());
 
-        pan.add(new JLabel("CWFS1", new ProbeRangeIcon(Orientation.horizontal), JLabel.LEFT) {{ setForeground(Color.black); }},
+        pan.add(new JLabel("OIWFS1", new ProbeRangeIcon(Orientation.horizontal), JLabel.LEFT) {{ setForeground(Color.black); }},
                 new GridBagConstraints() {{
                     gridx=0; gridy=0; anchor=WEST; fill=HORIZONTAL;
                 }}
         );
-        pan.add(new JLabel("CWFS2", new ProbeRangeIcon(Orientation.vertical), JLabel.LEFT) {{ setForeground(Color.black); }},
+        pan.add(new JLabel("OIWFS2", new ProbeRangeIcon(Orientation.vertical), JLabel.LEFT) {{ setForeground(Color.black); }},
                 new GridBagConstraints() {{
                     gridx=1; gridy=0; anchor=WEST; fill=HORIZONTAL;
                 }}
@@ -408,7 +408,7 @@ public final class CanopusFeature extends TpeImageFeature implements PropertyWat
     }
 
     private static final TpeMessage WARNING = TpeMessage.warningMessage(
-            "No valid region for CWFS stars.  Check offset positions.");
+            "No valid region for OIWFS stars.  Check offset positions.");
 
     public Option<Collection<TpeMessage>> getMessages() {
         if (!isEmpty) return None.instance();

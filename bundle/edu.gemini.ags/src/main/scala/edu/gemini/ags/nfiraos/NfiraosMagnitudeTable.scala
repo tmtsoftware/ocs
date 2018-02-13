@@ -4,7 +4,7 @@ import edu.gemini.ags.api.AgsMagnitude.{MagnitudeCalc, MagnitudeTable}
 import edu.gemini.pot.ModelConverters._
 import edu.gemini.catalog.api._
 import edu.gemini.spModel.core._
-import edu.gemini.spModel.gemini.nfiraos.{Canopus, NfiraosInstrument}
+import edu.gemini.spModel.gemini.nfiraos.{NfiraosOiwfs, NfiraosInstrument}
 import edu.gemini.spModel.gemini.iris.{Iris, IrisOdgw}
 import edu.gemini.spModel.guide.{GuideProbe, GuideSpeed}
 import edu.gemini.spModel.obs.context.ObsContext
@@ -37,8 +37,8 @@ object NfiraosMagnitudeTable extends MagnitudeTable {
         case (Site.GS, odgw: IrisOdgw)  =>
           Some(IrisOdgwMagnitudeLimitsCalculator.nfiraosMagnitudeConstraint(NfiraosGuideStarType.flexure, MagnitudeBand.H.some))
 
-        case (Site.GS, can: Canopus.Wfs) =>
-          Some(CanopusWfsMagnitudeLimitsCalculator.nfiraosMagnitudeConstraint(NfiraosGuideStarType.tiptilt, MagnitudeBand.R.some))
+        case (Site.GS, can: NfiraosOiwfs.Wfs) =>
+          Some(IrisOiwfsWfsMagnitudeLimitsCalculator.nfiraosMagnitudeConstraint(NfiraosGuideStarType.tiptilt, MagnitudeBand.R.some))
 
         case _                           =>
           None
@@ -48,7 +48,7 @@ object NfiraosMagnitudeTable extends MagnitudeTable {
   }
 
   /**
-   * IRIS, Canopus, and F2 require special handling for magnitude limits for Nfiraos.
+   * IRIS, Nfiraos, and F2 require special handling for magnitude limits for Nfiraos.
    */
   trait LimitsCalculator {
     def nfiraosMagnitudeConstraint(starType: NfiraosGuideStarType, nirBand: Option[MagnitudeBand]): MagnitudeConstraints
@@ -94,18 +94,18 @@ object NfiraosMagnitudeTable extends MagnitudeTable {
   }
 
   /**
-   * Since Canopus is not explicitly listed in NfiraosInstrument, it must be visible outside of the table in order to
+   * Since Nfiraos is not explicitly listed in NfiraosInstrument, it must be visible outside of the table in order to
    * be used directly by Mascot, since it cannot be looked up through the NfiraosInstrumentToMagnitudeLimitsCalculator map.
    */
-  trait CanopusWfsCalculator extends LimitsCalculator {
-    def getNominalMagnitudeConstraints(cwfs: Canopus.Wfs): MagnitudeConstraints
+  trait IrisOiwfsWfsCalculator extends LimitsCalculator {
+    def getNominalMagnitudeConstraints(oiwfs: NfiraosOiwfs.Wfs): MagnitudeConstraints
   }
 
-  lazy val CanopusWfsMagnitudeLimitsCalculator = new CanopusWfsCalculator {
+  lazy val IrisOiwfsWfsMagnitudeLimitsCalculator = new IrisOiwfsWfsCalculator {
     override def nfiraosMagnitudeConstraint(starType: NfiraosGuideStarType, nirBand: Option[MagnitudeBand]) =
       magLimits(RBandsList, 16.3, 8.8)
 
-    override def getNominalMagnitudeConstraints(cwfs: Canopus.Wfs): MagnitudeConstraints =
+    override def getNominalMagnitudeConstraints(oiwfs: NfiraosOiwfs.Wfs): MagnitudeConstraints =
       magLimits(RBandsList, 16.3, 8.8)
   }
 

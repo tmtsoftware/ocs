@@ -4,7 +4,7 @@ import edu.gemini.shared.util.immutable.*;
 import edu.gemini.spModel.gemini.altair.AltairAowfsGuider;
 import edu.gemini.spModel.gemini.altair.AltairParams;
 import edu.gemini.spModel.gemini.altair.InstAltair;
-import edu.gemini.spModel.gemini.nfiraos.Canopus;
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs;
 import edu.gemini.spModel.gemini.gmos.GmosOiwfsGuideProbe;
 import edu.gemini.spModel.gemini.iris.Iris;
 import edu.gemini.spModel.gemini.iris.IrisOdgw;
@@ -27,8 +27,8 @@ public final class GuideConfig extends ParamSet {
             new HashSet<>(Arrays.asList(IrisOdgw.values()))
     );
 
-    private static final Set<GuideProbe> CWFS_PROBES = Collections.unmodifiableSet(
-            new HashSet<>(Arrays.asList(Canopus.Wfs.values()))
+    private static final Set<GuideProbe> OIWFS_PROBES = Collections.unmodifiableSet(
+            new HashSet<>(Arrays.asList(NfiraosOiwfs.Wfs.values()))
     );
 
     private final ObservationEnvironment _oe;
@@ -62,7 +62,7 @@ public final class GuideConfig extends ParamSet {
     }
 
     private boolean containsNfiraos() {
-        return containsOneOf(CWFS_PROBES);
+        return containsOneOf(OIWFS_PROBES);
     }
 
     /**

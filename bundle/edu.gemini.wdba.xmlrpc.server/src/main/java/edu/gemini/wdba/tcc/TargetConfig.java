@@ -5,7 +5,7 @@ import edu.gemini.spModel.core.*;
 import edu.gemini.spModel.target.SPTarget;
 import edu.gemini.spModel.guide.GuideProbe;
 import edu.gemini.spModel.gemini.iris.IrisOdgw;
-import edu.gemini.spModel.gemini.nfiraos.Canopus;
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs;
 import edu.gemini.wdba.glue.api.WdbaGlueException;
 import org.dom4j.Element;
 
@@ -36,7 +36,7 @@ public final class TargetConfig extends ParamSet {
             return GuideProbe.Type.OIWFS.name();
         }
 
-        if ((type == GuideProbe.Type.AOWFS) && !(guider instanceof Canopus.Wfs)) {
+        if ((type == GuideProbe.Type.AOWFS) && !(guider instanceof NfiraosOiwfs.Wfs)) {
             return GuideProbe.Type.AOWFS.name();
         }
 

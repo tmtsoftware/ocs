@@ -10,7 +10,7 @@ import edu.gemini.spModel.gemini.altair.InstAltair;
 import edu.gemini.spModel.gemini.bhros.InstBHROS;
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2;
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2OiwfsGuideProbe;
-import edu.gemini.spModel.gemini.nfiraos.Canopus;
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs;
 import edu.gemini.spModel.gemini.gmos.*;
 import edu.gemini.spModel.gemini.gmos.GmosNorthType.DisperserNorth;
 import edu.gemini.spModel.gemini.gmos.GmosNorthType.FPUnitNorth;
@@ -23,7 +23,6 @@ import edu.gemini.spModel.gemini.gnirs.GnirsOiwfsGuideProbe;
 import edu.gemini.spModel.gemini.gnirs.InstGNIRS;
 import edu.gemini.spModel.gemini.gpi.Gpi;
 import edu.gemini.spModel.gemini.iris.Iris;
-import edu.gemini.spModel.gemini.iris.IrisOdgw;
 import edu.gemini.spModel.gemini.michelle.InstMichelle;
 import edu.gemini.spModel.gemini.nici.InstNICI;
 import edu.gemini.spModel.gemini.nici.NICIParams;
@@ -60,9 +59,6 @@ public enum Inst {
 
     // Not currently in use
     BHROS(InstBHROS.SP_TYPE, false, false, false),
-
-    CANOPUS(SPComponentType.QPT_CANOPUS, // new SPInstComponentType(SPInstComponentType.INST_BROAD_TYPE, "Canopus", "Canopus"),
-            false, true, true, Canopus.Wfs.values(), Canopus.Wfs.values()),
 
     FLAMINGOS2(Flamingos2.SP_TYPE, false, true, false,
             join(Flamingos2.FPUnit.values(), Flamingos2.Filter.values(), new Enum<?>[]{Flamingos2OiwfsGuideProbe.instance}),
@@ -105,9 +101,12 @@ public enum Inst {
             join(Gpi.Disperser.values(), Gpi.Filter.values())),
 
     IRIS(Iris.SP_TYPE, false, true, true,
-            IrisOdgw.values(), IrisOdgw.values(), Iris.Filter.values()),
+            NfiraosOiwfs.Wfs.values(), NfiraosOiwfs.Wfs.values(), Iris.Filter.values()),
 
     MICHELLE(InstMichelle.SP_TYPE, true, false, false),
+
+    NFIRAOS(SPComponentType.IRIS_OIWFS,
+        false, true, true, NfiraosOiwfs.Wfs.values(), NfiraosOiwfs.Wfs.values()),
 
     NICI(InstNICI.SP_TYPE, false, true, false,
             new Enum<?>[]{NiciOiwfsGuideProbe.instance},

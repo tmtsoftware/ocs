@@ -35,7 +35,7 @@ object NodeType {
     }
 
   def forComponentType(ct: SPComponentType): Option[NodeType[_ <: ISPNode]] = {
-    import edu.gemini.pot.sp.SPComponentType.{OBS_EXEC_LOG, OBS_QA_LOG, TEMPLATE_FOLDER, TEMPLATE_GROUP, TEMPLATE_PARAMETERS, QPT_CANOPUS, QPT_PWFS}
+    import edu.gemini.pot.sp.SPComponentType.{OBS_EXEC_LOG, OBS_QA_LOG, TEMPLATE_FOLDER, TEMPLATE_GROUP, TEMPLATE_PARAMETERS, IRIS_OIWFS, QPT_PWFS}
     import edu.gemini.pot.sp.SPComponentBroadType._
 
     def nt[A <: ISPNode : Manifest] = some(NodeType[A](ct))
@@ -49,7 +49,7 @@ object NodeType {
       case INFO        => nt[ISPObsComponent]
       case INSTRUMENT  =>
         ct match { // Ugh
-          case QPT_CANOPUS         => none
+          case IRIS_OIWFS         => none
           case QPT_PWFS            => none
           case _                   => nt[ISPObsComponent]
         }

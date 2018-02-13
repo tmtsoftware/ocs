@@ -19,7 +19,7 @@ public class Nfiraos implements AOSystem {
     /**
      * Related files will start with this prefix
      */
-    public static final String NFIRAOS_PREFIX = "canopus_";
+    public static final String NFIRAOS_PREFIX = "irisOiwfs_";
 
     /**
      * Name of the nfiraos background file

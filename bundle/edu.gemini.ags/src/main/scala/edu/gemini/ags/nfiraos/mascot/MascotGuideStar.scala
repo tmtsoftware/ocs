@@ -12,13 +12,13 @@ import edu.gemini.shared.util.immutable.ScalaConverters._
 import scalaz._, Scalaz._
 
 /**
- * Provides methods to find the best ODGW or CWFS guide stars using the Mascot Strehl algorithm
+ * Provides methods to find the best ODGW or OIWFS guide stars using the Mascot Strehl algorithm
  */
 object MascotGuideStar {
   val Log = Logger.getLogger(MascotGuideStar.getClass.getSimpleName)
 
-  /**Type for CWFS guide stars */
-  val CWFS = new CwfsGuideStar
+  /**Type for OIWFS guide stars */
+  val OIWFS = new OiwfsGuideStar
 
   /**Type for ODGW guide stars */
   val ODGW = new OdgwGuideStar
@@ -33,10 +33,10 @@ object MascotGuideStar {
   val numBasePositions = 5 * 5
 
   /**
-   * Finds the best ODGW or CWFS asterisms for the given table of stars.
+   * Finds the best ODGW or OIWFS asterisms for the given table of stars.
    *
    * @param ctx the observation context
-   * @param guideStarType CWFS or ODGW, defined in this class
+   * @param guideStarType OIWFS or ODGW, defined in this class
    * @param posAngleTolerance allow the pos angle to change +- this amount in degrees
    * @param basePosTolerance allow the base position to change +- this amount in arcsec
    * @param factor multiply strehl min, max and average by this value (depends on instrument filter: See REL-426)

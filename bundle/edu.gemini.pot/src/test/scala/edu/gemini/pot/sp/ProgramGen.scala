@@ -53,7 +53,7 @@ object ProgramGen {
     } yield ls
 
   private val validInstruments = SPComponentType.values().filter(_.broadType == SPComponentBroadType.INSTRUMENT).filterNot { ct =>
-    ct == SPComponentType.QPT_CANOPUS ||
+    ct == SPComponentType.IRIS_OIWFS ||
     ct == SPComponentType.QPT_PWFS
   }
 

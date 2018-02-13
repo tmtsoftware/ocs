@@ -272,7 +272,7 @@ public class NfiraosGuideStarWorker extends SwingWorker implements MascotProgres
         final WorldCoords basePos = tpe.getBasePos();
         final ObsContext obsContext = getObsContext(basePos.getRaDeg(), basePos.getDecDeg());
         final Set<edu.gemini.spModel.core.Angle> posAngles = getPosAngles(obsContext);
-        final List<NfiraosCatalogSearchResults> results = search(NfiraosGuideStarSearchOptions.DEFAULT, NfiraosTipTiltMode.canopus, obsContext, posAngles,
+        final List<NfiraosCatalogSearchResults> results = search(NfiraosGuideStarSearchOptions.DEFAULT, NfiraosTipTiltMode.nfiraos, obsContext, posAngles,
                 scala.Option.empty(), ec);
         return findGuideStars(obsContext, posAngles, results);
     }

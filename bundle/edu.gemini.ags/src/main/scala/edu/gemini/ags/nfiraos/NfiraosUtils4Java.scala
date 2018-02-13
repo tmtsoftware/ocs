@@ -3,7 +3,7 @@ package edu.gemini.ags.nfiraos
 import edu.gemini.shared.util.immutable.ImList
 import edu.gemini.shared.util.immutable.ScalaConverters._
 import edu.gemini.spModel.core.{Magnitude, MagnitudeBand, SingleBand, RBandsList, SiderealTarget}
-import edu.gemini.spModel.gemini.nfiraos.Canopus
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs
 import edu.gemini.spModel.guide.GuideProbe
 import scala.collection.JavaConverters._
 
@@ -31,7 +31,7 @@ object NfiraosUtils4Java {
   def probeMagnitudeInUse(guideProbe: GuideProbe, referenceBand: MagnitudeBand, mags: ImList[Magnitude]): String = {
     val availableMagnitudes = mags.asScalaList
     // TODO Use NfiraosMagnitudeTable
-    val bandsList = if (Canopus.Wfs.Group.instance.getMembers.contains(guideProbe)) {
+    val bandsList = if (NfiraosOiwfs.Wfs.Group.instance.getMembers.contains(guideProbe)) {
         RBandsList
       } else {
         SingleBand(referenceBand)

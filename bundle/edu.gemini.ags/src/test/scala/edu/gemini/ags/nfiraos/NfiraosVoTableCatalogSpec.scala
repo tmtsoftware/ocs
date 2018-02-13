@@ -2,7 +2,7 @@ package edu.gemini.ags.nfiraos
 
 import edu.gemini.catalog.api._
 import edu.gemini.catalog.votable.TestVoTableBackend
-import edu.gemini.spModel.gemini.nfiraos.Canopus.Wfs
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs.Wfs
 
 import scala.concurrent.duration._
 import edu.gemini.shared.util.immutable.{None => JNone}
@@ -48,7 +48,7 @@ class NfiraosVoTableCatalogSpec extends Specification {
       results should be size 2
 
       results.head.criterion should beEqualTo(NfiraosCatalogSearchCriterion(NfiraosCatalogSearchKey(NfiraosGuideStarType.tiptilt, IrisOdgw.Group.instance), CatalogSearchCriterion("On-detector Guide Window tiptilt", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(SingleBand(MagnitudeBand.H), FaintnessConstraint(14.5), Some(SaturationConstraint(7.3))), Some(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.None)))
-      results(1).criterion should beEqualTo(NfiraosCatalogSearchCriterion(NfiraosCatalogSearchKey(NfiraosGuideStarType.flexure, Wfs.Group.instance), CatalogSearchCriterion("Canopus Wave Front Sensor flexure", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(RBandsList, FaintnessConstraint(16.8), Some(SaturationConstraint(9.3))), Some(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.None)))
+      results(1).criterion should beEqualTo(NfiraosCatalogSearchCriterion(NfiraosCatalogSearchKey(NfiraosGuideStarType.flexure, Wfs.Group.instance), CatalogSearchCriterion("Nfiraos Wave Front Sensor flexure", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(RBandsList, FaintnessConstraint(16.8), Some(SaturationConstraint(9.3))), Some(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.None)))
       results.head.results should be size 5
       results(1).results should be size 5
     }

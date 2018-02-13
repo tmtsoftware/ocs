@@ -32,16 +32,9 @@ public enum IrisDetectorArray {
     // arcsec.  Using screen coordinates to make working with shapes possible,
     // so y is increasing from top to bottom.
 
-    public static final double DETECTOR_SIZE_MM = 36.72;   // mm
-    public static final double DETECTOR_GAP_MM  =  2.5;    // mm
-    public static final double SCALE            =  1.1154; // arcsec per mm
-
-    public static final double DETECTOR_SIZE_ARCSEC = DETECTOR_SIZE_MM * SCALE;
-    public static final double DETECTOR_GAP_ARCSEC  = DETECTOR_GAP_MM * SCALE;
-
-    // OT-11: Account for ODGW hotspot offset (in arcsec)
-//    public static final double ODGW_HOTSPOT_OFFSET = 7.628622;
-    public static final double ODGW_HOTSPOT_OFFSET = 5.39; // See REL-152
+    public static final double DETECTOR_SIZE_ARCSEC = 16.4; // from ocdd_iris_REL12_Release.pdf
+    public static final double DETECTOR_GAP_ARCSEC  = 1.2;  // ...
+    public static final double ODGW_HOTSPOT_OFFSET = 0.0;   // No offset for IRIS
 
     private static final Rectangle2D TOP_LEFT_SHAPE;
     static {

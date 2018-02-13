@@ -10,8 +10,8 @@ import edu.gemini.shared.util.immutable.{None => JNone, Some => JSome}
 import edu.gemini.spModel.core._
 import edu.gemini.spModel.core.AngleSyntax._
 import edu.gemini.pot.ModelConverters._
-import edu.gemini.spModel.gemini.nfiraos.Canopus.Wfs
-import edu.gemini.spModel.gemini.nfiraos.{Canopus, Nfiraos}
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs.Wfs
+import edu.gemini.spModel.gemini.nfiraos.{Nfiraos, Nfiraos}
 import edu.gemini.spModel.gemini.iris.{Iris, IrisOdgw}
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality
 import edu.gemini.spModel.nfiraos.{NfiraosGuideStarType, NfiraosTipTiltMode}
@@ -45,7 +45,7 @@ class NfiraosStrategySpec extends Specification {
       val env = TargetEnvironment.create(target)
       val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val iris = IrisOdgw.values().toList
-      val canopus = Canopus.Wfs.values().toList
+      val nfiraos = NfiraosOiwfs.Wfs.values().toList
       val pwfs1 = List(PwfsGuideProbe.pwfs1)
 
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), SPSiteQuality.Conditions.BEST, null, new Nfiraos, JNone.instance())
@@ -69,7 +69,7 @@ class NfiraosStrategySpec extends Specification {
       results should be size 2
 
       results.head.criterion should beEqualTo(NfiraosCatalogSearchCriterion(NfiraosCatalogSearchKey(NfiraosGuideStarType.tiptilt, IrisOdgw.Group.instance), CatalogSearchCriterion("On-detector Guide Window tiptilt", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(SingleBand(MagnitudeBand.H), FaintnessConstraint(14.5), scala.Option(SaturationConstraint(7.3))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.None)))
-      results(1).criterion should beEqualTo(NfiraosCatalogSearchCriterion(NfiraosCatalogSearchKey(NfiraosGuideStarType.flexure, Wfs.Group.instance), CatalogSearchCriterion("Canopus Wave Front Sensor flexure", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(RBandsList, FaintnessConstraint(15.8), scala.Option(SaturationConstraint(8.3))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.None)))
+      results(1).criterion should beEqualTo(NfiraosCatalogSearchCriterion(NfiraosCatalogSearchKey(NfiraosGuideStarType.flexure, Wfs.Group.instance), CatalogSearchCriterion("Nfiraos Wave Front Sensor flexure", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(RBandsList, FaintnessConstraint(15.8), scala.Option(SaturationConstraint(8.3))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.None)))
       results.head.results should be size 5
       results(1).results should be size 4
     }
@@ -81,7 +81,7 @@ class NfiraosStrategySpec extends Specification {
       val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val conditions = SPSiteQuality.Conditions.NOMINAL
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), conditions, null, new Nfiraos, JNone.instance())
-      val tipTiltMode = NfiraosTipTiltMode.canopus
+      val tipTiltMode = NfiraosTipTiltMode.nfiraos
 
       val posAngles = Set(ctx.getPositionAngle, Angle.zero, Angle.fromDegrees(90), Angle.fromDegrees(180), Angle.fromDegrees(270))
 
@@ -93,39 +93,39 @@ class NfiraosStrategySpec extends Specification {
       val assignments = ~selection.map(_.assignments)
       assignments should be size 2
 
-      assignments.exists(_.guideProbe == Canopus.Wfs.cwfs2) should beTrue
-      val cwfs2 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs2).map(_.guideStar)
-      assignments.exists(_.guideProbe == Canopus.Wfs.cwfs3) should beTrue
-      val cwfs3 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs3).map(_.guideStar)
+      assignments.exists(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs2) should beTrue
+      val oiwfs2 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs2).map(_.guideStar)
+      assignments.exists(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs3) should beTrue
+      val oiwfs3 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs3).map(_.guideStar)
 
       // Check coordinates
-      cwfs2.map(_.name) should beSome("848-004584")
-      cwfs3.map(_.name) should beSome("848-004582")
+      oiwfs2.map(_.name) should beSome("848-004584")
+      oiwfs3.map(_.name) should beSome("848-004582")
 
-      val cwfs2x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(3, 33, 21.838).getOrElse(Angle.zero)), Declination.fromAngle(Angle.fromDMS(79, 35, 38.20).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs2.map(_.coordinates ~= cwfs2x) should beSome(true)
-      val cwfs3x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(3, 33, 20.936).getOrElse(Angle.zero)), Declination.fromAngle(Angle.fromDMS(79, 34, 56.93).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs3.map(_.coordinates ~= cwfs3x) should beSome(true)
+      val oiwfs2x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(3, 33, 21.838).getOrElse(Angle.zero)), Declination.fromAngle(Angle.fromDMS(79, 35, 38.20).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs2.map(_.coordinates ~= oiwfs2x) should beSome(true)
+      val oiwfs3x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(3, 33, 20.936).getOrElse(Angle.zero)), Declination.fromAngle(Angle.fromDMS(79, 34, 56.93).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs3.map(_.coordinates ~= oiwfs3x) should beSome(true)
 
       // Check magnitudes are sorted correctly
-      val mag2 = cwfs2.flatMap(RBandsList.extract).map(_.value)
-      val mag3 = cwfs3.flatMap(RBandsList.extract).map(_.value)
+      val mag2 = oiwfs2.flatMap(RBandsList.extract).map(_.value)
+      val mag3 = oiwfs3.flatMap(RBandsList.extract).map(_.value)
       (mag3 < mag2) should beTrue
 
       // Analyze as a whole
       val newCtx = selection.map(_.applyTo(ctx)).getOrElse(ctx)
       val analysis = nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow())
       analysis.collect {
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs2, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs2 => Canopus.Wfs.cwfs2
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs3, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs3 => Canopus.Wfs.cwfs3
-      } should beEqualTo(List(Canopus.Wfs.cwfs2, Canopus.Wfs.cwfs3))
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs2, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs2 => NfiraosOiwfs.Wfs.oiwfs2
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs3, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs3 => NfiraosOiwfs.Wfs.oiwfs3
+      } should beEqualTo(List(NfiraosOiwfs.Wfs.oiwfs2, NfiraosOiwfs.Wfs.oiwfs3))
 
       // Analyze per probe
-      cwfs2.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs2, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs2, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs2.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs2, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs2, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
-      cwfs3.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs3, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs3, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs3.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs3, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs3, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
 
       // Test estimate: 2-star asterism grants 2/3 chance of success.
@@ -141,7 +141,7 @@ class NfiraosStrategySpec extends Specification {
       val inst = new Iris <| {_.setPosAngle(90.0)} <| {_.setIssPort(IssPort.UP_LOOKING)} <| {_.setFilter(Iris.Filter.H)}
       val conditions = new SPSiteQuality.Conditions(CloudCover.PERCENT_50, ImageQuality.PERCENT_85, SkyBackground.ANY, WaterVapor.ANY)
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), conditions, null, new Nfiraos, JNone.instance())
-      val tipTiltMode = NfiraosTipTiltMode.canopus
+      val tipTiltMode = NfiraosTipTiltMode.nfiraos
 
       val posAngles = Set(ctx.getPositionAngle, Angle.zero, Angle.fromDegrees(90), Angle.fromDegrees(180), Angle.fromDegrees(270))
 
@@ -151,27 +151,27 @@ class NfiraosStrategySpec extends Specification {
       val assignments = ~selection.map(_.assignments)
       assignments should be size 1
 
-      assignments.exists(_.guideProbe == Canopus.Wfs.cwfs3) should beTrue
-      val cwfs3 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs3).map(_.guideStar)
+      assignments.exists(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs3) should beTrue
+      val oiwfs3 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs3).map(_.guideStar)
 
       // Check coordinates
-      cwfs3.map(_.name) should beSome("450-000011")
-      val cwfs3x = Coordinates(
+      oiwfs3.map(_.name) should beSome("450-000011")
+      val oiwfs3x = Coordinates(
         RightAscension.fromAngle(Angle.fromHMS(0, 0, 11.370).getOrElse(Angle.zero)),
         Declination.fromAngle(Angle.zero - Angle.fromDMS(0, 0, 24.18).getOrElse(Angle.zero)).getOrElse(Declination.zero)
       )
-      cwfs3.map(_.coordinates ~= cwfs3x) should beSome(true)
+      oiwfs3.map(_.coordinates ~= oiwfs3x) should beSome(true)
 
       // Analyze as a whole
       val newCtx = selection.map(_.applyTo(ctx)).getOrElse(ctx)
       val analysis = nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow())
       analysis.collect {
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs3, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs3 => Canopus.Wfs.cwfs3
-      } should beEqualTo(List(Canopus.Wfs.cwfs3))
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs3, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs3 => NfiraosOiwfs.Wfs.oiwfs3
+      } should beEqualTo(List(NfiraosOiwfs.Wfs.oiwfs3))
 
       // Analyze per probe
-      cwfs3.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs3, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs3, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs3.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs3, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs3, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
 
       // Test estimate: 1-star asterism grants 1/3 chance of success.
@@ -186,7 +186,7 @@ class NfiraosStrategySpec extends Specification {
       val env = TargetEnvironment.create(target)
       val inst = new Iris <| {_.setPosAngle(90.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), SPSiteQuality.Conditions.BEST, null, new Nfiraos, JNone.instance())
-      val tipTiltMode = NfiraosTipTiltMode.canopus
+      val tipTiltMode = NfiraosTipTiltMode.nfiraos
 
       val posAngles = Set(ctx.getPositionAngle, Angle.zero, Angle.fromDegrees(90), Angle.fromDegrees(180), Angle.fromDegrees(270))
 
@@ -196,53 +196,53 @@ class NfiraosStrategySpec extends Specification {
       val assignments = ~selection.map(_.assignments)
       assignments should be size 3
 
-      assignments.exists(_.guideProbe == Canopus.Wfs.cwfs1) should beTrue
-      val cwfs1 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs1).map(_.guideStar)
-      assignments.exists(_.guideProbe == Canopus.Wfs.cwfs2) should beTrue
-      val cwfs2 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs2).map(_.guideStar)
-      assignments.exists(_.guideProbe == Canopus.Wfs.cwfs3) should beTrue
-      val cwfs3 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs3).map(_.guideStar)
+      assignments.exists(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs1) should beTrue
+      val oiwfs1 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs1).map(_.guideStar)
+      assignments.exists(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs2) should beTrue
+      val oiwfs2 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs2).map(_.guideStar)
+      assignments.exists(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs3) should beTrue
+      val oiwfs3 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs3).map(_.guideStar)
 
       // Check coordinates
-      cwfs1.map(_.name) should beSome("450-000005")
-      val cwfs1x = Coordinates(
+      oiwfs1.map(_.name) should beSome("450-000005")
+      val oiwfs1x = Coordinates(
         RightAscension.fromAngle(Angle.fromHMS(0, 0, 6.159).getOrElse(Angle.zero)),
         Declination.fromAngle(Angle.zero - Angle.fromDMS(0, 2, 47.04).getOrElse(Angle.zero)).getOrElse(Declination.zero)
       )
-      cwfs1.map(_.coordinates ~= cwfs1x) should beSome(true)
+      oiwfs1.map(_.coordinates ~= oiwfs1x) should beSome(true)
 
-      cwfs2.map(_.name) should beSome("450-000010")
-      val cwfs2x = Coordinates(
+      oiwfs2.map(_.name) should beSome("450-000010")
+      val oiwfs2x = Coordinates(
         RightAscension.fromAngle(Angle.fromHMS(0, 0, 9.519).getOrElse(Angle.zero)),
         Declination.fromAngle(Angle.zero - Angle.fromDMS(0, 3, 52.62).getOrElse(Angle.zero)).getOrElse(Declination.zero)
       )
-      cwfs2.map(_.coordinates ~= cwfs2x) should beSome(true)
+      oiwfs2.map(_.coordinates ~= oiwfs2x) should beSome(true)
 
-      cwfs3.map(_.name) should beSome("450-000009")
-      val cwfs3x = Coordinates(
+      oiwfs3.map(_.name) should beSome("450-000009")
+      val oiwfs3x = Coordinates(
         RightAscension.fromAngle(Angle.fromHMS(0, 0, 8.983).getOrElse(Angle.zero)),
         Declination.fromAngle(Angle.zero - Angle.fromDMS(0, 3, 53.32).getOrElse(Angle.zero)).getOrElse(Declination.zero)
       )
-      cwfs3.map(_.coordinates ~= cwfs3x) should beSome(true)
+      oiwfs3.map(_.coordinates ~= oiwfs3x) should beSome(true)
 
       // Analyze as a whole
       val newCtx = selection.map(_.applyTo(ctx)).getOrElse(ctx)
       val analysis = nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow())
       analysis.collect {
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs1, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs1 => Canopus.Wfs.cwfs1
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs2, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs2 => Canopus.Wfs.cwfs2
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs3, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs3 => Canopus.Wfs.cwfs3
-      } should beEqualTo(List(Canopus.Wfs.cwfs1, Canopus.Wfs.cwfs2, Canopus.Wfs.cwfs3))
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs1, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs1 => NfiraosOiwfs.Wfs.oiwfs1
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs2, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs2 => NfiraosOiwfs.Wfs.oiwfs2
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs3, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs3 => NfiraosOiwfs.Wfs.oiwfs3
+      } should beEqualTo(List(NfiraosOiwfs.Wfs.oiwfs1, NfiraosOiwfs.Wfs.oiwfs2, NfiraosOiwfs.Wfs.oiwfs3))
 
       // Analyze per probe
-      cwfs1.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs1, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs1, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs1.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs1, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs1, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
-      cwfs2.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs2, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs2, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs2.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs2, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs2, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
-      cwfs3.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs3, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs3, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs3.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs3, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs3, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
 
       // Test estimate: 3-star asterism grants guaranteed success.
@@ -257,7 +257,7 @@ class NfiraosStrategySpec extends Specification {
       val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val conditions = SPSiteQuality.Conditions.NOMINAL.sb(SPSiteQuality.SkyBackground.ANY)
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), conditions, null, new Nfiraos, JNone.instance())
-      val tipTiltMode = NfiraosTipTiltMode.canopus
+      val tipTiltMode = NfiraosTipTiltMode.nfiraos
 
       val posAngles = Set(ctx.getPositionAngle, Angle.zero, Angle.fromDegrees(90), Angle.fromDegrees(180), Angle.fromDegrees(270))
 
@@ -269,49 +269,49 @@ class NfiraosStrategySpec extends Specification {
       val assignments = ~selection.map(_.assignments)
       assignments should be size 3
 
-      assignments.exists(_.guideProbe == Canopus.Wfs.cwfs1) should beTrue
-      val cwfs1 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs1).map(_.guideStar)
-      assignments.exists(_.guideProbe == Canopus.Wfs.cwfs2) should beTrue
-      val cwfs2 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs2).map(_.guideStar)
-      assignments.exists(_.guideProbe == Canopus.Wfs.cwfs3) should beTrue
-      val cwfs3 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs3).map(_.guideStar)
+      assignments.exists(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs1) should beTrue
+      val oiwfs1 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs1).map(_.guideStar)
+      assignments.exists(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs2) should beTrue
+      val oiwfs2 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs2).map(_.guideStar)
+      assignments.exists(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs3) should beTrue
+      val oiwfs3 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs3).map(_.guideStar)
 
       // Check coordinates
-      cwfs1.map(_.name) should beSome("104-014597")
-      cwfs2.map(_.name) should beSome("104-014608")
-      cwfs3.map(_.name) should beSome("104-014547")
+      oiwfs1.map(_.name) should beSome("104-014597")
+      oiwfs2.map(_.name) should beSome("104-014608")
+      oiwfs3.map(_.name) should beSome("104-014547")
 
-      val cwfs1x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(5, 35, 32.630).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(69, 15, 48.64).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs1.map(_.coordinates ~= cwfs1x) should beSome(true)
-      val cwfs2x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(5, 35, 36.409).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(69, 16, 24.17).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs2.map(_.coordinates ~= cwfs2x) should beSome(true)
-      val cwfs3x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(5, 35, 18.423).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(69, 16, 30.67).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs3.map(_.coordinates ~= cwfs3x) should beSome(true)
+      val oiwfs1x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(5, 35, 32.630).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(69, 15, 48.64).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs1.map(_.coordinates ~= oiwfs1x) should beSome(true)
+      val oiwfs2x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(5, 35, 36.409).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(69, 16, 24.17).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs2.map(_.coordinates ~= oiwfs2x) should beSome(true)
+      val oiwfs3x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(5, 35, 18.423).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(69, 16, 30.67).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs3.map(_.coordinates ~= oiwfs3x) should beSome(true)
 
       // Check magnitudes are sorted correctly
-      val mag1 = cwfs1.flatMap(RBandsList.extract).map(_.value)
-      val mag2 = cwfs2.flatMap(RBandsList.extract).map(_.value)
-      val mag3 = cwfs3.flatMap(RBandsList.extract).map(_.value)
+      val mag1 = oiwfs1.flatMap(RBandsList.extract).map(_.value)
+      val mag2 = oiwfs2.flatMap(RBandsList.extract).map(_.value)
+      val mag3 = oiwfs3.flatMap(RBandsList.extract).map(_.value)
       (mag3 < mag1 && mag2 < mag1) should beTrue
 
       // Analyze as a whole
       val newCtx = selection.map(_.applyTo(ctx)).getOrElse(ctx)
       val analysis = nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow())
       analysis.collect {
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs1, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs1 => Canopus.Wfs.cwfs1
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs2, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs2 => Canopus.Wfs.cwfs2
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs3, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs3 => Canopus.Wfs.cwfs3
-      } should beEqualTo(List(Canopus.Wfs.cwfs1, Canopus.Wfs.cwfs2, Canopus.Wfs.cwfs3))
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs1, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs1 => NfiraosOiwfs.Wfs.oiwfs1
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs2, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs2 => NfiraosOiwfs.Wfs.oiwfs2
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs3, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs3 => NfiraosOiwfs.Wfs.oiwfs3
+      } should beEqualTo(List(NfiraosOiwfs.Wfs.oiwfs1, NfiraosOiwfs.Wfs.oiwfs2, NfiraosOiwfs.Wfs.oiwfs3))
 
       // Analyze per probe
-      cwfs1.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs1, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs1, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs1.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs1, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs1, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
-      cwfs2.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs2, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs2, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs2.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs2, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs2, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
-      cwfs3.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs3, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs3, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs3.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs3, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs3, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
 
       // Test estimate
@@ -326,7 +326,7 @@ class NfiraosStrategySpec extends Specification {
       val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val conditions = SPSiteQuality.Conditions.BEST.cc(SPSiteQuality.CloudCover.PERCENT_50)
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), conditions, null, new Nfiraos, JNone.instance())
-      val tipTiltMode = NfiraosTipTiltMode.canopus
+      val tipTiltMode = NfiraosTipTiltMode.nfiraos
 
       val posAngles = Set(ctx.getPositionAngle, Angle.zero, Angle.fromDegrees(90), Angle.fromDegrees(180), Angle.fromDegrees(270))
 
@@ -338,37 +338,37 @@ class NfiraosStrategySpec extends Specification {
       val assignments = ~selection.map(_.assignments)
       assignments should be size 3
 
-      val cwfs1 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs1).map(_.guideStar)
-      val cwfs2 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs2).map(_.guideStar)
-      val cwfs3 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs3).map(_.guideStar)
-      cwfs1.map(_.name) should beSome("104-014597")
-      cwfs2.map(_.name) should beSome("104-014608")
-      cwfs3.map(_.name) should beSome("104-014547")
+      val oiwfs1 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs1).map(_.guideStar)
+      val oiwfs2 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs2).map(_.guideStar)
+      val oiwfs3 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs3).map(_.guideStar)
+      oiwfs1.map(_.name) should beSome("104-014597")
+      oiwfs2.map(_.name) should beSome("104-014608")
+      oiwfs3.map(_.name) should beSome("104-014547")
 
-      val cwfs1x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(5, 35, 32.630).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(69, 15, 48.64).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs1.map(_.coordinates ~= cwfs1x) should beSome(true)
-      val cwfs2x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(5, 35, 36.409).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(69, 16, 24.17).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs2.map(_.coordinates ~= cwfs2x) should beSome(true)
-      val cwfs3x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(5, 35, 18.423).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(69, 16, 30.67).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs3.map(_.coordinates ~= cwfs3x) should beSome(true)
+      val oiwfs1x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(5, 35, 32.630).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(69, 15, 48.64).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs1.map(_.coordinates ~= oiwfs1x) should beSome(true)
+      val oiwfs2x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(5, 35, 36.409).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(69, 16, 24.17).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs2.map(_.coordinates ~= oiwfs2x) should beSome(true)
+      val oiwfs3x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(5, 35, 18.423).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(69, 16, 30.67).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs3.map(_.coordinates ~= oiwfs3x) should beSome(true)
 
       val newCtx = selection.map(_.applyTo(ctx)).getOrElse(ctx)
       // Analyze as a whole
       val analysis = nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow())
       analysis.collect {
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs1, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs1 => Canopus.Wfs.cwfs1
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs2, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs2 => Canopus.Wfs.cwfs2
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs3, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs3 => Canopus.Wfs.cwfs3
-      } should beEqualTo(List(Canopus.Wfs.cwfs1, Canopus.Wfs.cwfs2, Canopus.Wfs.cwfs3))
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs1, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs1 => NfiraosOiwfs.Wfs.oiwfs1
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs2, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs2 => NfiraosOiwfs.Wfs.oiwfs2
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs3, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs3 => NfiraosOiwfs.Wfs.oiwfs3
+      } should beEqualTo(List(NfiraosOiwfs.Wfs.oiwfs1, NfiraosOiwfs.Wfs.oiwfs2, NfiraosOiwfs.Wfs.oiwfs3))
       // Analyze per probe
-      cwfs1.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs1, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs1, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs1.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs1, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs1, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
-      cwfs2.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs2, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs2, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs2.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs2, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs2, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
-      cwfs3.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs3, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs3, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs3.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs3, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs3, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
 
       // Test estimate
@@ -383,7 +383,7 @@ class NfiraosStrategySpec extends Specification {
       val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val conditions = SPSiteQuality.Conditions.NOMINAL.sb(SPSiteQuality.SkyBackground.ANY).wv(SPSiteQuality.WaterVapor.ANY)
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), conditions, null, new Nfiraos, JNone.instance())
-      val tipTiltMode = NfiraosTipTiltMode.canopus
+      val tipTiltMode = NfiraosTipTiltMode.nfiraos
 
       val posAngles = Set(ctx.getPositionAngle, Angle.zero, Angle.fromDegrees(90), Angle.fromDegrees(180), Angle.fromDegrees(270))
 
@@ -395,46 +395,46 @@ class NfiraosStrategySpec extends Specification {
       val assignments = ~selection.map(_.assignments)
       assignments should be size 3
 
-      assignments.exists(_.guideProbe == Canopus.Wfs.cwfs1) should beTrue
-      val cwfs1 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs1).map(_.guideStar)
-      assignments.exists(_.guideProbe == Canopus.Wfs.cwfs2) should beTrue
-      val cwfs2 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs2).map(_.guideStar)
-      assignments.exists(_.guideProbe == Canopus.Wfs.cwfs3) should beTrue
-      val cwfs3 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs3).map(_.guideStar)
-      cwfs1.map(_.name) should beSome("208-152095")
-      cwfs2.map(_.name) should beSome("208-152215")
-      cwfs3.map(_.name) should beSome("208-152039")
+      assignments.exists(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs1) should beTrue
+      val oiwfs1 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs1).map(_.guideStar)
+      assignments.exists(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs2) should beTrue
+      val oiwfs2 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs2).map(_.guideStar)
+      assignments.exists(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs3) should beTrue
+      val oiwfs3 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs3).map(_.guideStar)
+      oiwfs1.map(_.name) should beSome("208-152095")
+      oiwfs2.map(_.name) should beSome("208-152215")
+      oiwfs3.map(_.name) should beSome("208-152039")
 
-      val cwfs1x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(17, 25, 27.151).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(48, 28, 07.67).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs1.map(_.coordinates ~= cwfs1x) should beSome(true)
-      val cwfs2x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(17, 25, 32.541).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(48, 27, 30.06).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs2.map(_.coordinates ~= cwfs2x) should beSome(true)
-      val cwfs3x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(17, 25, 24.719).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(48, 26, 58.00).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs3.map(_.coordinates ~= cwfs3x) should beSome(true)
+      val oiwfs1x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(17, 25, 27.151).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(48, 28, 07.67).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs1.map(_.coordinates ~= oiwfs1x) should beSome(true)
+      val oiwfs2x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(17, 25, 32.541).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(48, 27, 30.06).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs2.map(_.coordinates ~= oiwfs2x) should beSome(true)
+      val oiwfs3x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(17, 25, 24.719).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(48, 26, 58.00).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs3.map(_.coordinates ~= oiwfs3x) should beSome(true)
 
       // Check magnitudes are sorted correctly
-      val mag1 = cwfs1.flatMap(RBandsList.extract).map(_.value)
-      val mag2 = cwfs2.flatMap(RBandsList.extract).map(_.value)
-      val mag3 = cwfs3.flatMap(RBandsList.extract).map(_.value)
+      val mag1 = oiwfs1.flatMap(RBandsList.extract).map(_.value)
+      val mag2 = oiwfs2.flatMap(RBandsList.extract).map(_.value)
+      val mag3 = oiwfs3.flatMap(RBandsList.extract).map(_.value)
       (mag3 < mag1 && mag2 < mag1) should beTrue
 
       // Analyze as a whole
       val newCtx = selection.map(_.applyTo(ctx)).getOrElse(ctx)
       val analysis = nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow())
       analysis.collect {
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs1, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs1 => Canopus.Wfs.cwfs1
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs2, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs2 => Canopus.Wfs.cwfs2
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs3, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs3 => Canopus.Wfs.cwfs3
-      } should beEqualTo(List(Canopus.Wfs.cwfs1, Canopus.Wfs.cwfs2, Canopus.Wfs.cwfs3))
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs1, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs1 => NfiraosOiwfs.Wfs.oiwfs1
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs2, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs2 => NfiraosOiwfs.Wfs.oiwfs2
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs3, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs3 => NfiraosOiwfs.Wfs.oiwfs3
+      } should beEqualTo(List(NfiraosOiwfs.Wfs.oiwfs1, NfiraosOiwfs.Wfs.oiwfs2, NfiraosOiwfs.Wfs.oiwfs3))
       // Analyze per probe
-      cwfs1.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs1, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs1, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs1.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs1, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs1, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
-      cwfs2.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs2, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs2, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs2.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs2, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs2, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
-      cwfs3.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs3, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs3, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs3.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs3, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs3, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
 
       // Test estimate
@@ -449,7 +449,7 @@ class NfiraosStrategySpec extends Specification {
       val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val conditions = SPSiteQuality.Conditions.NOMINAL.sb(SPSiteQuality.SkyBackground.ANY).wv(SPSiteQuality.WaterVapor.ANY)
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), conditions, null, new Nfiraos, JNone.instance())
-      val tipTiltMode = NfiraosTipTiltMode.canopus
+      val tipTiltMode = NfiraosTipTiltMode.nfiraos
 
       val posAngles = Set(ctx.getPositionAngle, Angle.zero, Angle.fromDegrees(90), Angle.fromDegrees(180), Angle.fromDegrees(270))
 
@@ -461,47 +461,47 @@ class NfiraosStrategySpec extends Specification {
       val assignments = ~selection.map(_.assignments)
       assignments should be size 3
 
-      assignments.exists(_.guideProbe == Canopus.Wfs.cwfs1) should beTrue
-      val cwfs1 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs1).map(_.guideStar)
-      assignments.exists(_.guideProbe == Canopus.Wfs.cwfs2) should beTrue
-      val cwfs2 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs2).map(_.guideStar)
-      assignments.exists(_.guideProbe == Canopus.Wfs.cwfs3) should beTrue
-      val cwfs3 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs3).map(_.guideStar)
-      cwfs1.map(_.name) should beSome("289-128909")
-      cwfs2.map(_.name) should beSome("289-128878")
-      cwfs3.map(_.name) should beSome("289-128908")
+      assignments.exists(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs1) should beTrue
+      val oiwfs1 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs1).map(_.guideStar)
+      assignments.exists(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs2) should beTrue
+      val oiwfs2 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs2).map(_.guideStar)
+      assignments.exists(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs3) should beTrue
+      val oiwfs3 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs3).map(_.guideStar)
+      oiwfs1.map(_.name) should beSome("289-128909")
+      oiwfs2.map(_.name) should beSome("289-128878")
+      oiwfs3.map(_.name) should beSome("289-128908")
 
-      val cwfs1x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(17, 40, 21.743).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(32, 14, 54.04).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs1.map(_.coordinates ~= cwfs1x) should beSome(true)
-      val cwfs2x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(17, 40, 16.855).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(32, 15, 55.83).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs2.map(_.coordinates ~= cwfs2x) should beSome(true)
-      val cwfs3x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(17, 40, 21.594).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(32, 15, 50.38).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs3.map(_.coordinates ~= cwfs3x) should beSome(true)
+      val oiwfs1x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(17, 40, 21.743).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(32, 14, 54.04).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs1.map(_.coordinates ~= oiwfs1x) should beSome(true)
+      val oiwfs2x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(17, 40, 16.855).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(32, 15, 55.83).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs2.map(_.coordinates ~= oiwfs2x) should beSome(true)
+      val oiwfs3x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(17, 40, 21.594).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(32, 15, 50.38).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs3.map(_.coordinates ~= oiwfs3x) should beSome(true)
 
       // Check magnitudes are sorted correctly
-      val mag1 = cwfs1.flatMap(RBandsList.extract).map(_.value)
-      val mag2 = cwfs2.flatMap(RBandsList.extract).map(_.value)
-      val mag3 = cwfs3.flatMap(RBandsList.extract).map(_.value)
+      val mag1 = oiwfs1.flatMap(RBandsList.extract).map(_.value)
+      val mag2 = oiwfs2.flatMap(RBandsList.extract).map(_.value)
+      val mag3 = oiwfs3.flatMap(RBandsList.extract).map(_.value)
       (mag3 < mag1 && mag2 < mag1) should beTrue
 
       // Analyze as a whole
       val newCtx = selection.map(_.applyTo(ctx)).getOrElse(ctx)
       val analysis = nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow())
       analysis.collect {
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs1, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs1 => Canopus.Wfs.cwfs1
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs2, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs2 => Canopus.Wfs.cwfs2
-        case AgsAnalysis.NotReachable(Canopus.Wfs.cwfs3, st) if st.some == cwfs3                                                 => Canopus.Wfs.cwfs3
-      } should beEqualTo(List(Canopus.Wfs.cwfs1, Canopus.Wfs.cwfs2, Canopus.Wfs.cwfs3))
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs1, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs1 => NfiraosOiwfs.Wfs.oiwfs1
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs2, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs2 => NfiraosOiwfs.Wfs.oiwfs2
+        case AgsAnalysis.NotReachable(NfiraosOiwfs.Wfs.oiwfs3, st) if st.some == oiwfs3                                                 => NfiraosOiwfs.Wfs.oiwfs3
+      } should beEqualTo(List(NfiraosOiwfs.Wfs.oiwfs1, NfiraosOiwfs.Wfs.oiwfs2, NfiraosOiwfs.Wfs.oiwfs3))
 
       // Analyze per probe
-      cwfs1.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs1, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs1, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs1.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs1, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs1, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
-      cwfs2.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs2, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs2, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs2.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs2, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs2, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
-      cwfs3.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs3, s).contains(AgsAnalysis.NotReachable(Canopus.Wfs.cwfs3, s))
+      oiwfs3.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs3, s).contains(AgsAnalysis.NotReachable(NfiraosOiwfs.Wfs.oiwfs3, s))
       } should beSome(true)
 
       // Test estimate
@@ -516,7 +516,7 @@ class NfiraosStrategySpec extends Specification {
       val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val conditions = SPSiteQuality.Conditions.NOMINAL.sb(SPSiteQuality.SkyBackground.ANY)
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), conditions, null, new Nfiraos, JNone.instance())
-      val tipTiltMode = NfiraosTipTiltMode.canopus
+      val tipTiltMode = NfiraosTipTiltMode.nfiraos
 
       val posAngles = Set(ctx.getPositionAngle, Angle.zero, Angle.fromDegrees(90), Angle.fromDegrees(180), Angle.fromDegrees(270))
 
@@ -528,36 +528,36 @@ class NfiraosStrategySpec extends Specification {
       val assignments = ~selection.map(_.assignments)
       assignments should be size 3
 
-      val cwfs1 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs1).map(_.guideStar)
-      val cwfs2 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs2).map(_.guideStar)
-      val cwfs3 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs3).map(_.guideStar)
-      cwfs1.map(_.name) should beSome("202-067216")
-      cwfs2.map(_.name) should beSome("202-067200")
-      cwfs3.map(_.name) should beSome("201-071218")
+      val oiwfs1 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs1).map(_.guideStar)
+      val oiwfs2 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs2).map(_.guideStar)
+      val oiwfs3 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs3).map(_.guideStar)
+      oiwfs1.map(_.name) should beSome("202-067216")
+      oiwfs2.map(_.name) should beSome("202-067200")
+      oiwfs3.map(_.name) should beSome("201-071218")
 
-      val cwfs1x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(12, 38, 50.130).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(49, 47, 38.07).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs1.map(_.coordinates ~= cwfs1x) should beSome(true)
-      val cwfs2x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(12, 38, 44.500).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(49, 47, 58.38).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs2.map(_.coordinates ~= cwfs2x) should beSome(true)
-      val cwfs3x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(12, 38, 50.005).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(49, 48, 00.89).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs3.map(_.coordinates ~= cwfs3x) should beSome(true)
+      val oiwfs1x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(12, 38, 50.130).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(49, 47, 38.07).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs1.map(_.coordinates ~= oiwfs1x) should beSome(true)
+      val oiwfs2x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(12, 38, 44.500).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(49, 47, 58.38).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs2.map(_.coordinates ~= oiwfs2x) should beSome(true)
+      val oiwfs3x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(12, 38, 50.005).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(49, 48, 00.89).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs3.map(_.coordinates ~= oiwfs3x) should beSome(true)
 
       val newCtx = selection.map(_.applyTo(ctx)).getOrElse(ctx)
       // Analyze all the probes at once
       nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow()).collect {
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs1, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs1 => Canopus.Wfs.cwfs1
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs2, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs2 => Canopus.Wfs.cwfs2
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs3, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs3 => Canopus.Wfs.cwfs3
-      } should beEqualTo(List(Canopus.Wfs.cwfs1, Canopus.Wfs.cwfs2, Canopus.Wfs.cwfs3))
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs1, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs1 => NfiraosOiwfs.Wfs.oiwfs1
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs2, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs2 => NfiraosOiwfs.Wfs.oiwfs2
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs3, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs3 => NfiraosOiwfs.Wfs.oiwfs3
+      } should beEqualTo(List(NfiraosOiwfs.Wfs.oiwfs1, NfiraosOiwfs.Wfs.oiwfs2, NfiraosOiwfs.Wfs.oiwfs3))
       // Analyze per probe
-      cwfs1.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs1, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs1, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs1.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs1, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs1, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
-      cwfs2.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs2, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs2, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs2.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs2, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs2, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
-      cwfs3.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs3, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs3, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs3.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs3, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs3, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
 
       // Test estimate
@@ -572,7 +572,7 @@ class NfiraosStrategySpec extends Specification {
       val inst = new Iris <| {_.setPosAngle(0.0)} <| {_.setIssPort(IssPort.UP_LOOKING)}
       val conditions = SPSiteQuality.Conditions.BEST.cc(SPSiteQuality.CloudCover.PERCENT_50)
       val ctx = ObsContext.create(env, inst, new JSome(Site.GS), conditions, null, new Nfiraos, JNone.instance())
-      val tipTiltMode = NfiraosTipTiltMode.canopus
+      val tipTiltMode = NfiraosTipTiltMode.nfiraos
 
       val posAngles = Set(ctx.getPositionAngle, Angle.zero, Angle.fromDegrees(90), Angle.fromDegrees(180), Angle.fromDegrees(270))
 
@@ -584,36 +584,36 @@ class NfiraosStrategySpec extends Specification {
       val assignments = ~selection.map(_.assignments)
       assignments should be size 3
 
-      val cwfs1 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs1).map(_.guideStar)
-      val cwfs2 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs2).map(_.guideStar)
-      val cwfs3 = assignments.find(_.guideProbe == Canopus.Wfs.cwfs3).map(_.guideStar)
-      cwfs1.map(_.name) should beSome("202-067216")
-      cwfs2.map(_.name) should beSome("202-067200")
-      cwfs3.map(_.name) should beSome("201-071218")
+      val oiwfs1 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs1).map(_.guideStar)
+      val oiwfs2 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs2).map(_.guideStar)
+      val oiwfs3 = assignments.find(_.guideProbe == NfiraosOiwfs.Wfs.oiwfs3).map(_.guideStar)
+      oiwfs1.map(_.name) should beSome("202-067216")
+      oiwfs2.map(_.name) should beSome("202-067200")
+      oiwfs3.map(_.name) should beSome("201-071218")
 
-      val cwfs1x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(12, 38, 50.130).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(49, 47, 38.07).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs1.map(_.coordinates ~= cwfs1x) should beSome(true)
-      val cwfs2x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(12, 38, 44.500).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(49, 47, 58.38).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs2.map(_.coordinates ~= cwfs2x) should beSome(true)
-      val cwfs3x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(12, 38, 50.005).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(49, 48, 00.89).getOrElse(Angle.zero)).getOrElse(Declination.zero))
-      cwfs3.map(_.coordinates ~= cwfs3x) should beSome(true)
+      val oiwfs1x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(12, 38, 50.130).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(49, 47, 38.07).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs1.map(_.coordinates ~= oiwfs1x) should beSome(true)
+      val oiwfs2x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(12, 38, 44.500).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(49, 47, 58.38).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs2.map(_.coordinates ~= oiwfs2x) should beSome(true)
+      val oiwfs3x = Coordinates(RightAscension.fromAngle(Angle.fromHMS(12, 38, 50.005).getOrElse(Angle.zero)), Declination.fromAngle(Angle.zero - Angle.fromDMS(49, 48, 00.89).getOrElse(Angle.zero)).getOrElse(Declination.zero))
+      oiwfs3.map(_.coordinates ~= oiwfs3x) should beSome(true)
 
       val newCtx = selection.map(_.applyTo(ctx)).getOrElse(ctx)
       // Analyze all the probes at once
       nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow()).collect {
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs1, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs1 => Canopus.Wfs.cwfs1
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs2, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs2 => Canopus.Wfs.cwfs2
-        case AgsAnalysis.Usable(Canopus.Wfs.cwfs3, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == cwfs3 => Canopus.Wfs.cwfs3
-      } should beEqualTo(List(Canopus.Wfs.cwfs1, Canopus.Wfs.cwfs2, Canopus.Wfs.cwfs3))
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs1, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs1 => NfiraosOiwfs.Wfs.oiwfs1
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs2, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs2 => NfiraosOiwfs.Wfs.oiwfs2
+        case AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs3, st, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq) if st.some == oiwfs3 => NfiraosOiwfs.Wfs.oiwfs3
+      } should beEqualTo(List(NfiraosOiwfs.Wfs.oiwfs1, NfiraosOiwfs.Wfs.oiwfs2, NfiraosOiwfs.Wfs.oiwfs3))
       // Analyze per probe
-      cwfs1.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs1, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs1, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs1.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs1, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs1, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
-      cwfs2.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs2, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs2, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs2.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs2, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs2, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
-      cwfs3.map { s =>
-        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), Canopus.Wfs.cwfs3, s).contains(AgsAnalysis.Usable(Canopus.Wfs.cwfs3, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
+      oiwfs3.map { s =>
+        nfiraosStrategy.analyze(newCtx, ProbeLimitsTable.loadOrThrow(), NfiraosOiwfs.Wfs.oiwfs3, s).contains(AgsAnalysis.Usable(NfiraosOiwfs.Wfs.oiwfs3, s, GuideSpeed.FAST, AgsGuideQuality.DeliversRequestedIq))
       } should beSome(true)
 
       // Test estimate
@@ -627,7 +627,7 @@ class NfiraosStrategySpec extends Specification {
     results should be size 2
 
     results.head.criterion.key should beEqualTo(NfiraosCatalogSearchKey(NfiraosGuideStarType.tiptilt, Wfs.Group.instance))
-    results.head.criterion should beEqualTo(NfiraosCatalogSearchCriterion(NfiraosCatalogSearchKey(NfiraosGuideStarType.tiptilt, Wfs.Group.instance), CatalogSearchCriterion("Canopus Wave Front Sensor tiptilt", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(RBandsList, FaintnessConstraint(15.8), scala.Option(SaturationConstraint(8.3))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.Some(Angle.zero))))
+    results.head.criterion should beEqualTo(NfiraosCatalogSearchCriterion(NfiraosCatalogSearchKey(NfiraosGuideStarType.tiptilt, Wfs.Group.instance), CatalogSearchCriterion("Nfiraos Wave Front Sensor tiptilt", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(RBandsList, FaintnessConstraint(15.8), scala.Option(SaturationConstraint(8.3))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.Some(Angle.zero))))
     results(1).criterion.key should beEqualTo(NfiraosCatalogSearchKey(NfiraosGuideStarType.flexure, IrisOdgw.Group.instance))
     results(1).criterion should beEqualTo(NfiraosCatalogSearchCriterion(NfiraosCatalogSearchKey(NfiraosGuideStarType.flexure, IrisOdgw.Group.instance), CatalogSearchCriterion("On-detector Guide Window flexure", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(SingleBand(MagnitudeBand.H), FaintnessConstraint(17.0), scala.Option(SaturationConstraint(8.0))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.Some(Angle.zero))))
     results.head.results should be size expectedTipTiltResultsCount
@@ -639,7 +639,7 @@ class NfiraosStrategySpec extends Specification {
     results should be size 2
 
     results.head.criterion.key should beEqualTo(NfiraosCatalogSearchKey(NfiraosGuideStarType.tiptilt, Wfs.Group.instance))
-    results.head.criterion should beEqualTo(NfiraosCatalogSearchCriterion(NfiraosCatalogSearchKey(NfiraosGuideStarType.tiptilt, Wfs.Group.instance), CatalogSearchCriterion("Canopus Wave Front Sensor tiptilt", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(RBandsList, FaintnessConstraint(16.3), scala.Option(SaturationConstraint(8.8))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.Some(Angle.zero))))
+    results.head.criterion should beEqualTo(NfiraosCatalogSearchCriterion(NfiraosCatalogSearchKey(NfiraosGuideStarType.tiptilt, Wfs.Group.instance), CatalogSearchCriterion("Nfiraos Wave Front Sensor tiptilt", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(RBandsList, FaintnessConstraint(16.3), scala.Option(SaturationConstraint(8.8))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.Some(Angle.zero))))
     results(1).criterion.key should beEqualTo(NfiraosCatalogSearchKey(NfiraosGuideStarType.flexure, IrisOdgw.Group.instance))
     results(1).criterion should beEqualTo(NfiraosCatalogSearchCriterion(NfiraosCatalogSearchKey(NfiraosGuideStarType.flexure, IrisOdgw.Group.instance), CatalogSearchCriterion("On-detector Guide Window flexure", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(SingleBand(MagnitudeBand.H), FaintnessConstraint(17.0), scala.Option(SaturationConstraint(8.0))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.Some(Angle.zero))))
     results.head.results should be size expectedTipTiltResultsCount
@@ -651,7 +651,7 @@ class NfiraosStrategySpec extends Specification {
     results should be size 2
 
     results.head.criterion.key should beEqualTo(NfiraosCatalogSearchKey(NfiraosGuideStarType.tiptilt, Wfs.Group.instance))
-    results.head.criterion should beEqualTo(NfiraosCatalogSearchCriterion(NfiraosCatalogSearchKey(NfiraosGuideStarType.tiptilt, Wfs.Group.instance), CatalogSearchCriterion("Canopus Wave Front Sensor tiptilt", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(RBandsList, FaintnessConstraint(16.8), scala.Option(SaturationConstraint(9.3))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.Some(Angle.zero))))
+    results.head.criterion should beEqualTo(NfiraosCatalogSearchCriterion(NfiraosCatalogSearchKey(NfiraosGuideStarType.tiptilt, Wfs.Group.instance), CatalogSearchCriterion("Nfiraos Wave Front Sensor tiptilt", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(RBandsList, FaintnessConstraint(16.8), scala.Option(SaturationConstraint(9.3))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.Some(Angle.zero))))
     results(1).criterion.key should beEqualTo(NfiraosCatalogSearchKey(NfiraosGuideStarType.flexure, IrisOdgw.Group.instance))
     results(1).criterion should beEqualTo(NfiraosCatalogSearchCriterion(NfiraosCatalogSearchKey(NfiraosGuideStarType.flexure, IrisOdgw.Group.instance), CatalogSearchCriterion("On-detector Guide Window flexure", RadiusConstraint.between(Angle.zero, Angle.fromDegrees(0.01666666666665151)), MagnitudeConstraints(SingleBand(MagnitudeBand.H), FaintnessConstraint(17.0), scala.Option(SaturationConstraint(8.0))), scala.Option(Offset(0.0014984027777700248.degrees[OffsetP], 0.0014984027777700248.degrees[OffsetQ])), scala.Some(Angle.zero))))
     results.head.results should be size expectedTipTiltResultsCount

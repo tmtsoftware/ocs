@@ -236,7 +236,7 @@ public final class Nfiraos extends AbstractDataObject implements PropertyProvide
         return sc;
     }
 
-    private static final Collection<GuideProbe> GUIDERS = GuideProbeUtil.instance.createCollection(Canopus.Wfs.values());
+    private static final Collection<GuideProbe> GUIDERS = GuideProbeUtil.instance.createCollection(NfiraosOiwfs.Wfs.values());
 
     public Collection<GuideProbe> getGuideProbes() {
         return GUIDERS;

@@ -217,7 +217,7 @@ class MascotGuideStarSpec extends Specification {
       inst.setIssPort(IssPort.SIDE_LOOKING)
       val ctx = ObsContext.create(env, inst, JNone.instance(), SPSiteQuality.Conditions.BEST, null, null, JNone.instance())
 
-      val result = MascotGuideStar.findBestAsterismInQueryResult(loadedTargets, ctx, MascotGuideStar.CWFS, 180.0, 10.0)
+      val result = MascotGuideStar.findBestAsterismInQueryResult(loadedTargets, ctx, MascotGuideStar.OIWFS, 180.0, 10.0)
 
       val remoteAsterism = for {
         (strehlList, pa, ra, dec) <- result
@@ -234,7 +234,7 @@ class MascotGuideStarSpec extends Specification {
       inst.setIssPort(IssPort.SIDE_LOOKING)
       val ctx = ObsContext.create(env, inst, JNone.instance(), SPSiteQuality.Conditions.BEST, null, null, JNone.instance())
 
-      val result = MascotGuideStar.findBestAsterismInQueryResult(MascotGuideStarSpec.replaceRBands(loadedTargets), ctx, MascotGuideStar.CWFS, 180.0, 10.0)
+      val result = MascotGuideStar.findBestAsterismInQueryResult(MascotGuideStarSpec.replaceRBands(loadedTargets), ctx, MascotGuideStar.OIWFS, 180.0, 10.0)
 
       val remoteAsterism = for {
         (strehlList, pa, ra, dec) <- result
@@ -255,7 +255,7 @@ class MascotGuideStarSpec extends Specification {
         val ctx = ObsContext.create(env, inst, JNone.instance(), SPSiteQuality.Conditions.BEST, null, null, JNone.instance())
 
         val targets = t.result.targets.rows
-        val result = MascotGuideStar.findBestAsterismInQueryResult(targets, ctx, MascotGuideStar.CWFS, 180.0, 10.0)
+        val result = MascotGuideStar.findBestAsterismInQueryResult(targets, ctx, MascotGuideStar.OIWFS, 180.0, 10.0)
 
         for {
           (strehlList, pa, ra, dec) <- result

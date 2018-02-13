@@ -6,7 +6,7 @@ import java.beans.PropertyDescriptor
 
 import edu.gemini.spModel.core.SiderealTarget
 import edu.gemini.spModel.data.config.{DefaultParameter, IParameter}
-import edu.gemini.spModel.gemini.nfiraos.Canopus
+import edu.gemini.spModel.gemini.nfiraos.Nfiraos
 import edu.gemini.spModel.gemini.iris.Iris._
 import edu.gemini.spModel.gemini.iris.Iris.Filter._
 import edu.gemini.spModel.gemini.seqcomp.SeqRepeatOffset
@@ -33,11 +33,11 @@ class PlannedTimeTest extends InstrumentSequenceTestBase[Iris, IrisSeqConfig] {
   override def setUp() {
     super.setUp()
 
-    // Add a canopus guide star so that guiding will be turned on
+    // Add a nfiraos guide star so that guiding will be turned on
     val env  = getTargetEnvironment
     val grp  = env.getPrimaryGuideGroup
     val target = new SPTarget(SiderealTarget.empty)
-    val env2 = env.setPrimaryGuideGroup(grp.put(GuideProbeTargets.create(Canopus.Wfs.cwfs3, target)))
+    val env2 = env.setPrimaryGuideGroup(grp.put(GuideProbeTargets.create(NfiraosOiwfs.Wfs.oiwfs3, target)))
 
     val dobj = getTarget.getDataObject.asInstanceOf[TargetObsComp]
     dobj.setTargetEnvironment(env2)

@@ -7,7 +7,7 @@ import edu.gemini.ags.api.AgsAnalysis
 import edu.gemini.qpt.core.Marker.Severity
 import edu.gemini.qpt.core.Variant
 import edu.gemini.qpt.core.util.MarkerManager
-import edu.gemini.spModel.gemini.nfiraos.Canopus
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs
 import edu.gemini.spModel.gemini.iris.IrisOdgw
 import edu.gemini.spModel.guide.GuideProbeGroup
 
@@ -25,7 +25,7 @@ class AgsAnalysisListener extends MarkerModelListener[Variant] {
     // Iterate over the observations in the variant and determine if they should generate
     // markers based on the AgsAnalysis.
     for (alloc <- variant.getAllocs.asScala if !alloc.getObs.getAgsAnalysis.isEmpty) {
-      // Only analyses with a severity level that are not ODGW and Canopus should generate a marker.
+      // Only analyses with a severity level that are not ODGW and Nfiraos should generate a marker.
       for {
         a <- alloc.getObs.getAgsAnalysis.asScala
         if (a match {
@@ -43,8 +43,8 @@ class AgsAnalysisListener extends MarkerModelListener[Variant] {
 }
 
 object AgsAnalysisListener {
-  // We want to ignore AgsAnalysis problems for ODGW and Canopus.
-  val ignoredProbeGroups: Set[GuideProbeGroup] = Set(IrisOdgw.Group.instance, Canopus.Wfs.Group.instance)
+  // We want to ignore AgsAnalysis problems for ODGW and Nfiraos.
+  val ignoredProbeGroups: Set[GuideProbeGroup] = Set(IrisOdgw.Group.instance, NfiraosOiwfs.Wfs.Group.instance)
 
   def severity(a: AgsAnalysis): Option[Severity] =
     a.quality match {

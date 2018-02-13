@@ -4,7 +4,7 @@ import edu.gemini.ags.api.AgsGuideQuality._
 import edu.gemini.ags.api.AgsMagnitude.MagnitudeTable
 import edu.gemini.ags.api.{AgsAnalysis, AgsRegistrar}
 import edu.gemini.p2checker.api.{P2Problems, IP2Problems, Problem, ObservationElements, IRule}
-import edu.gemini.spModel.gemini.nfiraos.Canopus
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs
 import edu.gemini.spModel.gemini.iris.IrisOdgw
 import edu.gemini.spModel.guide.GuideProbeGroup
 import edu.gemini.spModel.obs.SPObservation
@@ -29,7 +29,7 @@ class AgsAnalysisRule(mt: MagnitudeTable) extends IRule {
 
           // Analyses that are not DeliversRequestedIq in quality should lead to a warning or error.
           // This equates to all analyses with a severity level.
-          // We also omit ODGW and Canopus errors because these are already reported with different P2 messages.
+          // We also omit ODGW and Nfiraos errors because these are already reported with different P2 messages.
           for {
             h <- analysis
             if (h match {
@@ -48,8 +48,8 @@ class AgsAnalysisRule(mt: MagnitudeTable) extends IRule {
 object AgsAnalysisRule {
   val Prefix = "AgsAnalysisRule_"
 
-  // We want to ignore AgsAnalysis problems for ODGW and Canopus.
-  val ignoredProbeGroups: Set[GuideProbeGroup] = Set(IrisOdgw.Group.instance, Canopus.Wfs.Group.instance)
+  // We want to ignore AgsAnalysis problems for ODGW and Nfiraos.
+  val ignoredProbeGroups: Set[GuideProbeGroup] = Set(IrisOdgw.Group.instance, NfiraosOiwfs.Wfs.Group.instance)
 
   def severity(a: AgsAnalysis): Option[Problem.Type] =
     a.quality match {

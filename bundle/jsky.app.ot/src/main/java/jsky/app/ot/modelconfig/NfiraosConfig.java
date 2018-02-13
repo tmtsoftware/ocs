@@ -5,7 +5,7 @@ import edu.gemini.shared.util.immutable.MapOp;
 import edu.gemini.shared.util.immutable.None;
 import edu.gemini.shared.util.immutable.Option;
 import edu.gemini.shared.util.immutable.Some;
-import edu.gemini.spModel.gemini.nfiraos.Canopus;
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs;
 import edu.gemini.spModel.gemini.iris.IrisDetectorArray;
 import edu.gemini.spModel.gemini.iris.IrisDetectorArray.Config.Direction;
 import edu.gemini.spModel.telescope.IssPort;
@@ -19,16 +19,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Applies Nfiraos (Canopus and IRIS) configuration options.
+ * Applies Nfiraos (Nfiraos and IRIS) configuration options.
  */
 public enum NfiraosConfig implements ConfigApply {
     instance;
 
     private static final Logger LOG = Logger.getLogger(NfiraosConfig.class.getName());
 
-    public static final String CANOPUS_UP         = "canopusUp";
-    public static final String CANOPUS_SIDE       = "canopusSide";
-    public static final String CANOPUS_ROT        = "rotation";
+    public static final String IrisOiwfs_UP         = "irisOiwfsUp";
+    public static final String IrisOiwfs_SIDE       = "irisOiwfsSide";
+    public static final String IrisOiwfs_ROT        = "rotation";
 
     private static Option<Angle> parseAngle(Double d) {
         if ((d == null) || d.isInfinite() || d.isNaN()) {
@@ -39,7 +39,7 @@ public enum NfiraosConfig implements ConfigApply {
     }
 
     private static Option<Angle> getAngle(String key, ModelConfig config) {
-        Option<Double> dOpt = config.getDouble(key + "." + CANOPUS_ROT);
+        Option<Double> dOpt = config.getDouble(key + "." + IrisOiwfs_ROT);
         return dOpt.flatMap(new MapOp<Double, Option<Angle>>() {
             @Override public Option<Angle> apply(Double d) {
                 return parseAngle(d);
@@ -47,17 +47,17 @@ public enum NfiraosConfig implements ConfigApply {
         });
     }
 
-    private void setCanopus(String key, ModelConfig config) {
+    private void setIrisOiwfs(String key, ModelConfig config) {
         Option<Angle> angleOpt = getAngle(key, config);
         if (angleOpt.isEmpty()) return;
 
         Angle angle = angleOpt.getValue();
 
-        IssPort port = (CANOPUS_SIDE == key) ? IssPort.SIDE_LOOKING : IssPort.UP_LOOKING;
-        String msg  = String.format("Set Canopus %s: rotation = %s", port.displayValue(), angle);
+        IssPort port = (IrisOiwfs_SIDE == key) ? IssPort.SIDE_LOOKING : IssPort.UP_LOOKING;
+        String msg  = String.format("Set Nfiraos %s: rotation = %s", port.displayValue(), angle);
         LOG.log(Level.INFO, msg);
 
-        Canopus.setRotationConfig(port, angle);
+        NfiraosOiwfs.setRotationConfig(port, angle);
     }
 
 
@@ -128,8 +128,8 @@ public enum NfiraosConfig implements ConfigApply {
     }
 
     @Override public void apply(ModelConfig config) {
-        setCanopus(CANOPUS_SIDE, config);
-        setCanopus(CANOPUS_UP,   config);
+        setIrisOiwfs(IrisOiwfs_SIDE, config);
+        setIrisOiwfs(IrisOiwfs_UP,   config);
         setOdgw(ODGW_SIDE, config);
         setOdgw(ODGW_UP,   config);
     }

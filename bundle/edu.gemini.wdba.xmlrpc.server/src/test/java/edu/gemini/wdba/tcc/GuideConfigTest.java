@@ -11,7 +11,7 @@ import edu.gemini.spModel.gemini.altair.AltairAowfsGuider;
 import edu.gemini.spModel.gemini.altair.AltairParams;
 import edu.gemini.spModel.gemini.altair.InstAltair;
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2OiwfsGuideProbe;
-import edu.gemini.spModel.gemini.nfiraos.Canopus;
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs;
 import edu.gemini.spModel.gemini.gmos.GmosOiwfsGuideProbe;
 import edu.gemini.spModel.gemini.iris.IrisOdgw;
 import edu.gemini.spModel.gemini.nici.NiciOiwfsGuideProbe;
@@ -117,21 +117,21 @@ public final class GuideConfigTest extends TestBase {
     }
 
     @Test public void testNfiraos() throws Exception {
-        testTargetEnvironment(TccNames.Nfiraos, create(Canopus.Wfs.values()));
-        testTargetEnvironment(TccNames.Nfiraos, create(Canopus.Wfs.cwfs1, Canopus.Wfs.cwfs2, IrisOdgw.odgw1));
+        testTargetEnvironment(TccNames.Nfiraos, create(NfiraosOiwfs.Wfs.values()));
+        testTargetEnvironment(TccNames.Nfiraos, create(NfiraosOiwfs.Wfs.oiwfs1, NfiraosOiwfs.Wfs.oiwfs2, IrisOdgw.odgw1));
     }
 
     @Test public void testNfiraosOI() throws Exception {
-        testTargetEnvironment(TccNames.NfiraosOI, create(Canopus.Wfs.cwfs1, Flamingos2OiwfsGuideProbe.instance));
-        testTargetEnvironment(TccNames.NfiraosOI, create(Canopus.Wfs.cwfs1, IrisOdgw.odgw1, Flamingos2OiwfsGuideProbe.instance));
+        testTargetEnvironment(TccNames.NfiraosOI, create(NfiraosOiwfs.Wfs.oiwfs1, Flamingos2OiwfsGuideProbe.instance));
+        testTargetEnvironment(TccNames.NfiraosOI, create(NfiraosOiwfs.Wfs.oiwfs1, IrisOdgw.odgw1, Flamingos2OiwfsGuideProbe.instance));
     }
 
     @Test public void testNfiraosP1() throws Exception {
-        testTargetEnvironment(TccNames.NfiraosP1, create(PwfsGuideProbe.pwfs1, Canopus.Wfs.cwfs1));
+        testTargetEnvironment(TccNames.NfiraosP1, create(PwfsGuideProbe.pwfs1, NfiraosOiwfs.Wfs.oiwfs1));
     }
 
     @Test public void testNfiraosP1OI() throws Exception {
-        testTargetEnvironment(TccNames.NfiraosP1OI, create(PwfsGuideProbe.pwfs1, Canopus.Wfs.cwfs1, Flamingos2OiwfsGuideProbe.instance));
+        testTargetEnvironment(TccNames.NfiraosP1OI, create(PwfsGuideProbe.pwfs1, NfiraosOiwfs.Wfs.oiwfs1, Flamingos2OiwfsGuideProbe.instance));
     }
 
     @Test public void testAO() throws Exception {

@@ -21,6 +21,7 @@ import edu.gemini.spModel.smartgcal.repository.CalibrationRemoteRepository;
 import edu.gemini.spModel.smartgcal.repository.CalibrationResourceRepository;
 import edu.gemini.spModel.smartgcal.repository.CalibrationUpdater;
 import edu.gemini.util.security.auth.keychain.KeyChain;
+import jsky.app.ot.gemini.nfiraos.NfiraosFeature;
 import jsky.app.ot.modelconfig.Flamingos2Config;
 import jsky.app.ot.modelconfig.NfiraosConfig;
 import jsky.app.ot.modelconfig.ModelConfig;
@@ -208,7 +209,7 @@ public final class OT {
                 jsky.app.ot.gemini.tpe.EdIterOffsetFeature.class,
                 jsky.app.ot.gemini.acqcam.TpeAcqCameraFeature.class,
                 jsky.app.ot.gemini.altair.Altair_WFS_Feature.class,
-                jsky.app.ot.gemini.nfiraos.CanopusFeature.class,
+                jsky.app.ot.gemini.nfiraos.NfiraosFeature.class,
                 jsky.app.ot.gemini.iris.IrisOdgwFeature.class,
                 jsky.app.ot.gemini.nfiraos.StrehlFeature.class,
                 jsky.app.ot.gemini.inst.OIWFS_Feature.class,

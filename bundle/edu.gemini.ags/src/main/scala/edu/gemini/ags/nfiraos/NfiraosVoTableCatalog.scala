@@ -120,9 +120,9 @@ case class NfiraosVoTableCatalog(backend: VoTableBackend = ConeSearchBackend, ca
   }
 
   // Returns a list of radius limits used in the criteria.
-  // If inst is flamingos2, use separate limits, since the difference in size between the OIWFS and Canopus
+  // If inst is flamingos2, use separate limits, since the difference in size between the OIWFS and Nfiraos
   // areas is too large to get good results.
-  // Otherwise, for IRIS, merge the radius limits into one, since the Canopus and IRIS radius are both about
+  // Otherwise, for IRIS, merge the radius limits into one, since the Nfiraos and IRIS radius are both about
   // 1 arcmin.
   protected [nfiraos] def getRadiusConstraints(inst: NfiraosInstrument, criterions: List[NfiraosCatalogSearchCriterion]): List[RadiusConstraint] = {
     inst match {

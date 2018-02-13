@@ -10,7 +10,7 @@ import edu.gemini.pot.sp.SPComponentType;
 import edu.gemini.shared.util.immutable.Option;
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2;
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2OiwfsGuideProbe;
-import edu.gemini.spModel.gemini.nfiraos.Canopus;
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs;
 import edu.gemini.spModel.gemini.iris.Iris;
 import edu.gemini.spModel.gemini.iris.IrisOdgw;
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality;
@@ -31,8 +31,8 @@ import edu.gemini.spModel.target.env.TargetEnvironment;
 public final class NfiraosGuideStarRule implements IRule {
     private static final String PREFIX = "NfiraosGuideStarRule_";
     private static final String ODGW = "The ODGW%d guide star falls out of the range of the detector";
-    private static final String CWFS = "The CWFS%d guide star falls out of the range of the guide probe";
-    private static final String ConfigError = "Configuration not supported. Please select 3 CWFS + 1 ODGW or 1 CWFS + 3 ODGW";
+    private static final String OIWFS = "The OIWFS%d guide star falls out of the range of the guide probe";
+    private static final String ConfigError = "Configuration not supported. Please select 3 OIWFS + 1 ODGW or 1 OIWFS + 3 ODGW";
     private static final String TipTilt = "Less than 3 Nfiraos guide stars of the same origin. Tip-tilt correction will not be optimal.";
     private static final String SlowFocus = "Missing Slow-focus Sensor star. Slow Focus correction will be not be applied.";
 // TODO: REL-2941   private static final String Flexure = "Missing flexure guide star. Flexure will not be compensated.";
@@ -77,11 +77,11 @@ public final class NfiraosGuideStarRule implements IRule {
                 }
             }
 
-            // Check the Canopus guide positions.
+            // Check the Nfiraos guide positions.
             if (elements.hasNfiraos()) {
-                for (final Canopus.Wfs canwfs : Canopus.Wfs.values()) {
+                for (final NfiraosOiwfs.Wfs canwfs : NfiraosOiwfs.Wfs.values()) {
                     if (!validate(canwfs, ctx)) {
-                        addError(problems, PREFIX + "CWFS", CWFS, ctx, canwfs.getIndex(), targetNode);
+                        addError(problems, PREFIX + "OIWFS", OIWFS, ctx, canwfs.getIndex(), targetNode);
                     }
                 }
 
@@ -100,12 +100,12 @@ public final class NfiraosGuideStarRule implements IRule {
             }
 
             GuideGroup primaryGuideGroup = env.getPrimaryGuideGroup();
-            // get # cwfs
-            int cwfs = 0;
-            for (final Canopus.Wfs canwfs : Canopus.Wfs.values()) {
+            // get # oiwfs
+            int oiwfs = 0;
+            for (final NfiraosOiwfs.Wfs canwfs : NfiraosOiwfs.Wfs.values()) {
                 Option<GuideProbeTargets> gpt = primaryGuideGroup.get(canwfs);
                 if (!gpt.isEmpty() && !gpt.getValue().getPrimary().isEmpty()) {
-                    cwfs++;
+                    oiwfs++;
                 }
             }
 
@@ -118,22 +118,22 @@ public final class NfiraosGuideStarRule implements IRule {
                         odgws++;
                     }
                 }
-                //if (3 CWFS and >1 ODGW) or (2 CWFS and 2 ODGW) or (4 ODGW)
-                if ((cwfs == 3 && odgws > 1) || (odgws == 2 && cwfs == 2) || (odgws == 4) || (odgws == 3 && cwfs > 1)) {
+                //if (3 OIWFS and >1 ODGW) or (2 OIWFS and 2 ODGW) or (4 ODGW)
+                if ((oiwfs == 3 && odgws > 1) || (odgws == 2 && oiwfs == 2) || (odgws == 4) || (odgws == 3 && oiwfs > 1)) {
                     problems.addError(PREFIX + "ConfigError", ConfigError, targetNode);
                 }
-                //When using less than 3 of either CANOPUS CWFS or ODGW when 1 of the complementary type (CWFS3 or ODGW/F2 OIWFS)
-                if (((odgws <= 1 && cwfs < 3) || (cwfs <= 1 && odgws < 3)) && !isDayCal) {
+                //When using less than 3 of either Nfiraos OIWFS or ODGW when 1 of the complementary type (OIWFS3 or ODGW/F2 OIWFS)
+                if (((odgws <= 1 && oiwfs < 3) || (oiwfs <= 1 && odgws < 3)) && !isDayCal) {
                     problems.addWarning(PREFIX + "TipTilt", TipTilt, targetNode);
                 }
-                //No Canopus Slow-focus Sensor guide star (CWFS) when using 2 or 3 ODGW.
-                if ((odgws == 3 || odgws == 2) && cwfs == 0) {
+                //No Nfiraos Slow-focus Sensor guide star (OIWFS) when using 2 or 3 ODGW.
+                if ((odgws == 3 || odgws == 2) && oiwfs == 0) {
                     problems.addWarning(PREFIX + "SlowFocus", SlowFocus, targetNode);
                 }
 
                 /* TODO: REL-2941
-                //No flexure guide star (IRIS ODGW or Flamingos II OIWFS) when using 2 or 3 CWFS.
-                if ((cwfs == 3 || cwfs == 2) && odgws == 0) {
+                //No flexure guide star (IRIS ODGW or Flamingos II OIWFS) when using 2 or 3 OIWFS.
+                if ((oiwfs == 3 || oiwfs == 2) && odgws == 0) {
                     problems.addWarning(PREFIX + "Flexure", Flexure, targetNode);
                 }
                 */
@@ -147,15 +147,15 @@ public final class NfiraosGuideStarRule implements IRule {
                     f2oiwfs = true;
                 }
                 /* TODO: REL-2941
-                //No flexure guide star (IRIS ODGW or Flamingos II OIWFS) when using 2 or 3 CWFS.
-                if (!f2oiwfs && (cwfs == 3 || cwfs == 2)) {
+                //No flexure guide star (IRIS ODGW or Flamingos II OIWFS) when using 2 or 3 OIWFS.
+                if (!f2oiwfs && (oiwfs == 3 || oiwfs == 2)) {
                     if (gpt.isEmpty() || gpt.getValue().getPrimary().isEmpty()) {
                         problems.addWarning(PREFIX + "Flexure", Flexure, targetNode);
                     }
                 }
                 */
-                //When using less than 3 of either CANOPUS CWFS or ODGW when 1 of the complementary type (CWFS3 or ODGW/F2 OIWFS)
-                if ((f2oiwfs && cwfs < 3) && !isDayCal) {
+                //When using less than 3 of either Nfiraos OIWFS or ODGW when 1 of the complementary type (OIWFS3 or ODGW/F2 OIWFS)
+                if ((f2oiwfs && oiwfs < 3) && !isDayCal) {
                     problems.addWarning(PREFIX + "TipTilt", TipTilt, targetNode);
                 }
             }

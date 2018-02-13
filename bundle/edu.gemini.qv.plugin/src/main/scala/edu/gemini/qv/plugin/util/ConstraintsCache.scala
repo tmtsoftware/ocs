@@ -217,7 +217,7 @@ class ConstraintsCache(allNights: Seq[Night]) extends Publisher {
    * Gets the minimal elevation for an observation to be observable depending on LGS or not.
    * NOTE: This should be done by checking for the actual instrument used by the observation from o.instruments
    * but as part of REL-293 the Nfiraos component has been removed from the list of instruments in the Obs objects
-   * and was replaced by an artificial Canopus component in the QPT; see also ObsQueryFunctor.instrument().
+   * and was replaced by an artificial Nfiraos component in the QPT; see also ObsQueryFunctor.instrument().
    * Since fixing this properly would need additional work in the QPT this is out of scope for now.
    */
   private def minElevationFor(n: Night, o: Obs) =

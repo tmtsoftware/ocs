@@ -11,7 +11,7 @@ import edu.gemini.pot.ModelConverters._
 import edu.gemini.spModel.core.SiderealTarget
 import edu.gemini.spModel.ags.AgsStrategyKey.NfiraosKey
 import edu.gemini.spModel.gemini.flamingos2.{Flamingos2, Flamingos2OiwfsGuideProbe}
-import edu.gemini.spModel.gemini.nfiraos.{Canopus, NfiraosInstrument}
+import edu.gemini.spModel.gemini.nfiraos.{NfiraosOiwfs, NfiraosInstrument}
 import edu.gemini.spModel.gemini.iris.{Iris, IrisOdgw}
 import edu.gemini.spModel.nfiraos.{NfiraosGuideProbeGroup, NfiraosTipTiltMode}
 import edu.gemini.spModel.obs.context.ObsContext
@@ -38,11 +38,11 @@ trait NfiraosStrategy extends AgsStrategy {
   // they are done, so we create IDs for each. This is a pretty nasty way to do things, but
   // since we cannot predict in what order the results will return, we need to be able
   // to pick them out somehow.
-  private val CanopusTipTiltId = 0
+  private val IrisOiwfsTipTiltId = 0
   private val OdgwFlexureId    = 1
 
   override def magnitudes(ctx: ObsContext, mt: MagnitudeTable): List[(GuideProbe, MagnitudeCalc)] = {
-    val cans = Canopus.Wfs.values().map { cwfs => mt(ctx, cwfs).map(cwfs -> _) }.toList.flatten
+    val cans = NfiraosOiwfs.Wfs.values().map { oiwfs => mt(ctx, oiwfs).map(oiwfs -> _) }.toList.flatten
     val odgw = IrisOdgw.values().map { odgw => mt(ctx, odgw).map(odgw -> _) }.toList.flatten
     cans ++ odgw
   }
@@ -62,13 +62,13 @@ trait NfiraosStrategy extends AgsStrategy {
       val probeAnalysis = grp.getMembers.asScala.toList.flatMap { p => analysis(ctx, mt, p) }
       probeAnalysis.filter(hasGuideStarForProbe) match {
         case Nil =>
-          // Pick the first guide probe as representative, since we are called with either Canopus or IrisOdwg
+          // Pick the first guide probe as representative, since we are called with either Nfiraos or IrisOdwg
           ~grp.getMembers.asScala.headOption.map {gp => List(NoGuideStarForGroup(grp))}
         case lst => lst
       }
     }
 
-    mapGroup(Canopus.Wfs.Group.instance) // TODO: REL-2941 ++ mapGroup(IrisOdgw.Group.instance)
+    mapGroup(NfiraosOiwfs.Wfs.Group.instance) // TODO: REL-2941 ++ mapGroup(IrisOdgw.Group.instance)
   }
 
   override def candidates(ctx: ObsContext, mt: MagnitudeTable)(ec: ExecutionContext): Future[List[(GuideProbe, List[SiderealTarget])]] = {
@@ -87,7 +87,7 @@ trait NfiraosStrategy extends AgsStrategy {
     // why do we need multiple position angles?  catalog results are given in
     // a ring (limited by radius limits) around a base position ... confusion
     val posAngles   = (ctx.getPositionAngle :: (0 until 360 by 90).map(Angle.fromDegrees(_)).toList).toSet
-    search(NfiraosTipTiltMode.canopus, ctx, posAngles, None)(ec).map(simplifiedResult)
+    search(NfiraosTipTiltMode.nfiraos, ctx, posAngles, None)(ec).map(simplifiedResult)
   }
 
   override def estimate(ctx: ObsContext, mt: MagnitudeTable)(ec: ExecutionContext): Future[Estimate] = {
@@ -95,14 +95,14 @@ trait NfiraosStrategy extends AgsStrategy {
     val anglesToTry = (0 until 360 by 90).map(Angle.fromDegrees(_)).toSet
 
     // Get the query results and convert them to Nfiraos-specific ones.
-    val results = search(NfiraosTipTiltMode.canopus, ctx, anglesToTry, None)(ec)
+    val results = search(NfiraosTipTiltMode.nfiraos, ctx, anglesToTry, None)(ec)
 
     // Iterate over 90 degree position angles if no 3-star asterism is found at PA = 0.
     val nfiraosCatalogResults = results.map(result => NfiraosResultsAnalyzer.analyzeGoodEnough(ctx, anglesToTry, result, _.stars.size < 3))
 
-    // We only want Canopus targets, so filter to those and then determine if the asterisms are big enough.
+    // We only want Nfiraos targets, so filter to those and then determine if the asterisms are big enough.
     nfiraosCatalogResults.map { ggsLst =>
-      val largestAsterism = ggsLst.map(_.guideGroup.grp.toManualGroup.targetMap.keySet.intersection(NfiraosStrategy.canopusProbes).size).fold(0)(math.max)
+      val largestAsterism = ggsLst.map(_.guideGroup.grp.toManualGroup.targetMap.keySet.intersection(NfiraosStrategy.irisOiwfsProbes).size).fold(0)(math.max)
       AgsStrategy.Estimate.toEstimate(largestAsterism / 3.0)
     }
   }
@@ -120,7 +120,7 @@ trait NfiraosStrategy extends AgsStrategy {
 
       // Now check that the results are valid: there must be a valid tip-tilt and flexure star each.
       results.map { r =>
-        val AllKeys:List[NfiraosGuideProbeGroup] = List(Canopus.Wfs.Group.instance, IrisOdgw.Group.instance)
+        val AllKeys:List[NfiraosGuideProbeGroup] = List(NfiraosOiwfs.Wfs.Group.instance, IrisOdgw.Group.instance)
         val containedKeys = r.map(_.criterion.key.group)
         // Return a list only if both guide probes returned a value
         ~(containedKeys.forall(AllKeys.contains) option r)
@@ -143,13 +143,13 @@ trait NfiraosStrategy extends AgsStrategy {
         Set(ctx.getPositionAngle, Angle.zero, Angle.fromDegrees(90), Angle.fromDegrees(180), Angle.fromDegrees(270))
     }
 
-    val results = search(NfiraosTipTiltMode.canopus, ctx, posAngles, None)(ec)
+    val results = search(NfiraosTipTiltMode.nfiraos, ctx, posAngles, None)(ec)
     results.map { r =>
       val nfiraosGuideStars = findGuideStars(ctx, posAngles, r)
 
       // Now we must convert from an Option[NfiraosGuideStars] to a Selection.
       nfiraosGuideStars.map { x =>
-        val assignments = x.guideGroup.getAll.asScalaList.filter(_.getGuider.getGroup.contains(Canopus.Wfs.Group.instance)).flatMap(targets => {
+        val assignments = x.guideGroup.getAll.asScalaList.filter(_.getGuider.getGroup.contains(NfiraosOiwfs.Wfs.Group.instance)).flatMap(targets => {
           val guider = targets.getGuider
           targets.getTargets.asScalaList.map(target => Assignment(guider, target.toSiderealTarget(ctx.getSchedulingBlockStart)))
         })
@@ -169,27 +169,27 @@ trait NfiraosStrategy extends AgsStrategy {
       val odgwMagLimits = (lim(IrisOdgw.odgw1) /: IrisOdgw.values().drop(1)) { (ml, odgw) =>
         (ml |@| lim(odgw))(_ union _).flatten
       }
-      val canMagLimits = (lim(Canopus.Wfs.cwfs1) /: Canopus.Wfs.values().drop(1)) { (ml, can) =>
+      val canMagLimits = (lim(NfiraosOiwfs.Wfs.oiwfs1) /: NfiraosOiwfs.Wfs.values().drop(1)) { (ml, can) =>
         (ml |@| lim(can))(_ union _).flatten
       }
 
-      val canopusConstraint = canMagLimits.map(c => CatalogQuery(CanopusTipTiltId, base.toNewModel, RadiusConstraint.between(Angle.zero, Canopus.Wfs.Group.instance.getRadiusLimits.toNewModel), List(ctx.getConditions.adjust(c)), UCAC4))
+      val irisOiwfsConstraint = canMagLimits.map(c => CatalogQuery(IrisOiwfsTipTiltId, base.toNewModel, RadiusConstraint.between(Angle.zero, NfiraosOiwfs.Wfs.Group.instance.getRadiusLimits.toNewModel), List(ctx.getConditions.adjust(c)), UCAC4))
       val odgwConstraint    = odgwMagLimits.map(c => CatalogQuery(OdgwFlexureId,   base.toNewModel, RadiusConstraint.between(Angle.zero, IrisOdgw.Group.instance.getRadiusLimits.toNewModel), List(ctx.getConditions.adjust(c)), UCAC4))
-      List(canopusConstraint, odgwConstraint).flatten
+      List(irisOiwfsConstraint, odgwConstraint).flatten
     }
 
   override val probeBands = RBandsList
 
   // Return the band used for each probe
   // TODO Delegate to NfiraosMagnitudeTable
-  private def probeBands(guideProbe: GuideProbe): BandsList = if (Canopus.Wfs.Group.instance.getMembers.contains(guideProbe)) RBandsList else SingleBand(MagnitudeBand.H)
+  private def probeBands(guideProbe: GuideProbe): BandsList = if (NfiraosOiwfs.Wfs.Group.instance.getMembers.contains(guideProbe)) RBandsList else SingleBand(MagnitudeBand.H)
 
   override val guideProbes: List[GuideProbe] =
-    Flamingos2OiwfsGuideProbe.instance :: (IrisOdgw.values() ++ Canopus.Wfs.values()).toList
+    Flamingos2OiwfsGuideProbe.instance :: (IrisOdgw.values() ++ NfiraosOiwfs.Wfs.values()).toList
 }
 
 object NfiraosStrategy extends NfiraosStrategy {
   override private [impl] val backend = ConeSearchBackend
 
-  private [impl] lazy val canopusProbes: ISet[GuideProbe] = ISet.fromList(List(Canopus.Wfs.cwfs1, Canopus.Wfs.cwfs2, Canopus.Wfs.cwfs3))
+  private [impl] lazy val irisOiwfsProbes: ISet[GuideProbe] = ISet.fromList(List(NfiraosOiwfs.Wfs.oiwfs1, NfiraosOiwfs.Wfs.oiwfs2, NfiraosOiwfs.Wfs.oiwfs3))
 }

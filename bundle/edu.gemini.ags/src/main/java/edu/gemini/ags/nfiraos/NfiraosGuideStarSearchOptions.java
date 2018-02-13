@@ -6,7 +6,7 @@ import edu.gemini.catalog.api.UCAC4$;
 import edu.gemini.catalog.api.MagnitudeConstraints;
 import edu.gemini.spModel.core.Angle;
 import edu.gemini.spModel.core.MagnitudeBand;
-import edu.gemini.spModel.gemini.nfiraos.Canopus;
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs;
 import edu.gemini.spModel.gemini.nfiraos.NfiraosInstrument;
 import edu.gemini.spModel.nfiraos.NfiraosGuideProbeGroup;
 import edu.gemini.spModel.nfiraos.NfiraosGuideStarType;
@@ -90,12 +90,12 @@ public class NfiraosGuideStarSearchOptions {
 
 
     public enum AnalyseChoice {
-        BOTH("Canopus and IRIS", NfiraosTipTiltMode.both),
-        CANOPUS("Canopus", NfiraosTipTiltMode.canopus),
+        BOTH("Nfiraos and IRIS", NfiraosTipTiltMode.both),
+        Nfiraos("Nfiraos", NfiraosTipTiltMode.nfiraos),
         IRIS("IRIS", NfiraosTipTiltMode.instrument),
         ;
 
-        public static AnalyseChoice DEFAULT = CANOPUS; // REL-604
+        public static AnalyseChoice DEFAULT = Nfiraos; // REL-604
 
         private String _displayValue;
         private NfiraosTipTiltMode _nfiraosTipTiltMode;
@@ -128,7 +128,7 @@ public class NfiraosGuideStarSearchOptions {
         this.instrument = instrument;
         if (instrument == NfiraosInstrument.flamingos2) {
             // Flamingos 2 OIWFS can only ever be used for the flexure star.
-            this.tipTiltMode = NfiraosTipTiltMode.canopus;
+            this.tipTiltMode = NfiraosTipTiltMode.nfiraos;
         } else {
             this.tipTiltMode = tipTiltMode;
         }
@@ -145,26 +145,26 @@ public class NfiraosGuideStarSearchOptions {
      */
     public List<NfiraosCatalogSearchCriterion> searchCriteria(final ObsContext obsContext, final scala.Option<MagnitudeBand> nirBand) {
         switch(tipTiltMode) {
-            case canopus: return Arrays.asList(
-                    canopusCriterion(obsContext, NfiraosGuideStarType.tiptilt),
+            case nfiraos: return Arrays.asList(
+                    irisOiwfsCriterion(obsContext, NfiraosGuideStarType.tiptilt),
                     instrumentCriterion(obsContext, NfiraosGuideStarType.flexure, nirBand));
             case instrument: return Arrays.asList(
                     instrumentCriterion(obsContext, NfiraosGuideStarType.tiptilt, nirBand),
-                    canopusCriterion(obsContext, NfiraosGuideStarType.flexure));
+                    irisOiwfsCriterion(obsContext, NfiraosGuideStarType.flexure));
             default:
             case both: return Arrays.asList(
-                    canopusCriterion(obsContext, NfiraosGuideStarType.tiptilt),
+                    irisOiwfsCriterion(obsContext, NfiraosGuideStarType.tiptilt),
                     instrumentCriterion(obsContext, NfiraosGuideStarType.flexure, nirBand),
                     instrumentCriterion(obsContext, NfiraosGuideStarType.tiptilt, nirBand),
-                    canopusCriterion(obsContext, NfiraosGuideStarType.flexure)
+                    irisOiwfsCriterion(obsContext, NfiraosGuideStarType.flexure)
             );
         }
     }
 
-    private NfiraosCatalogSearchCriterion canopusCriterion(final ObsContext obsContext, final NfiraosGuideStarType ggst) {
-        final NfiraosMagnitudeTable.LimitsCalculator calculator = NfiraosMagnitudeTable.CanopusWfsMagnitudeLimitsCalculator();
+    private NfiraosCatalogSearchCriterion irisOiwfsCriterion(final ObsContext obsContext, final NfiraosGuideStarType ggst) {
+        final NfiraosMagnitudeTable.LimitsCalculator calculator = NfiraosMagnitudeTable.IrisOiwfsWfsMagnitudeLimitsCalculator();
         // Ugly hack for
-        return searchCriterion(obsContext, Canopus.Wfs.Group.instance, calculator, ggst, scala.Option.<MagnitudeBand>empty());
+        return searchCriterion(obsContext, NfiraosOiwfs.Wfs.Group.instance, calculator, ggst, scala.Option.<MagnitudeBand>empty());
     }
 
     private NfiraosCatalogSearchCriterion instrumentCriterion(final ObsContext obsContext, final NfiraosGuideStarType ggst, final scala.Option<MagnitudeBand> nirBand) {

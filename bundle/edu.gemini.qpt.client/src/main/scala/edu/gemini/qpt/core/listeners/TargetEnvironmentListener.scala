@@ -5,7 +5,7 @@ import edu.gemini.qpt.core.Marker
 import edu.gemini.qpt.core.Variant
 import edu.gemini.qpt.core.util.MarkerManager
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2OiwfsGuideProbe
-import edu.gemini.spModel.gemini.nfiraos.Canopus
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs
 import edu.gemini.spModel.gemini.iris.IrisOdgw
 import edu.gemini.spModel.gemini.nifs.NifsOiwfsGuideProbe
 import edu.gemini.spModel.guide.GuideProbe
@@ -23,11 +23,11 @@ object TargetEnvironmentListener {
   }
 
   // We use a set of GuideProbes to check for some specific exception cases.
-  private val canopusGuiders: Set[GuideProbe] = Canopus.Wfs.values().toSet
+  private val irisOiwfsGuiders: Set[GuideProbe] = NfiraosOiwfs.Wfs.values().toSet
   private val odgwGuiders: Set[GuideProbe]    = IrisOdgw.values().toSet
 
-  private val irisGuiders: Set[GuideProbe]  = canopusGuiders ++ odgwGuiders
-  private val f2NfiraosGuiders: Set[GuideProbe] = canopusGuiders + Flamingos2OiwfsGuideProbe.instance
+  private val irisGuiders: Set[GuideProbe]  = irisOiwfsGuiders ++ odgwGuiders
+  private val f2NfiraosGuiders: Set[GuideProbe] = irisOiwfsGuiders + Flamingos2OiwfsGuideProbe.instance
   private def isNfiraosConfiguration(s: Set[GuideProbe]): Boolean =
     s.subsetOf(irisGuiders) || s.subsetOf(f2NfiraosGuiders)
 }
@@ -62,8 +62,8 @@ class TargetEnvironmentListener extends MarkerModelListener[Variant] {
 
       // We now check for the GuideEnvironment cases that should generate warnings. These are:
       // 1. Multiple guide groups have targets.
-      // 2. A guide group has multiple guide probe targets, unless those happen to all be IRIS ODGW and/or Canopus CWFS,
-      //    or multiple Canopus CWFS with F2 OIWFS.
+      // 2. A guide group has multiple guide probe targets, unless those happen to all be IRIS ODGW and/or Nfiraos OIWFS,
+      //    or multiple Nfiraos OIWFS with F2 OIWFS.
       // 3. If any guide probe targets instance has multiple targets.
       // 4. Primary group uses NIFS + OIWFS.
 

@@ -102,9 +102,10 @@ public enum SPComponentType implements Serializable {
     TEMPLATE_PARAMETERS(TEMPLATE, "Parameters", "Template Parameters"),
     UNKNOWN(SPComponentBroadType.UNKNOWN, "unknown", "unknown"),
 
+    IRIS_OIWFS(INSTRUMENT, "Nfiraos", "Nfiraos"),
+
     // TODO: remove these
     // HACK: these are types used only by QPT that seem to have been introduced by misunderstanding.
-    QPT_CANOPUS(INSTRUMENT, "Canopus", "Canopus"),
     QPT_PWFS(INSTRUMENT, "PWFS", "PWFS"),
 
             ;
