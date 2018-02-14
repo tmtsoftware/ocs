@@ -44,39 +44,39 @@ public class IrisRule implements IRule {
         }
     };
 
-    private static IConfigRule LONG_EXPOSURE_TIME_RULE = new IConfigRule() {
-
-        private static final String MESSAGE =
-                "Exposure time (%.1f sec) may result in detector wells more than 50%% full (max for %s is %.0f sec)";
-
-        public Problem check(Config config, int step, ObservationElements elems, Object state) {
-            Double expTime = SequenceRule.getExposureTime(config);
-            if (expTime == null) return null;
-
-            Iris.Filter filter = (Iris.Filter) SequenceRule.getInstrumentItem(config, Iris.FILTER_PROP);
-            if (filter == null) return null;
-
-            double maxTime = filter.exposureTimeHalfWellSecs();
-            if (maxTime <= 0) return null;
-
-            if (expTime > maxTime) {
-                String msg = String.format(MESSAGE, expTime, filter.logValue(), maxTime);
-                return new Problem(WARNING, PREFIX + "LONG_EXPOSURE_TIME_RULE", msg, SequenceRule.getInstrumentOrSequenceNode(step, elems, config));
-            }
-            return null;
-        }
-
-        public IConfigMatcher getMatcher() {
-            return SequenceRule.SCIENCE_MATCHER;
-        }
-    };
+//    private static IConfigRule LONG_EXPOSURE_TIME_RULE = new IConfigRule() {
+//
+//        private static final String MESSAGE =
+//                "Exposure time (%.1f sec) may result in detector wells more than 50%% full (max for %s is %.0f sec)";
+//
+//        public Problem check(Config config, int step, ObservationElements elems, Object state) {
+//            Double expTime = SequenceRule.getExposureTime(config);
+//            if (expTime == null) return null;
+//
+//            Iris.Filter filter = (Iris.Filter) SequenceRule.getInstrumentItem(config, Iris.FILTER_PROP);
+//            if (filter == null) return null;
+//
+//            double maxTime = filter.exposureTimeHalfWellSecs();
+//            if (maxTime <= 0) return null;
+//
+//            if (expTime > maxTime) {
+//                String msg = String.format(MESSAGE, expTime, filter.logValue(), maxTime);
+//                return new Problem(WARNING, PREFIX + "LONG_EXPOSURE_TIME_RULE", msg, SequenceRule.getInstrumentOrSequenceNode(step, elems, config));
+//            }
+//            return null;
+//        }
+//
+//        public IConfigMatcher getMatcher() {
+//            return SequenceRule.SCIENCE_MATCHER;
+//        }
+//    };
 
     /*
      * Register all the IRIS rules to apply
      */
     static {
         IRIS_RULES.add(SHORT_EXPOSURE_TIME_RULE);
-        IRIS_RULES.add(LONG_EXPOSURE_TIME_RULE);
+//        IRIS_RULES.add(LONG_EXPOSURE_TIME_RULE);
     }
 
     public IP2Problems check(ObservationElements elems)  {

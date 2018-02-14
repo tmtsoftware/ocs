@@ -54,34 +54,10 @@ import java.util.*;
 import static edu.gemini.spModel.seqcomp.SeqConfigNames.INSTRUMENT_KEY;
 
 /**
- * This class defines the GS AOI instrument.
+ * This class defines the IRIS instrument.
  */
 public final class Iris extends SPInstObsComp
    implements PropertyProvider, GuideProbeProvider, IssPortProvider, StepCalculator, PosAngleConstraintAware {
-//    From REL-439:
-//    ----
-//    OT changes:
-//    The text in the IRIS component describing each read mode, the exposure time warning/error limits,
-//    and the readout overheads in the planned time calculations must be updated with the information below.
-//    The default exposure time for the IRIS component must be 60.0 seconds.
-//
-//    Bright Objects:
-//    Low Noise Reads: 2 (1-1 Fowler Sample)
-//    Read Noise : 28e-
-//    Exposure Time : > 5.3 sec (recommended) 5.3 sec (minimum)
-//    Readout overhead: 10 sec
-//
-//    Faint Objects / Broad Band Imaging
-//    Low Noise Reads: 8 (4-4 Fowler Sample)
-//    Read Noise : 13e-
-//    Exposure Time : > 21.5 sec (recommended) 21.5 sec (min)
-//    Readout overhead: 26 sec
-//
-//    Very Faint Objects / Narrow-band Imaging
-//    Low Noise Reads: 16 (8-8 Fowler Sample)
-//    Read Noise : 10e-
-//    Exposure Time : > 42.5 sec (recommended) 42.5 sec (min)
-//    Readout overhead: 48 sec
 
     public enum ReadMode implements DisplayableSpType, SequenceableSpType, LoggableSpType {
         // Updated for REL-439
@@ -153,56 +129,62 @@ public final class Iris extends SPInstObsComp
 
     // REL-445: Updated using the new 50/50 times below
     public enum Filter implements DisplayableSpType, SequenceableSpType, LoggableSpType {
-        Z("Z (1.015 um)", "Z",
-                1.015, ReadMode.FAINT, 26.0, 4619, new SingleBand((MagnitudeBand.J$.MODULE$))),
-        HEI("HeI (1.083 um)", "HeI",
-                1.083, ReadMode.VERY_FAINT, 72.6, 21792, new SingleBand((MagnitudeBand.J$.MODULE$))),
-        PA_GAMMA("Pa(gamma) (1.094 um)", "Pagma",
-                1.094, ReadMode.VERY_FAINT, 122.0, 36585, new SingleBand((MagnitudeBand.J$.MODULE$))),
-        J_CONTINUUM("J-continuum (1.207 um)", "Jcont",
-                1.207, ReadMode.VERY_FAINT, 32.6, 9793, new SingleBand((MagnitudeBand.J$.MODULE$))),
-        J("J (1.250 um)", "J",
-                1.250, ReadMode.FAINT, 5.7, 1004, new SingleBand((MagnitudeBand.J$.MODULE$))),
-        H("H (1.635 um)", "H",
-                1.635, ReadMode.BRIGHT, 12.0, 460, new SingleBand((MagnitudeBand.H$.MODULE$))),
-        PA_BETA("Pa(beta) (1.282 um)", "Pabeta",
-                1.282, ReadMode.FAINT, 21.8, 3879, new SingleBand((MagnitudeBand.J$.MODULE$))),
-        H_CONTINUUM("H-continuum (1.570 um)", "Hcont",
-                1.570, ReadMode.FAINT, 31.2, 5545, new SingleBand((MagnitudeBand.H$.MODULE$))),
-        CH4_SHORT("CH4(short) (1.580 um)", "CH4short",
-                1.580, ReadMode.FAINT, 6.6, 1174, new SingleBand((MagnitudeBand.H$.MODULE$))),
-        FE_II("[Fe II] (1.644 um)", "FeII1644",
-                1.644, ReadMode.FAINT, 24.9, 4416, new SingleBand((MagnitudeBand.H$.MODULE$))),
-        CH4_LONG("CH4(long) (1.690 um)", "CH4long",
-                1.690, ReadMode.FAINT, 6.8, 1202, new SingleBand((MagnitudeBand.H$.MODULE$))),
-        H20_ICE("H20 ice (2.000 um)", "H20ice",
-                2.000, ReadMode.FAINT, 19.1, 3395, new SingleBand((MagnitudeBand.K$.MODULE$))),
-        HEI_2P2S("HeI (2p2s) (2.058 um)", "HeI2p2s",
-                2.058, ReadMode.FAINT, 28.3, 5032, new SingleBand((MagnitudeBand.K$.MODULE$))),
-        K_CONTINUUM1("Ks-continuum (2.093 um)", "Kcontshrt",
-                2.093, ReadMode.FAINT, 7.8, 6069, new SingleBand((MagnitudeBand.K$.MODULE$))),
-        BR_GAMMA("Br(gamma) (2.166 um)", "Brgma",
-                2.166, ReadMode.FAINT, 31.0, 5496, new SingleBand((MagnitudeBand.K$.MODULE$))),
-        K_CONTINUUM2("Kl-continuum (2.270 um)", "Kcontlong",
-                2.270, ReadMode.FAINT, 33.3, 5911, new SingleBand((MagnitudeBand.K$.MODULE$))),
-        K_PRIME("K(prime) (2.120 um)", "Kprime",
-                2.120, ReadMode.BRIGHT, 14.8, 566, new SingleBand((MagnitudeBand.K$.MODULE$))),
-        H2_1_0_S_1("H2 1-0 S(1) (2.122 um)", "H2(1-0)",
-                2.122, ReadMode.FAINT, 27.5, 5400, new SingleBand((MagnitudeBand.K$.MODULE$))),
-        K_SHORT("K(short) (2.150 um)", "Kshort",
-                2.150, ReadMode.BRIGHT, 14.4, 551, new SingleBand((MagnitudeBand.K$.MODULE$))),
-        K("K (2.200 um)", "K",
-                2.200, ReadMode.BRIGHT, 12.3, 470, new SingleBand((MagnitudeBand.K$.MODULE$))),
-        H2_2_1_S_1("H2 2-1 S(1) (2.248 um)", "H2(2-1)",
-                2.248, ReadMode.FAINT, 32.6, 5784, new SingleBand((MagnitudeBand.K$.MODULE$))),
-        CO("CO (2.360 um)", "CO2360",
-                2.360, ReadMode.FAINT, 7.7, 1370, new SingleBand((MagnitudeBand.K$.MODULE$))),
-        DIFFUSER1("Diffuser1", "Diffuser1",
-                0.0, ReadMode.BRIGHT, 0.0, 0),
-        DIFFUSER2("Diffuser2", "Diffuser2",
-                0.0, ReadMode.BRIGHT, 0.0, 0),
-        BLOCKED("Blocked", "Blocked",
-                0.0, ReadMode.BRIGHT, 0.0, 0),;
+        Zbb("Zbb (0.928 um)", "Zbb", 0.928, new SingleBand((MagnitudeBand.J$.MODULE$))),
+        Ybb("Ybb (1.092 um)", "Ybb", 1.092),
+        Jbb("Jbb (1.27 um)", "Jbb", 1.27, new SingleBand((MagnitudeBand.J$.MODULE$))),
+        Hbb("Hbb (1.629 um)", "Hbb", 1.629, new SingleBand((MagnitudeBand.H$.MODULE$))),
+
+        Z("Z (0.876 um)", "Z", 0.876, new SingleBand((MagnitudeBand.J$.MODULE$))),
+        Y("Y (1.019 um)", "Y", 1.019),
+        J("J (1.245 um)", "J", 1.245, new SingleBand((MagnitudeBand.J$.MODULE$))),
+        H("H (1.626 um)", "H", 1.626, new SingleBand((MagnitudeBand.H$.MODULE$))),
+        Ks("Ks (2.139 um)", "Ks", 2.139, new SingleBand((MagnitudeBand.K$.MODULE$))),
+        K("K (2.191 um)", "K", 2.191, new SingleBand((MagnitudeBand.K$.MODULE$))),
+//        HKnotch("H+K notch (Two bandpasses)", "H+K notch", ???), // XXX TODO FIXME
+
+        ZN1("ZN1 (0.8613 um)", "ZN1", 0.8613, new SingleBand((MagnitudeBand.J$.MODULE$))),
+        ZN2("ZN2 (0.8963 um)", "ZN2", 0.8963, new SingleBand((MagnitudeBand.J$.MODULE$))),
+        ZN3("ZN3 (0.9328 um)", "ZN3", 0.9328, new SingleBand((MagnitudeBand.J$.MODULE$))),
+        ZN4("ZN4 (0.9708 um)", "ZN4", 0.9708, new SingleBand((MagnitudeBand.J$.MODULE$))),
+
+        YN1("YN1 (1.0104 um)", "YN1", 1.0104, new SingleBand((MagnitudeBand.Y$.MODULE$))),
+        YN2("YN2 (1.0515 um)", "YN2", 1.0515, new SingleBand((MagnitudeBand.Y$.MODULE$))),
+        YN3("YN3 (1.0943 um)", "YN3", 1.0943, new SingleBand((MagnitudeBand.Y$.MODULE$))),
+        YN4("YN4 (1.1389 um)", "YN4", 1.1389, new SingleBand((MagnitudeBand.Y$.MODULE$))),
+
+        JN1("JN1 (1.1853 um)", "JN1", 1.1853, new SingleBand((MagnitudeBand.J$.MODULE$))),
+        JN2("JN2 (1.2336 um)", "JN2", 1.2336, new SingleBand((MagnitudeBand.J$.MODULE$))),
+        JN3("JN3 (1.2838 um)", "JN3", 1.2838, new SingleBand((MagnitudeBand.J$.MODULE$))),
+        JN4("JN4 (1.3361 um)", "JN4", 1.3361, new SingleBand((MagnitudeBand.J$.MODULE$))),
+
+        HN1("HN1 (1.5113 um)", "HN1", 1.5113, new SingleBand((MagnitudeBand.H$.MODULE$))),
+        HN2("HN2 (1.5728 um)", "HN2", 1.5728, new SingleBand((MagnitudeBand.H$.MODULE$))),
+        HN3("HN3 (1.6369 um)", "HN3", 1.6369, new SingleBand((MagnitudeBand.H$.MODULE$))),
+        HN4("HN4 (1.7036 um)", "HN4", 1.7036, new SingleBand((MagnitudeBand.H$.MODULE$))),
+        HN5("HN5 (1.773 um)", "HN5", 1.773, new SingleBand((MagnitudeBand.H$.MODULE$))),
+
+        KN1("KN1 (2.0096 um)", "KN1", 2.0096, new SingleBand((MagnitudeBand.K$.MODULE$))),
+        KN2("KN2 (2.0914 um)", "KN2", 2.0914, new SingleBand((MagnitudeBand.K$.MODULE$))),
+        KN3("KN3 (2.1766 um)", "KN3", 2.1766, new SingleBand((MagnitudeBand.K$.MODULE$))),
+        KN4("KN4 (2.2653 um)", "KN4", 2.2653, new SingleBand((MagnitudeBand.K$.MODULE$))),
+        KN4_5("KN4.5 (2.33 um)", "KN4.5", 2.33, new SingleBand((MagnitudeBand.K$.MODULE$))),
+        KN5("KN5 (2.3575 um)", "KN5", 2.3575, new SingleBand((MagnitudeBand.K$.MODULE$))),
+
+        CaII_Trip("CaII Trip (0.850,0.854,0.866 um)", "CaII Trip", 0.854), // XXX TODO FIXME
+        HeI("HeI (1.0830 um)", "HeI", 1.0830, new SingleBand((MagnitudeBand.J$.MODULE$))),
+        Pa_Beta("Pa-Beta (1.2818 um)", "Pa-Beta", 1.2818),
+        FeII("FeII (1.6455 um)", "FeII", 1.6455, new SingleBand((MagnitudeBand.H$.MODULE$))),
+        Br_Gamma("Br-Gamma (2.166 um)", "Br-Gamma", 2.166, new SingleBand((MagnitudeBand.K$.MODULE$))),
+        CO("CO (2.290 um)", "CO", 2.290, new SingleBand((MagnitudeBand.K$.MODULE$))),
+
+        J_Cont("J Cont (1.2132 um)", "J Cont", 1.2132, new SingleBand((MagnitudeBand.J$.MODULE$))),
+        Pa_Pi("Pa-Pi (1.2818 um)", "Pa-Pi", 1.2818),
+        H_Cont("H Cont (1.5804 um)", "H Cont", 1.5804, new SingleBand((MagnitudeBand.H$.MODULE$))),
+        H2("H2 (2.121 um)", "H2", 2.121, new SingleBand((MagnitudeBand.K$.MODULE$))),
+        K_Cont("K Cont (2.143 um)", "K Cont", 2.143, new SingleBand((MagnitudeBand.K$.MODULE$))),
+        Br_gamma("Br-gamma (2.166 um)", "Br-gamma", 2.166, new SingleBand((MagnitudeBand.K$.MODULE$))),
+        ;
+
 
         public static Filter DEFAULT = Z;
         public static final ItemKey KEY = new ItemKey(INSTRUMENT_KEY, "filter");
@@ -210,30 +192,19 @@ public final class Iris extends SPInstObsComp
         private final String displayValue;
         private final String logValue;
         private final double wavelength;
-        private final ReadMode readMode;
-        private final double expTime5050;
-        private final double expTimeHalfWell;
         private final Option<BandsList> catalogBand;
 
-        Filter(String displayValue, String logValue, double wavelength, ReadMode readMode, double expTime5050,
-                       double expTimeHalfWell, BandsList catalogBand) {
+        Filter(String displayValue, String logValue, double wavelength, BandsList catalogBand) {
             this.displayValue = displayValue;
             this.logValue = logValue;
             this.wavelength = wavelength;
-            this.readMode = readMode;
-            this.expTime5050 = expTime5050;
-            this.expTimeHalfWell = expTimeHalfWell;
             this.catalogBand = new Some<>(catalogBand);
         }
 
-        Filter(String displayValue, String logValue, double wavelength, ReadMode readMode, double expTime5050,
-                       double expTimeHalfWell) {
+        Filter(String displayValue, String logValue, double wavelength) {
             this.displayValue = displayValue;
             this.logValue = logValue;
             this.wavelength = wavelength;
-            this.readMode = readMode;
-            this.expTime5050 = expTime5050;
-            this.expTimeHalfWell = expTimeHalfWell;
             this.catalogBand = None.instance();
         }
 
@@ -251,18 +222,6 @@ public final class Iris extends SPInstObsComp
 
         public String formattedWavelength() {
             return String.format("%.3f", wavelength);
-        }
-
-        public ReadMode readMode() {
-            return readMode;
-        }
-
-        public double exposureTime5050Secs() {
-            return expTime5050;
-        }
-
-        public double exposureTimeHalfWellSecs() {
-            return expTimeHalfWell;
         }
 
         public String sequenceValue() {
@@ -502,7 +461,7 @@ public final class Iris extends SPInstObsComp
     public Iris() {
         super(SP_TYPE);
         setVersion(VERSION);
-        readMode = filter.readMode();
+//        readMode = filter.readMode();
         setExposureTime(60); // REL-445
     }
 
@@ -598,15 +557,16 @@ public final class Iris extends SPInstObsComp
     }
 
     public double getRecommendedExposureTimeSecs() {
-        return getRecommendedExposureTimeSecs(getFilter(), getReadMode());
+//        return getRecommendedExposureTimeSecs(getFilter(), getReadMode());
+        return 0.0; // Allan: XXX TODO FIXME: How to calculate this for IRIS?
     }
 
-    public static double getRecommendedExposureTimeSecs(Filter filter, ReadMode readMode) {
-        double min = getMinimumExposureTimeSecs(readMode);
-        if (filter == null) return min;
-        double res = 3 * filter.exposureTime5050Secs();
-        return (res < min) ? min : res;
-    }
+//    public static double getRecommendedExposureTimeSecs(Filter filter, ReadMode readMode) {
+//        double min = getMinimumExposureTimeSecs(readMode);
+//        if (filter == null) return min;
+//        double res = 3 * filter.exposureTime5050Secs();
+//        return (res < min) ? min : res;
+//    }
 
     public double getMinimumExposureTimeSecs() {
         return getMinimumExposureTimeSecs(getReadMode());

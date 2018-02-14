@@ -126,63 +126,63 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     }
 
     private final EditListener<Iris, Iris.Filter> filterChangeListener = evt -> {
-        final Filter f = evt.getNewValue();
-        if (f == null) return;
-
-        final ReadMode readMode = f.readMode();
-        if (readMode == null) return;
-        getDataObject().setReadMode(readMode);
+//        final Filter f = evt.getNewValue();
+//        if (f == null) return;
+//
+//        final ReadMode readMode = f.readMode();
+//        if (readMode == null) return;
+//        getDataObject().setReadMode(readMode);
     };
 
-    private final class ExposureTimeMessageUpdater implements EditListener<Iris, Double>, PropertyChangeListener {
-        private final JLabel label;
-
-        ExposureTimeMessageUpdater() {
-            this.label = new JLabel("");
-        }
-
-        JLabel getLabel() {
-            return label;
-        }
-
-        public void valueChanged(EditEvent<Iris, Double> event) {
-            update(event.getNewValue());
-        }
-
-        public void propertyChange(PropertyChangeEvent evt) {
-            update();
-        }
-
-        void update() {
-            final Iris iris = getDataObject();
-            update((iris == null) ? null : iris.getExposureTime());
-        }
-
-        void update(Double val) {
-            final Iris iris = getDataObject();
-            Color fg = Color.black;
-            String txt = "";
-            if ((iris != null) && (val != null)) {
-                final double min = iris.getMinimumExposureTimeSecs();
-                final double rec = iris.getRecommendedExposureTimeSecs();
-                final double max = iris.getFilter().exposureTimeHalfWellSecs();
-
-                if (val < min) {
-                    fg = FATAL_FG_COLOR;
-                    txt = String.format("Below minimum (%.1f sec).", min);
-                } else if (val < rec) {
-                    fg = WARNING_FG_COLOR;
-                    txt = String.format("Below recommendation (%.1f sec).", rec);
-                } else if ((val > max) && (max > 0)) {
-                    fg = WARNING_FG_COLOR;
-                    txt = String.format("Very long exp. time (%d sec max).", Math.round(max));
-                }
-            }
-
-            label.setText(txt);
-            label.setForeground(fg);
-        }
-    }
+//    private final class ExposureTimeMessageUpdater implements EditListener<Iris, Double>, PropertyChangeListener {
+//        private final JLabel label;
+//
+//        ExposureTimeMessageUpdater() {
+//            this.label = new JLabel("");
+//        }
+//
+//        JLabel getLabel() {
+//            return label;
+//        }
+//
+//        public void valueChanged(EditEvent<Iris, Double> event) {
+//            update(event.getNewValue());
+//        }
+//
+//        public void propertyChange(PropertyChangeEvent evt) {
+//            update();
+//        }
+//
+//        void update() {
+//            final Iris iris = getDataObject();
+//            update((iris == null) ? null : iris.getExposureTime());
+//        }
+//
+//        void update(Double val) {
+//            final Iris iris = getDataObject();
+//            Color fg = Color.black;
+//            String txt = "";
+//            if ((iris != null) && (val != null)) {
+//                final double min = iris.getMinimumExposureTimeSecs();
+//                final double rec = iris.getRecommendedExposureTimeSecs();
+//                final double max = iris.getFilter().exposureTimeHalfWellSecs();
+//
+//                if (val < min) {
+//                    fg = FATAL_FG_COLOR;
+//                    txt = String.format("Below minimum (%.1f sec).", min);
+//                } else if (val < rec) {
+//                    fg = WARNING_FG_COLOR;
+//                    txt = String.format("Below recommendation (%.1f sec).", rec);
+//                } else if ((val > max) && (max > 0)) {
+//                    fg = WARNING_FG_COLOR;
+//                    txt = String.format("Very long exp. time (%d sec max).", Math.round(max));
+//                }
+//            }
+//
+//            label.setText(txt);
+//            label.setForeground(fg);
+//        }
+//    }
 
     private final class CoaddsMessageUpdater implements EditListener<Iris, Integer>, PropertyChangeListener {
         private final JLabel label;
@@ -229,8 +229,8 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
     private final TextFieldPropertyCtrl<Iris, Double> posAngleCtrl;
     private final CheckboxEnumPropertyCtrl<Iris, PosAngleConstraint> posAngleConstraintCtrl;
-    private final TextFieldPropertyCtrl<Iris, Double> exposureTimeCtrl;
-    private final ExposureTimeMessageUpdater exposureTimeMessageUpdater;
+//    private final TextFieldPropertyCtrl<Iris, Double> exposureTimeCtrl;
+//    private final ExposureTimeMessageUpdater exposureTimeMessageUpdater;
     private final TextFieldPropertyCtrl<Iris, Integer> coaddsCtrl;
     private final CoaddsMessageUpdater coaddsMessageUpdater;
 
@@ -254,9 +254,9 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
         // Exposure Time
         pd = Iris.EXPOSURE_TIME_PROP;
-        exposureTimeMessageUpdater = new ExposureTimeMessageUpdater();
-        exposureTimeCtrl = TextFieldPropertyCtrl.createDoubleInstance(pd, 1);
-        exposureTimeCtrl.addEditListener(exposureTimeMessageUpdater);
+//        exposureTimeMessageUpdater = new ExposureTimeMessageUpdater();
+//        exposureTimeCtrl = TextFieldPropertyCtrl.createDoubleInstance(pd, 1);
+//        exposureTimeCtrl.addEditListener(exposureTimeMessageUpdater);
 
         // Cooads
         pd = Iris.COADDS_PROP;
@@ -283,11 +283,11 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         // ------ Separator --------
         pan.add(new JSeparator(JSeparator.HORIZONTAL), separatorGbc(0, 3, 7));
 
-        exposureTimeCtrl.setColumns(4);
-        pan.add(new JLabel("Exp Time"), propLabelGbc(0, 4));
-        pan.add(exposureTimeCtrl.getComponent(), propWidgetGbc(1, 4));
-        pan.add(new JLabel("sec"), propUnitsGbc(2, 4));
-        pan.add(exposureTimeMessageUpdater.getLabel(), warningLabelGbc(0, 5, 3));
+//        exposureTimeCtrl.setColumns(4);
+//        pan.add(new JLabel("Exp Time"), propLabelGbc(0, 4));
+//        pan.add(exposureTimeCtrl.getComponent(), propWidgetGbc(1, 4));
+//        pan.add(new JLabel("sec"), propUnitsGbc(2, 4));
+//        pan.add(exposureTimeMessageUpdater.getLabel(), warningLabelGbc(0, 5, 3));
 
         coaddsCtrl.setColumns(3);
         addCtrl(pan, 4, 4, coaddsCtrl, "exp/obs");
@@ -355,8 +355,8 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         if (iris == null) return;
         iris.removePropertyChangeListener(FILTER_PROP.getName(), msgPanel);
         iris.removePropertyChangeListener(READ_MODE_PROP.getName(), msgPanel);
-        iris.removePropertyChangeListener(FILTER_PROP.getName(), exposureTimeMessageUpdater);
-        iris.removePropertyChangeListener(READ_MODE_PROP.getName(), exposureTimeMessageUpdater);
+//        iris.removePropertyChangeListener(FILTER_PROP.getName(), exposureTimeMessageUpdater);
+//        iris.removePropertyChangeListener(READ_MODE_PROP.getName(), exposureTimeMessageUpdater);
     }
 
     @Override
@@ -365,7 +365,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
         posAngleCtrl.setBean(iris);
         posAngleConstraintCtrl.setBean(iris);
-        exposureTimeCtrl.setBean(iris);
+//        exposureTimeCtrl.setBean(iris);
         coaddsCtrl.setBean(iris);
         filterCtrl.setBean(iris);
         portCtrl.setBean(iris);
@@ -380,9 +380,9 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
         iris.addPropertyChangeListener(FILTER_PROP.getName(), msgPanel);
         iris.addPropertyChangeListener(READ_MODE_PROP.getName(), msgPanel);
-        iris.addPropertyChangeListener(FILTER_PROP.getName(), exposureTimeMessageUpdater);
-        iris.addPropertyChangeListener(READ_MODE_PROP.getName(), exposureTimeMessageUpdater);
+//        iris.addPropertyChangeListener(FILTER_PROP.getName(), exposureTimeMessageUpdater);
+//        iris.addPropertyChangeListener(READ_MODE_PROP.getName(), exposureTimeMessageUpdater);
         msgPanel.update();
-        exposureTimeMessageUpdater.update();
+//        exposureTimeMessageUpdater.update();
     }
 }
