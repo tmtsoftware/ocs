@@ -258,6 +258,63 @@ public final class Iris extends SPInstObsComp
         }
     }
 
+
+    /**
+     * IRIS Dispersers.
+     */
+    public enum Disperser implements DisplayableSpType, SequenceableSpType, LoggableSpType {
+
+        NONE("None", "none", None.DOUBLE),
+        R1200JH("R=1200 (J + H) grism", "R1200JH", new Some<>(1.39)),
+        R1200HK("R=1200 (H + K) grism", "R1200HK", new Some<>(1.871)),
+        R3000("R=3000 (J or H or K) grism", "R3000", new Some<>(1.65)),
+        ;
+
+        /** The default Disperser value **/
+        public static final Disperser DEFAULT = NONE;
+        public static final ItemKey KEY = new ItemKey(INSTRUMENT_KEY, "disperser");
+
+        private final String _displayName;
+        private final String _logValue;
+        private final Option<Double> _wavelength;  // in um
+
+        Disperser(String name, String logValue, Option<Double> wavelength) {
+            _displayName = name;
+            _logValue    = logValue;
+            _wavelength  = wavelength;
+        }
+
+        public String displayValue() {
+            return _displayName;
+        }
+
+        public Option<Double> getWavelength() {
+            return _wavelength;
+        }
+
+        public String sequenceValue() {
+            return name();
+        }
+
+        public String logValue() {
+            return _logValue;
+        }
+
+        public String toString() {
+            return displayValue();
+        }
+
+        // REL-1522
+        public static Option<Disperser> byName(String name) {
+            for (Disperser m: values()) {
+                if (m.displayValue().equals(name)) {
+                    return new Some<>(m);
+                }
+            }
+            return None.instance();
+        }
+    }
+
     public enum UtilityWheel implements DisplayableSpType, SequenceableSpType, LoggableSpType {
         EXTRAFOCAL_LENS_1("Extra-focal lens 1", "xf 1"),
         EXTRAFOCAL_LENS_2("Extra-focal lens 2", "xf 2"),
