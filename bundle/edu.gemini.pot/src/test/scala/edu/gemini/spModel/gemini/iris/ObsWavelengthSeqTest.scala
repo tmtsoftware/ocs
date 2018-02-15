@@ -36,9 +36,9 @@ class ObsWavelengthSeqTest extends ObsWavelengthTestBase[Iris, IrisSeqConfig] {
 
   @Test def testIterateFilter() {
     val sc = Base.createSysConfig
-    sc.putParameter(filterParam(Filter.CO, Filter.H20_ICE))
+    sc.putParameter(filterParam(Filter.CO, Filter.H2))
     setSysConfig(sc)
 
-    verifyFilters(Filter.CO, Filter.H20_ICE)
+    verifyFilters(Filter.CO, Filter.H2)
   }
 }

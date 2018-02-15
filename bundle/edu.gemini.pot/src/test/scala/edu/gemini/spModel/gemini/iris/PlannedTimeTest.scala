@@ -6,7 +6,7 @@ import java.beans.PropertyDescriptor
 
 import edu.gemini.spModel.core.SiderealTarget
 import edu.gemini.spModel.data.config.{DefaultParameter, IParameter}
-import edu.gemini.spModel.gemini.nfiraos.Nfiraos
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs
 import edu.gemini.spModel.gemini.iris.Iris._
 import edu.gemini.spModel.gemini.iris.Iris.Filter._
 import edu.gemini.spModel.gemini.seqcomp.SeqRepeatOffset
@@ -46,13 +46,13 @@ class PlannedTimeTest extends InstrumentSequenceTestBase[Iris, IrisSeqConfig] {
 
   @Test def testFilterWheelMove() {
     val sc0 = createSysConfig
-    sc0.putParameter(getParameter(FILTER_PROP, BR_GAMMA, BR_GAMMA))
+    sc0.putParameter(getParameter(FILTER_PROP, Br_Gamma, Br_Gamma))
     setSysConfig(sc0)
 
     val noMove = PlannedTimeCalculator.instance.calc(getObs).totalTime
 
     val sc1 = createSysConfig
-    sc1.putParameter(getParameter(FILTER_PROP, BR_GAMMA, CH4_LONG))
+    sc1.putParameter(getParameter(FILTER_PROP, Br_Gamma, FeII)) // Allan: Changed for IRIS
     setSysConfig(sc1)
 
     val move = PlannedTimeCalculator.instance.calc(getObs).totalTime

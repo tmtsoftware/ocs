@@ -12,7 +12,7 @@ import edu.gemini.pot.ModelConverters._
 import edu.gemini.spModel.core.Magnitude
 import edu.gemini.spModel.core._
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2
-import edu.gemini.spModel.gemini.nfiraos.{Nfiraos, Nfiraos, NfiraosInstrument}
+import edu.gemini.spModel.gemini.nfiraos.{Nfiraos, NfiraosOiwfs, NfiraosInstrument}
 import edu.gemini.spModel.gemini.iris.Iris
 import edu.gemini.spModel.gemini.iris.IrisOdgw
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality

@@ -11,8 +11,8 @@ class SpGsoaiBlueprintTest {
   @Test
   def sanityTests() {
     // Check filters are preserved
-    val blueprint = new SpIrisBlueprint(List(Iris.Filter.FE_II))
-    assertEquals(Iris.Filter.FE_II :: Nil, blueprint.filters.toList)
+    val blueprint = new SpIrisBlueprint(List(Iris.Filter.FeII))
+    assertEquals(Iris.Filter.FeII :: Nil, blueprint.filters.toList)
 
     assertEquals(1, blueprint.toParamSet(new PioXmlFactory).getParams(SpIrisBlueprint.FILTERS_PARAM_NAME).size())
   }

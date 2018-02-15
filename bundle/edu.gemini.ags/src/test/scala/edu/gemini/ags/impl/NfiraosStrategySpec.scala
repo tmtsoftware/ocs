@@ -11,7 +11,8 @@ import edu.gemini.spModel.core._
 import edu.gemini.spModel.core.AngleSyntax._
 import edu.gemini.pot.ModelConverters._
 import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs.Wfs
-import edu.gemini.spModel.gemini.nfiraos.{Nfiraos, Nfiraos}
+import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs
+import edu.gemini.spModel.gemini.nfiraos.Nfiraos
 import edu.gemini.spModel.gemini.iris.{Iris, IrisOdgw}
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality
 import edu.gemini.spModel.nfiraos.{NfiraosGuideStarType, NfiraosTipTiltMode}

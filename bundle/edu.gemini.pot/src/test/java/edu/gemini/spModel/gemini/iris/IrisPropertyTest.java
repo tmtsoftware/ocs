@@ -16,7 +16,7 @@ import edu.gemini.spModel.telescope.PosAngleConstraint;
 public class IrisPropertyTest extends BeanPropertyTestBase {
 
     private final ImList<PropertyTest> tests = DefaultImList.create(
-        new PropertyTest(FILTER_PROP, Filter.DEFAULT, Filter.H20_ICE, Filter.CH4_LONG),
+        new PropertyTest(FILTER_PROP, Filter.DEFAULT, Filter.H2, Filter.CO),
         new PropertyTest(READ_MODE_PROP, Filter.DEFAULT.readMode(), ReadMode.BRIGHT),
         new PropertyTest(PORT_PROP, IssPort.UP_LOOKING, IssPort.SIDE_LOOKING),
 

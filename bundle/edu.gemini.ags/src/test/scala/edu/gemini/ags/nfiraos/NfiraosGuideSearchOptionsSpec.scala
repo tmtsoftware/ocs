@@ -3,7 +3,7 @@ package edu.gemini.ags.nfiraos
 import edu.gemini.catalog.api._
 import edu.gemini.shared.util.immutable.{None => JNone}
 import edu.gemini.spModel.core._
-import edu.gemini.spModel.gemini.nfiraos.{Nfiraos, NfiraosInstrument}
+import edu.gemini.spModel.gemini.nfiraos.{Nfiraos, NfiraosOiwfs, NfiraosInstrument}
 import edu.gemini.spModel.gemini.iris.{IrisOdgw, Iris}
 import edu.gemini.spModel.gemini.obscomp.SPSiteQuality
 import edu.gemini.spModel.nfiraos.{NfiraosGuideStarType, NfiraosTipTiltMode}

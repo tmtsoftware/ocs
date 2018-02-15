@@ -33,7 +33,7 @@ OsgiKeys.exportPackage := Seq(
   "edu.gemini.itc.nfiraos",
   "edu.gemini.itc.gmos",
   "edu.gemini.itc.gnirs",
-  "edu.gemini.itc.gsaoi",
+  "edu.gemini.itc.iris",
   "edu.gemini.itc.michelle",
   "edu.gemini.itc.nifs",
   "edu.gemini.itc.niri",
