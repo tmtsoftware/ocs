@@ -514,24 +514,16 @@ public enum NfiraosOiwfs {
   @SuppressWarnings("SuspiciousNameCombination")
   public Option<Area> probeArm(ObsContext ctx, Wfs oiwfs, boolean validate) {
 
-    // ---------------- XXX FIXME TODO: Refactor this ---------------
+    // ---------------- XXX FIXME TODO: Refactor this, copied from python code... ---------------
     int r_max = 300;                      // maximum extension of probes (mm)
     int r_overshoot = 20;                 // distance by which probes overshoot centre (mm)
     int r_origin = r_max - r_overshoot;   // distance of probe origin from centre (mm)
     double phi = oiwfs.getArmAngle(ctx);  // base arm angle in radians
-    double x0 = r_origin * Math.cos(phi); //  x-coordinate of arm origin
-    double y0 = r_origin * Math.sin(phi); // y-coordinate of arm origin
+    double t = ctx.getPositionAngle().toRadians();
+    double x0 = r_origin * Math.cos(phi - t); //  x-coordinate of arm origin
+    double y0 = r_origin * Math.sin(phi - t); // y-coordinate of arm origin
     double r_head = 25 / 2.0;             // radius of probe head (mm)
-    double theta_home = phi + Math.PI % 2 * Math.PI; // rotation arm actuator angle home (radians)
-
-    // XXX TODO FIXME (Do we need to use the plate scale of the image?)
-    double platescale = 2.182;   // platescale in OIWFS plane (mm/arcsec)
-    double r_patrol = 60 * platescale; // radius of the patrol area in (mm)
-    double r = r_max - r_patrol;    // radius of arm extension actuator, initial probe extension (mm)
-
-
-    // --------- XXX FIXME TODO END -------------
-
+    double platescale = 2.182;            // platescale in OIWFS plane (mm/arcsec)
 
     return ctx.getBaseCoordinates().map(coords -> {
       GuideProbeTargets targets = ctx.getTargets().getPrimaryGuideGroup().get(oiwfs).getOrNull();
@@ -543,43 +535,29 @@ public enum NfiraosOiwfs {
           if (oc.isDefined()) {
             CoordinateDiff diff = new CoordinateDiff(coords, oc.getValue());
             Offset dis = diff.getOffset();
+            // Offset from base pos to oiwfs in arcsec
             double p = -dis.p().toArcsecs().getMagnitude();
             double q = -dis.q().toArcsecs().getMagnitude();
 
+            // Offset from base pos to probe arm origin in arcsec
+            double x = -x0 / platescale;
+            double y = -y0 / platescale;
+            double headWidth = r_head / platescale;
 
-            double x = -x0/platescale, y = -y0/platescale, headWidth = r_head/platescale;
-            double armLength = Math.hypot(p-x, q-y); // Arm length changes with guide star position?
-
-            // Find angle to correct the arm angle with respect to the base position
-            // Solve triangle with sides (dist(basePos, guideStar), DistToProbeBase)
-            double hypot = Math.hypot(diff.getDistance().toArcsecs().getMagnitude(), armLength);
-            double a = Math.PI - Math.acos(p/hypot) - Math.PI/2;
-
-            // Get current transformations
-//            double t = ctx.getPositionAngle().toRadians();
-//            t = t + getRotationConfig(ctx.getIssPort()).toRadians().getMagnitude();
-//            AffineTransform xform = new AffineTransform();
-//            xform.translate(p, q);
-//            xform.rotate(-oiwfs.getArmAngle(ctx)); // probe arm starting angle
-//            xform.rotate(-a); // XXX
-//            if (t != 0.0) xform.rotate(-t);
-
-            // Get basic probe arm shape and apply transformations
-//            Area res = new Area(new Rectangle2D.Double(
-//                -r_overshoot/platescale, -PROBE_ARM_WIDTH / 2,
-//                armLength+r_overshoot, PROBE_ARM_WIDTH));
-
+            // Calculate the polygon for the probe arm
+            double px = y - q, py = -(x - p);
+            double length = Math.hypot(px, py); // length of perpendicular for arm rect
+            double nx = px / length;
+            double ny = py / length; // normalized perpendicular
+            double w = PROBE_ARM_WIDTH / 2;
             List<Pair<Double, Double>> points = new ArrayList<>();
-            points.add(new Pair<>(x-1, y-1));
-            points.add(new Pair<>(x+1, y+1));
-            points.add(new Pair<>(p+1, q+1));
-            points.add(new Pair<>(p-1, q-1));
+            points.add(new Pair<>(x + nx * w, y + ny * w));
+            points.add(new Pair<>(x - nx * w, y - ny * w));
+            points.add(new Pair<>(p - nx * w, q - ny * w));
+            points.add(new Pair<>(p + nx * w, q + ny * w));
             ImPolygon probeArm = ImPolygon.apply(points);
             Area res = new Area(probeArm);
-            res.add(new Area(new Rectangle2D.Double(x-headWidth/2, y-headWidth/2, headWidth, headWidth)));
-            res.add(new Area(new Ellipse2D.Double(p-headWidth/2, q-headWidth/2, headWidth, headWidth)));
-
-//            res.transform(xform);
+            res.add(new Area(new Ellipse2D.Double(p - headWidth / 2, q - headWidth / 2, headWidth, headWidth)));
 
             // Clip to Nfiraos range, taking offsets into account
 //                        Area range = probeRange3(ctx);
