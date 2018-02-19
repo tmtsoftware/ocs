@@ -101,12 +101,12 @@ public final class NfiraosFeature extends TpeImageFeature implements PropertyWat
         props.setBoolean(PROP_SHOW_RANGES, draw);
     }
 
-    /**
-     * Gets the drawing of probe ranges.
-     */
-    private boolean getDrawProbeRanges() {
-        return props.getBoolean(PROP_SHOW_RANGES, true);
-    }
+//    /**
+//     * Gets the drawing of probe ranges.
+//     */
+//    private boolean getDrawProbeRanges() {
+//        return props.getBoolean(PROP_SHOW_RANGES, true);
+//    }
 
     private PropertyChangeListener selListener = evt -> _redraw();
 
@@ -251,30 +251,29 @@ public final class NfiraosFeature extends TpeImageFeature implements PropertyWat
         g2d.draw(s);
 
         // Draw the probe 1 and probe 2 ranges.
-        if (getDrawProbeRanges()) {
-            Area a1 = new Area(flipArea(NfiraosOiwfs.Wfs.oiwfs1.probeRange(ctx))).createTransformedArea(trans);
-            Area a2 = new Area(flipArea(NfiraosOiwfs.Wfs.oiwfs2.probeRange(ctx))).createTransformedArea(trans);
-            g2d.setColor(OtColor.makeTransparent(AO_FOV_COLOR, 0.3));
-
-            if (rangeMode.show1()) g2d.draw(a1);
-            if (rangeMode.show2()) g2d.draw(a2);
-
-            Paint p = g2d.getPaint();
-            if (rangeMode.show1()) {
-                g2d.setPaint(createProbeRangePaint(g2d, Orientation.horizontal));
-                g2d.fill(a1);
-            }
-            if (rangeMode.show2()) {
-                g2d.setPaint(createProbeRangePaint(g2d, Orientation.vertical));
-                g2d.fill(a2);
-            }
-            g2d.setPaint(p);
-        }
+//        if (getDrawProbeRanges()) {
+//            Area a1 = new Area(flipArea(NfiraosOiwfs.Wfs.oiwfs1.probeRange(ctx))).createTransformedArea(trans);
+//            Area a2 = new Area(flipArea(NfiraosOiwfs.Wfs.oiwfs2.probeRange(ctx))).createTransformedArea(trans);
+//            g2d.setColor(OtColor.makeTransparent(AO_FOV_COLOR, 0.3));
+//
+//            if (rangeMode.show1()) g2d.draw(a1);
+//            if (rangeMode.show2()) g2d.draw(a2);
+//
+//            Paint p = g2d.getPaint();
+//            if (rangeMode.show1()) {
+//                g2d.setPaint(createProbeRangePaint(g2d, Orientation.horizontal));
+//                g2d.fill(a1);
+//            }
+//            if (rangeMode.show2()) {
+//                g2d.setPaint(createProbeRangePaint(g2d, Orientation.vertical));
+//                g2d.fill(a2);
+//            }
+//            g2d.setPaint(p);
+//        }
 
         drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs1);
         drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs2);
-        // oiwfs3 probe arm is not displayed
-//        drawProbeArm(g2d, tii, ctx, NfiraosOiwfs.Wfs.oiwfs3);
+        drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs3);
 
         g2d.setColor(c);
     }
