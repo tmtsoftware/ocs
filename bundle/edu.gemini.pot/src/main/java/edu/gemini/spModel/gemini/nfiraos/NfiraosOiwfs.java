@@ -311,30 +311,22 @@ public enum NfiraosOiwfs {
 
   public static final double RADIUS_ARCSEC = 60.0;
 
-
-  // Probe ranges expressed in arcsec
-//    private static final Tuple2<Integer, Integer> PROBE1_RANGE = new Pair<Integer, Integer>(-66, 24);
-//    private static final Tuple2<Integer, Integer> PROBE2_RANGE = new Pair<Integer, Integer>(-24, 66);
-
-  // REL-297:
-  // P1 can access a square field of 3.7 x 3.0 armcin, but the center is at (+0.11,+0.3)
-  // P2 can access a square field of 4.2 x 3.0 arcmin, but the center is at (0.0,-0.33)
   private static final Point2D.Double PROBE1_CENTER = new Point2D.Double(0.11 * 60.0, 0.3 * 60.0);
   private static final Point2D.Double PROBE2_CENTER = new Point2D.Double(0.0, -0.33 * 60.0);
   private static final Tuple2<Double, Double> PROBE1_DIM = new Pair<>(3.7 * 60.0, 3.0 * 60.0);
 
   //     REL-1042: Update the Nfiraos probe limits in the OT
-//    private static final Tuple2<Double, Double> PROBE2_DIM = new Pair<Double, Double>(4.2 * 60.0, 3.0 * 60.0);
   private static final Tuple2<Double, Double> PROBE2_DIM = new Pair<>(4.2 * 60.0, 2.5 * 60.0);
 
   private static final Ellipse2D AO_PORT = new Ellipse2D.Double(-RADIUS_ARCSEC, -RADIUS_ARCSEC, RADIUS_ARCSEC * 2, RADIUS_ARCSEC * 2);
 
-  // Width of OIWFS probe arm in arcsec
-  private static final double PROBE_ARM_WIDTH = 3.0; // XXX TODO FIXME (just guessing)
-
-  // Probe arm end, as distance in arcsec from the OIWFS guide star
-  private static final double PROBE_ARM_END = 8.9;
-
+  // These were copied from Ed Chapin's oiwfs_sim.py
+  private static final int R_MAX = 300;                      // maximum extension of probes (mm)
+  private static final int R_OVERSHOOT = 20;                 // distance by which probes overshoot centre (mm)
+  private static final int R_ORIGIN = R_MAX - R_OVERSHOOT;   // distance of probe origin from centre (mm)
+  private static final double R_HEAD = 25 / 2.0;             // radius of probe head (mm)
+  private static final double PLATE_SCALE = 2.182;           // plate scale in OIWFS plane (mm/arcsec)
+  private static final double PROBE_ARM_WIDTH = 3.0;         // Width of OIWFS probe arm in arcsec (XXX: Allan: Just guessing here)
 
   /**
    * Returns a Shape that defines the AO port in arcsecs, centered at
@@ -511,19 +503,11 @@ public enum NfiraosOiwfs {
    * @return the shape in arcsec relative to the base position, or null if the probe is not
    * in range or is vignetted
    */
-  @SuppressWarnings("SuspiciousNameCombination")
   public Option<Area> probeArm(ObsContext ctx, Wfs oiwfs, boolean validate) {
-
-    // ---------------- XXX FIXME TODO: Refactor this, copied from python code... ---------------
-    int r_max = 300;                      // maximum extension of probes (mm)
-    int r_overshoot = 20;                 // distance by which probes overshoot centre (mm)
-    int r_origin = r_max - r_overshoot;   // distance of probe origin from centre (mm)
-    double phi = oiwfs.getArmAngle(ctx);  // base arm angle in radians
+    double phi = oiwfs.getArmAngle(ctx);      // base arm angle in radians
     double t = ctx.getPositionAngle().toRadians();
-    double x0 = r_origin * Math.cos(phi - t); //  x-coordinate of arm origin
-    double y0 = r_origin * Math.sin(phi - t); // y-coordinate of arm origin
-    double r_head = 25 / 2.0;             // radius of probe head (mm)
-    double platescale = 2.182;            // platescale in OIWFS plane (mm/arcsec)
+    double x0 = R_ORIGIN * Math.cos(phi - t); //  x-coordinate of arm origin
+    double y0 = R_ORIGIN * Math.sin(phi - t); // y-coordinate of arm origin
 
     return ctx.getBaseCoordinates().map(coords -> {
       GuideProbeTargets targets = ctx.getTargets().getPrimaryGuideGroup().get(oiwfs).getOrNull();
@@ -540,11 +524,12 @@ public enum NfiraosOiwfs {
             double q = -dis.q().toArcsecs().getMagnitude();
 
             // Offset from base pos to probe arm origin in arcsec
-            double x = -x0 / platescale;
-            double y = -y0 / platescale;
-            double headWidth = r_head / platescale;
+            double x = -x0 / PLATE_SCALE;
+            double y = -y0 / PLATE_SCALE;
+            double headWidth = R_HEAD / PLATE_SCALE;
 
             // Calculate the polygon for the probe arm
+            // (Need to draw the rect at an angle between the guide star and the origin, so using a polygon)
             double px = y - q, py = -(x - p);
             double length = Math.hypot(px, py); // length of perpendicular for arm rect
             double nx = px / length;
@@ -557,6 +542,7 @@ public enum NfiraosOiwfs {
             points.add(new Pair<>(p + nx * w, q + ny * w));
             ImPolygon probeArm = ImPolygon.apply(points);
             Area res = new Area(probeArm);
+            // Add a circle for the probe head
             res.add(new Area(new Ellipse2D.Double(p - headWidth / 2, q - headWidth / 2, headWidth, headWidth)));
 
             // Clip to Nfiraos range, taking offsets into account
