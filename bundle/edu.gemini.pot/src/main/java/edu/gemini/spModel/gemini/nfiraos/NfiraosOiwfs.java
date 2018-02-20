@@ -309,15 +309,10 @@ public enum NfiraosOiwfs {
     }
   }
 
-  public static final double RADIUS_ARCSEC = 60.0;
+  // Radius of the FOV
+  private static final double RADIUS_ARCSEC = 60.0;
 
-  private static final Point2D.Double PROBE1_CENTER = new Point2D.Double(0.11 * 60.0, 0.3 * 60.0);
-  private static final Point2D.Double PROBE2_CENTER = new Point2D.Double(0.0, -0.33 * 60.0);
-  private static final Tuple2<Double, Double> PROBE1_DIM = new Pair<>(3.7 * 60.0, 3.0 * 60.0);
-
-  //     REL-1042: Update the Nfiraos probe limits in the OT
-  private static final Tuple2<Double, Double> PROBE2_DIM = new Pair<>(4.2 * 60.0, 2.5 * 60.0);
-
+  // Shape for FOV (from center (0,0))
   private static final Ellipse2D AO_PORT = new Ellipse2D.Double(-RADIUS_ARCSEC, -RADIUS_ARCSEC, RADIUS_ARCSEC * 2, RADIUS_ARCSEC * 2);
 
   // These were copied from Ed Chapin's oiwfs_sim.py
@@ -328,6 +323,7 @@ public enum NfiraosOiwfs {
   private static final double PLATE_SCALE = 2.182;           // plate scale in OIWFS plane (mm/arcsec)
   private static final double PROBE_ARM_WIDTH = 3.0;         // Width of OIWFS probe arm in arcsec (XXX: Allan: Just guessing here)
 
+  // XXX TODO FIXME: Duplicate of AO_PORT?
   /**
    * Returns a Shape that defines the AO port in arcsecs, centered at
    * <code>(0,0)</code>.
@@ -375,80 +371,38 @@ public enum NfiraosOiwfs {
   }
 
   public synchronized static Angle getRotationConfig(IssPort port) {
-    return rotation[port.ordinal()]; // XXX TODO: FIXME: Remove for NFIRAOS?
+    return rotation[port.ordinal()]; // XXX TODO: FIXME: Remove IssPort port for NFIRAOS?
   }
 
   public synchronized static void setRotationConfig(IssPort port, Angle rotation) {
     NfiraosOiwfs.rotation[port.ordinal()] = rotation;
   }
 
-  // Returns the probe range given the context, mid point and dimensions in arcsec
-  private Area probe3DependentRange(ObsContext ctx, Point2D.Double mid, Tuple2<Double, Double> dim) {
-    // Gets a rectangle that covers the whole AO port size in width, and
-    // has the proper height.
-    Area rect = new Area(new Rectangle2D.Double(
-        mid.x - dim._1() / 2.,
-        -mid.y - dim._2() / 2.,
-        dim._1(), dim._2()));
-
-    // Get the position angle and a transform that rotates in the direction
-    // of the position angle, and one in the opposite direction.  Recall
-    // that positive y is down and a positive rotation rotates the positive
-    // x axis toward the positive y axis.  Position angle is expressed as
-    // an angle east of north.
+  // Returns an area indicating the total range of the given probe arm (in arcsecs)
+  private Area probeDependentRange(ObsContext ctx, Wfs oiwfs) {
+    double phi = oiwfs.getArmAngle(ctx);      // base arm angle in radians
     double t = ctx.getPositionAngle().toRadians();
-    t = t + getRotationConfig(ctx.getIssPort()).toRadians().getMagnitude();
-    AffineTransform rotWithPosAngle = AffineTransform.getRotateInstance(-t);
-    AffineTransform rotAgainstPosAngle = AffineTransform.getRotateInstance(t);
-
-    // Get the valid range of the OIWFS 3 probe at all offset positions and
-    // compute the center of that range.
-    Area p3range = new Area(probeRange3(ctx));
-    Rectangle2D b = p3range.getBounds2D();
-    Point2D center = new Point2D.Double(b.getCenterX(), b.getCenterY());
-
-    // We have to translate the rectangle.  If there is a primary OIWFS3
-    // star, then we translate the rectangle to there.  Otherwise, we assume
-    // the center of the probe 3 range computed above.
-    Point2D xlat = new Point2D.Double(center.getX(), center.getY());
-
-    // Find the oiwfs3 star, if any.
-    Option<Point2D> oiwfs3Opt = getPrimaryOiwfs3Offset(ctx);
-    if (!oiwfs3Opt.isEmpty()) {
-      Point2D oiwfs3 = oiwfs3Opt.getValue();
-
-      // Rotate both the oiwfs position and the center of the probe 3
-      // range to 0 degrees.
-      rotAgainstPosAngle.transform(center, center);
-      rotAgainstPosAngle.transform(oiwfs3, oiwfs3);
-
-      // Gets a point using the y value of the oiwfs star and x value of
-      // the center position.  We could just translate to the oiwfs star
-      // position, but then the width of the rectangle wouldn't be in
-      // position to cover the probe 3 range.
-//            xlat = new Point2D.Double(center.getX(), oiwfs3.getY());
-      xlat = new Point2D.Double(oiwfs3.getX(), oiwfs3.getY());
-
-      // Rotate this point to where it should be with the position angle.
-      rotWithPosAngle.transform(xlat, xlat);
-    }
-
-    rect.transform(rotWithPosAngle);
-    rect.transform(AffineTransform.getTranslateInstance(xlat.getX(), xlat.getY()));
-    rect.intersect(p3range);
-    return rect;
+    double x0 = R_ORIGIN * Math.cos(phi - t); //  x-coordinate of arm origin
+    double y0 = R_ORIGIN * Math.sin(phi - t); // y-coordinate of arm origin
+    double x = -x0 / PLATE_SCALE;
+    double y = -y0 / PLATE_SCALE;
+    double size = R_MAX*2 / PLATE_SCALE;
+    Area range = new Area(new Ellipse2D.Double(x-size/2, y-size/2, size, size));
+    range.intersect(new Area(AO_PORT));
+    return range;
   }
 
+  // XXX ---------- TODO FIXME: update this for IRIS/NFIRAOS ---------------
   public Area probeRange1(ObsContext ctx) {
-    return probe3DependentRange(ctx, PROBE1_CENTER, PROBE1_DIM);
+    return probeDependentRange(ctx, Wfs.oiwfs1);
   }
 
   public Area probeRange2(ObsContext ctx) {
-    return probe3DependentRange(ctx, PROBE2_CENTER, PROBE2_DIM);
+    return probeDependentRange(ctx, Wfs.oiwfs2);
   }
 
   public Area probeRange3(ObsContext ctx) {
-    return offsetIntersection(ctx, ctx.getSciencePositions());
+    return probeDependentRange(ctx, Wfs.oiwfs3);
   }
 
   /**
@@ -462,7 +416,7 @@ public enum NfiraosOiwfs {
     double t = ctx.getPositionAngle().toRadians();
 
     for (Offset pos : offsets) {
-      Area cur = new Area(AO_PORT_SHAPE);
+      Area cur = new Area(AO_PORT);
 
       double p = pos.p().toArcsecs().getMagnitude();
       double q = pos.q().toArcsecs().getMagnitude();
