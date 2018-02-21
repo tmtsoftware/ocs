@@ -14,6 +14,7 @@ import edu.gemini.spModel.target.SPTarget;
 import edu.gemini.spModel.target.env.Asterism;
 import edu.gemini.spModel.target.env.GuideProbeTargets;
 import edu.gemini.spModel.target.env.TargetEnvironment;
+import edu.gemini.spModel.target.offset.OffsetPosBase;
 import edu.gemini.spModel.telescope.IssPort;
 import edu.gemini.shared.util.immutable.Pair;
 
@@ -314,6 +315,7 @@ public enum NfiraosOiwfs {
 
   // Shape for FOV (from center (0,0))
   private static final Ellipse2D AO_PORT = new Ellipse2D.Double(-RADIUS_ARCSEC, -RADIUS_ARCSEC, RADIUS_ARCSEC * 2, RADIUS_ARCSEC * 2);
+  public static Area AO_BOUNDS = new Area(AO_PORT);
 
   // These were copied from Ed Chapin's oiwfs_sim.py
   private static final int R_MAX = 300;                      // maximum extension of probes (mm)
@@ -323,12 +325,12 @@ public enum NfiraosOiwfs {
   private static final double PLATE_SCALE = 2.182;           // plate scale in OIWFS plane (mm/arcsec)
   private static final double PROBE_ARM_WIDTH = 3.0;         // Width of OIWFS probe arm in arcsec (XXX: Allan: Just guessing here)
 
-  // XXX TODO FIXME: Duplicate of AO_PORT?
-  /**
-   * Returns a Shape that defines the AO port in arcsecs, centered at
-   * <code>(0,0)</code>.
-   */
-  private static final Shape AO_PORT_SHAPE = new Ellipse2D.Double(AO_PORT.getX(), AO_PORT.getY(), AO_PORT.getWidth(), AO_PORT.getHeight());
+//  // XXX TODO FIXME: Duplicate of AO_PORT?
+//  /**
+//   * Returns a Shape that defines the AO port in arcsecs, centered at
+//   * <code>(0,0)</code>.
+//   */
+//  public static final Shape AO_PORT_SHAPE = new Ellipse2D.Double(AO_PORT.getX(), AO_PORT.getY(), AO_PORT.getWidth(), AO_PORT.getHeight());
 
   // Gets the primary OIWFS 3 guide star, if any.
   private Option<SPTarget> getPrimaryOiwfs3(ObsContext ctx) {
@@ -340,27 +342,27 @@ public enum NfiraosOiwfs {
     return gtOpt.getValue().getPrimary();
   }
 
-  // Gets the coordinates of the primary OIWFS guide star relative to the
-  // base position, translated to screen coordinates.
-  private Option<Point2D> getPrimaryOiwfs3Offset(ObsContext ctx) {
-    Option<SPTarget> spTargetOpt = getPrimaryOiwfs3(ctx);
-    if (spTargetOpt.isEmpty()) return None.instance();
-
-    Asterism asterism = ctx.getTargets().getAsterism();
-    SPTarget target = spTargetOpt.getValue();
-
-    final Option<Long> when = ctx.getSchedulingBlockStart();
-
-    return
-        asterism.getSkycalcCoordinates(when).flatMap(bc ->
-            target.getSkycalcCoordinates(when).map(tc -> {
-              CoordinateDiff diff = new CoordinateDiff(bc, tc);
-              Offset o = diff.getOffset();
-              double p = -o.p().toArcsecs().getMagnitude();
-              double q = -o.q().toArcsecs().getMagnitude();
-              return new Point2D.Double(p, q);
-            }));
-  }
+//  // Gets the coordinates of the primary OIWFS guide star relative to the
+//  // base position, translated to screen coordinates.
+//  private Option<Point2D> getPrimaryOiwfs3Offset(ObsContext ctx) {
+//    Option<SPTarget> spTargetOpt = getPrimaryOiwfs3(ctx);
+//    if (spTargetOpt.isEmpty()) return None.instance();
+//
+//    Asterism asterism = ctx.getTargets().getAsterism();
+//    SPTarget target = spTargetOpt.getValue();
+//
+//    final Option<Long> when = ctx.getSchedulingBlockStart();
+//
+//    return
+//        asterism.getSkycalcCoordinates(when).flatMap(bc ->
+//            target.getSkycalcCoordinates(when).map(tc -> {
+//              CoordinateDiff diff = new CoordinateDiff(bc, tc);
+//              Offset o = diff.getOffset();
+//              double p = -o.p().toArcsecs().getMagnitude();
+//              double q = -o.q().toArcsecs().getMagnitude();
+//              return new Point2D.Double(p, q);
+//            }));
+//  }
 
   private static final Angle[] rotation = new Angle[IssPort.values().length];
 
@@ -388,7 +390,7 @@ public enum NfiraosOiwfs {
     double y = -y0 / PLATE_SCALE;
     double size = R_MAX*2 / PLATE_SCALE;
     Area range = new Area(new Ellipse2D.Double(x-size/2, y-size/2, size, size));
-    range.intersect(new Area(AO_PORT));
+    range.intersect(AO_BOUNDS);
     return range;
   }
 
@@ -416,7 +418,7 @@ public enum NfiraosOiwfs {
     double t = ctx.getPositionAngle().toRadians();
 
     for (Offset pos : offsets) {
-      Area cur = new Area(AO_PORT);
+      Area cur = AO_BOUNDS;
 
       double p = pos.p().toArcsecs().getMagnitude();
       double q = pos.q().toArcsecs().getMagnitude();

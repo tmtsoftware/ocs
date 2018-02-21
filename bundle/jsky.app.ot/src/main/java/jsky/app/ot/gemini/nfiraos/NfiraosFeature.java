@@ -12,6 +12,10 @@ import edu.gemini.spModel.target.WatchablePos;
 import edu.gemini.spModel.target.env.GuideProbeTargets;
 import edu.gemini.spModel.target.env.TargetEnvironment;
 import edu.gemini.spModel.target.env.TargetEnvironmentDiff;
+import edu.gemini.spModel.target.offset.OffsetPosBase;
+import edu.gemini.spModel.target.offset.OffsetPosList;
+import jsky.app.ot.gemini.inst.OiwfsPlotFeature;
+import jsky.app.ot.gemini.inst.OiwfsPlotFeature$;
 import jsky.app.ot.tpe.*;
 import jsky.app.ot.tpe.feat.TpeGuidePosCreatableItem;
 import jsky.app.ot.util.BasicPropertyList;
@@ -29,6 +33,9 @@ import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.Collections;
 
+import static java.awt.BasicStroke.CAP_BUTT;
+import static java.awt.BasicStroke.JOIN_BEVEL;
+
 /**
  * Draws the Nfiraos AO field of view and probe ranges.
  */
@@ -38,8 +45,12 @@ public final class NfiraosFeature extends TpeImageFeature implements PropertyWat
   private boolean isEmpty;
 
   // Color for AO WFS limit.
-  private static final Color AO_FOV_COLOR = Color.RED;
-  private static final Color PROBE_RANGE_COLOR = OtColor.SALMON;
+  private static final Color AO_FOV_COLOR1 = Color.RED;
+  private static final Color AO_FOV_COLOR2 = Color.RED;
+  private static final Color AO_FOV_COLOR3 = Color.RED;
+  private static final Color PROBE_RANGE_COLOR1 = OtColor.SALMON;
+  private static final Color PROBE_RANGE_COLOR2 = OtColor.SALMON;
+  private static final Color PROBE_RANGE_COLOR3 = OtColor.SALMON;
 
   // Composite used for drawing items that block the view
   private static final Composite BLOCKED = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5F);
@@ -187,15 +198,16 @@ public final class NfiraosFeature extends TpeImageFeature implements PropertyWat
   }
 
   // Creates a Paint that is used for filling the probe 1 and 2 ranges.
-  private static Paint createProbeRangePaint(Graphics2D g2d, Orientation s) {
-    return createProbeRangePaint(g2d, s, 16, 0.16, 0.4);
+  private static Paint createProbeRangePaint(Graphics2D g2d, Orientation s, Color color) {
+    return createProbeRangePaint(g2d, s, 16, 0.16, 0.4, color);
   }
 
-  private static Paint createProbeRangeKeyPaint(Graphics2D g2d, Orientation s) {
-    return createProbeRangePaint(g2d, s, 8, 0.32, 0.8);
+  private static Paint createProbeRangeKeyPaint(Graphics2D g2d, Orientation s, Color color) {
+    return createProbeRangePaint(g2d, s, 8, 0.32, 0.8, color);
   }
 
-  private static Paint createProbeRangePaint(Graphics2D g2d, Orientation s, int skip, double alphaBg, double alphaLine) {
+  private static Paint createProbeRangePaint(Graphics2D g2d, Orientation s, int skip,
+                                             double alphaBg, double alphaLine, Color color) {
     final int size = skip * 2;
 
     final Rectangle2D.Double rec = new Rectangle2D.Double(0, 0, size, size);
@@ -205,14 +217,14 @@ public final class NfiraosFeature extends TpeImageFeature implements PropertyWat
     Graphics2D bimg = bim.createGraphics();
 
     // Shade it with a light red color almost completely transparent.
-    bimg.setColor(OtColor.makeTransparent(PROBE_RANGE_COLOR, alphaBg));
+    bimg.setColor(OtColor.makeTransparent(color, alphaBg));
     bimg.setComposite(AlphaComposite.Src);
     bimg.fill(rec);
 
     // Now draw the slanting lines, which are also pretty transparent
     // though not quite as much as the background.
     bimg.setClip(0, 0, size, size);
-    bimg.setColor(OtColor.makeTransparent(PROBE_RANGE_COLOR, alphaLine));
+    bimg.setColor(OtColor.makeTransparent(color, alphaLine));
 
     if (s == Orientation.vertical) {
       for (int x = 0; x < size; x += skip) {
@@ -240,63 +252,77 @@ public final class NfiraosFeature extends TpeImageFeature implements PropertyWat
    * Draw the feature.
    */
   public void draw(Graphics g, TpeImageInfo tii) {
-    if (!isEnabled(_iw.getContext())) return;
+    TpeContext tpeCtx = _iw.getContext();
+
+    if (!isEnabled(tpeCtx)) return;
     if (trans == null) return;
 
     Graphics2D g2d = (Graphics2D) g;
-    Color c = g2d.getColor();
+    Color oldColor = g2d.getColor();
 
     Option<ObsContext> ctxOpt = _iw.getObsContext();
     if (ctxOpt.isEmpty()) return;
     ObsContext ctx = ctxOpt.getValue();
 
     // Draw the AO window itself.  A circle.
-    Area a = NfiraosOiwfs.Wfs.oiwfs3.probeRange(ctx);
+    Area a = new Area(NfiraosOiwfs.AO_BOUNDS);
     isEmpty = a.isEmpty();
     if (isEmpty) return;
 
+    // XXX TODO FIXME: Handle offset positions
+//    // If a base pos is selected, use it
+//    OffsetPosBase selectedOffsetPos = tpeCtx.offsets().selectedPosOrNull();
+
     Shape s = trans.createTransformedShape(flipArea(a));
-    g2d.setColor(AO_FOV_COLOR);
+    g2d.setColor(AO_FOV_COLOR1);
     g2d.draw(s);
 
-    // ------------ XXX TODO FIXME ----------------
     // Draw the probe ranges.
     if (getDrawProbeRanges()) {
       Area a1 = new Area(flipArea(NfiraosOiwfs.Wfs.oiwfs1.probeRange(ctx))).createTransformedArea(trans);
       Area a2 = new Area(flipArea(NfiraosOiwfs.Wfs.oiwfs2.probeRange(ctx))).createTransformedArea(trans);
       Area a3 = new Area(flipArea(NfiraosOiwfs.Wfs.oiwfs3.probeRange(ctx))).createTransformedArea(trans);
-      g2d.setColor(OtColor.makeTransparent(AO_FOV_COLOR, 0.3));
 
+      Stroke oldStroke = g2d.getStroke();
+      g2d.setStroke(OiwfsPlotFeature$.MODULE$.ThickDashedStroke());
+
+      g2d.setColor(OtColor.makeTransparent(AO_FOV_COLOR1, 0.7));
       g2d.draw(a1);
+
+      g2d.setColor(OtColor.makeTransparent(AO_FOV_COLOR2, 0.7));
       g2d.draw(a2);
+
+      g2d.setColor(OtColor.makeTransparent(AO_FOV_COLOR3, 0.7));
       g2d.draw(a3);
 
-      Paint p = g2d.getPaint();
-      g2d.setPaint(createProbeRangePaint(g2d, Orientation.horizontal));
-      g2d.fill(a1);
+//      Paint p = g2d.getPaint();
+//      g2d.setPaint(createProbeRangePaint(g2d, Orientation.horizontal, PROBE_RANGE_COLOR1));
+//      g2d.fill(a1);
+//
+//      g2d.setPaint(createProbeRangePaint(g2d, Orientation.vertical, PROBE_RANGE_COLOR2));
+//      g2d.fill(a2);
+//
+//      g2d.setPaint(createProbeRangePaint(g2d, Orientation.vertical, PROBE_RANGE_COLOR3));
+//      g2d.fill(a3);
 
-      g2d.setPaint(createProbeRangePaint(g2d, Orientation.vertical));
-      g2d.fill(a2);
+//      g2d.setPaint(p);
 
-      g2d.setPaint(createProbeRangePaint(g2d, Orientation.vertical));
-      g2d.fill(a3);
-
-      g2d.setPaint(p);
+      g2d.setStroke(oldStroke);
     }
 
-    drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs1);
-    drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs2);
-    drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs3);
+    drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs1, AO_FOV_COLOR1);
+    drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs2, AO_FOV_COLOR2);
+    drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs3, AO_FOV_COLOR3);
 
-    g2d.setColor(c);
+    g2d.setColor(oldColor);
   }
 
   // draw the probe arm for the given wfs
-  private void drawProbeArm(Graphics2D g2d, ObsContext ctx, NfiraosOiwfs.Wfs wfs) {
+  private void drawProbeArm(Graphics2D g2d, ObsContext ctx, NfiraosOiwfs.Wfs wfs, Color color) {
     wfs.probeArm(ctx, true).foreach(a -> {
       if (a != null) {
         Shape s = trans.createTransformedShape(flipArea(a));
-        g2d.setColor(AO_FOV_COLOR);
+        g2d.setColor(color);
         g2d.draw(s);
         Composite c = g2d.getComposite();
         g2d.setComposite(BLOCKED);
@@ -390,7 +416,7 @@ public final class NfiraosFeature extends TpeImageFeature implements PropertyWat
 
       Paint origPaint = g2d.getPaint();
       for (Orientation slant : slants) {
-        Paint p = createProbeRangeKeyPaint(g2d, slant);
+        Paint p = createProbeRangeKeyPaint(g2d, slant, PROBE_RANGE_COLOR1);
         g2d.setPaint(p);
         g2d.fill(new Rectangle2D.Double(1, 1, 16, 16));
       }
