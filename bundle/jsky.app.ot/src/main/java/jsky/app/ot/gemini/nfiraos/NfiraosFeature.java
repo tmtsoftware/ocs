@@ -45,12 +45,8 @@ public final class NfiraosFeature extends TpeImageFeature implements PropertyWat
   private boolean isEmpty;
 
   // Color for AO WFS limit.
-  private static final Color AO_FOV_COLOR1 = Color.RED;
-  private static final Color AO_FOV_COLOR2 = Color.RED;
-  private static final Color AO_FOV_COLOR3 = Color.RED;
-  private static final Color PROBE_RANGE_COLOR1 = OtColor.SALMON;
-  private static final Color PROBE_RANGE_COLOR2 = OtColor.SALMON;
-  private static final Color PROBE_RANGE_COLOR3 = OtColor.SALMON;
+  private static final Color AO_FOV_COLOR = Color.RED;
+  private static final Color PROBE_RANGE_COLOR = OtColor.SALMON;
 
   // Composite used for drawing items that block the view
   private static final Composite BLOCKED = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5F);
@@ -274,7 +270,7 @@ public final class NfiraosFeature extends TpeImageFeature implements PropertyWat
 //    OffsetPosBase selectedOffsetPos = tpeCtx.offsets().selectedPosOrNull();
 
     Shape s = trans.createTransformedShape(flipArea(a));
-    g2d.setColor(AO_FOV_COLOR1);
+    g2d.setColor(AO_FOV_COLOR);
     g2d.draw(s);
 
     // Draw the probe ranges.
@@ -286,23 +282,23 @@ public final class NfiraosFeature extends TpeImageFeature implements PropertyWat
       Stroke oldStroke = g2d.getStroke();
       g2d.setStroke(OiwfsPlotFeature$.MODULE$.ThickDashedStroke());
 
-      g2d.setColor(OtColor.makeTransparent(AO_FOV_COLOR1, 0.7));
+      g2d.setColor(OtColor.makeTransparent(AO_FOV_COLOR, 0.7));
       g2d.draw(a1);
 
-      g2d.setColor(OtColor.makeTransparent(AO_FOV_COLOR2, 0.7));
+      g2d.setColor(OtColor.makeTransparent(AO_FOV_COLOR, 0.7));
       g2d.draw(a2);
 
-      g2d.setColor(OtColor.makeTransparent(AO_FOV_COLOR3, 0.7));
+      g2d.setColor(OtColor.makeTransparent(AO_FOV_COLOR, 0.7));
       g2d.draw(a3);
 
 //      Paint p = g2d.getPaint();
-//      g2d.setPaint(createProbeRangePaint(g2d, Orientation.horizontal, PROBE_RANGE_COLOR1));
+//      g2d.setPaint(createProbeRangePaint(g2d, Orientation.horizontal, PROBE_RANGE_COLOR));
 //      g2d.fill(a1);
 //
-//      g2d.setPaint(createProbeRangePaint(g2d, Orientation.vertical, PROBE_RANGE_COLOR2));
+//      g2d.setPaint(createProbeRangePaint(g2d, Orientation.vertical, PROBE_RANGE_COLOR));
 //      g2d.fill(a2);
 //
-//      g2d.setPaint(createProbeRangePaint(g2d, Orientation.vertical, PROBE_RANGE_COLOR3));
+//      g2d.setPaint(createProbeRangePaint(g2d, Orientation.vertical, PROBE_RANGE_COLOR));
 //      g2d.fill(a3);
 
 //      g2d.setPaint(p);
@@ -310,9 +306,9 @@ public final class NfiraosFeature extends TpeImageFeature implements PropertyWat
       g2d.setStroke(oldStroke);
     }
 
-    drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs1, AO_FOV_COLOR1);
-    drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs2, AO_FOV_COLOR2);
-    drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs3, AO_FOV_COLOR3);
+    drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs1, AO_FOV_COLOR);
+    drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs2, AO_FOV_COLOR);
+    drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs3, AO_FOV_COLOR);
 
     g2d.setColor(oldColor);
   }
@@ -416,7 +412,7 @@ public final class NfiraosFeature extends TpeImageFeature implements PropertyWat
 
       Paint origPaint = g2d.getPaint();
       for (Orientation slant : slants) {
-        Paint p = createProbeRangeKeyPaint(g2d, slant, PROBE_RANGE_COLOR1);
+        Paint p = createProbeRangeKeyPaint(g2d, slant, PROBE_RANGE_COLOR);
         g2d.setPaint(p);
         g2d.fill(new Rectangle2D.Double(1, 1, 16, 16));
       }
