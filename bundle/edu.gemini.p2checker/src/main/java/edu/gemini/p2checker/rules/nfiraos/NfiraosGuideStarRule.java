@@ -8,6 +8,8 @@ import edu.gemini.p2checker.util.PositionOffsetChecker;
 import edu.gemini.pot.sp.ISPProgramNode;
 import edu.gemini.pot.sp.SPComponentType;
 import edu.gemini.shared.util.immutable.Option;
+import edu.gemini.skycalc.Angle;
+import edu.gemini.skycalc.Offset;
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2;
 import edu.gemini.spModel.gemini.flamingos2.Flamingos2OiwfsGuideProbe;
 import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs;
@@ -24,6 +26,8 @@ import edu.gemini.spModel.target.SPTarget;
 import edu.gemini.spModel.target.env.GuideGroup;
 import edu.gemini.spModel.target.env.GuideProbeTargets;
 import edu.gemini.spModel.target.env.TargetEnvironment;
+
+import static edu.gemini.skycalc.Offset.ZERO_OFFSET;
 
 /**
  * A rule for checking Nfiraos guide star positions.
@@ -179,7 +183,8 @@ public final class NfiraosGuideStarRule implements IRule {
         if (primaryOpt.isEmpty()) return true; // okay, no target to check
 
         SPTarget primary = primaryOpt.getValue();
-        return guider.validate(primary, ctx) == GuideStarValidation.VALID;
+        // XXX TODO FIXME: Should include offset pos?
+        return guider.validate(primary, ctx, ZERO_OFFSET) == GuideStarValidation.VALID;
     }
 
     private void addError(P2Problems problems, String id, String tmpl, ObsContext ctx, int index, ISPProgramNode node) {

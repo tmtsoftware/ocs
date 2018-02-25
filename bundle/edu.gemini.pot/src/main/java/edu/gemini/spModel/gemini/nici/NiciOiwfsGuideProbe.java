@@ -3,6 +3,7 @@ package edu.gemini.spModel.gemini.nici;
 import edu.gemini.shared.util.immutable.None;
 import edu.gemini.shared.util.immutable.Option;
 import edu.gemini.shared.util.immutable.Some;
+import edu.gemini.skycalc.Offset;
 import edu.gemini.spModel.core.BandsList;
 import edu.gemini.spModel.core.NoBands;
 import edu.gemini.spModel.guide.*;
@@ -59,7 +60,7 @@ public enum NiciOiwfsGuideProbe implements ValidatableGuideProbe {
         return (ctx.getInstrument() instanceof InstNICI) ? new Some<>(getPatrolField()) : None.instance();
     }
     @Override
-    public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx) {
+    public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx, Offset offset) {
         return GuideProbeUtil.instance.validate(guideStar, this, ctx);
     }
 

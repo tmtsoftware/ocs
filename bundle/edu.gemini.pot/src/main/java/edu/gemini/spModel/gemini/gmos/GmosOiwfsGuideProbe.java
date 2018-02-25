@@ -96,7 +96,7 @@ public enum GmosOiwfsGuideProbe implements ValidatableGuideProbe, OffsetValidati
     }
 
     @Override
-    public GuideStarValidation validate(final SPTarget guideStar, final ObsContext ctx) {
+    public GuideStarValidation validate(final SPTarget guideStar, final ObsContext ctx, Offset offset) {
         return GuideProbeUtil.instance.validate(guideStar, this, ctx);
     }
 

@@ -1,11 +1,12 @@
 
 **NOTE**: This doc is written in Markdown format. You can view it locally using https://github.com/joeyespo/grip or paste it into a Gist or just read the source.
 
-## OCS
+## TMT OCS Prototype (based on the Gemini OCS)
 
-[![Join the chat at https://gitter.im/gemini-hlsw/ocs](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/gemini-hlsw/ocs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+The is a fork of Gemini OCS that is being used as a prototype. In this version the GSAOI instrument and CANOPUS have been replaced with IRIS and NFIRAOS.
+Most of the other Gemini instruments have been commented out of the OT UI.
 
-[![Build Status](https://travis-ci.org/gemini-hlsw/ocs.svg?branch=develop)](https://travis-ci.org/gemini-hlsw/ocs)
+*The following is from the Gemini OCS README (with some minor additions).*
 
 This is a single rather large project that comprises a collection of **OSGi Bundles** that are assembled in various combinations to produce the following end-user applications:
 
@@ -58,8 +59,8 @@ For **app projects** the following additional commands are available:
 
 | command     | explanation
 |-------------|-------------
-| `ocsAppIdeaModule <config>` | Generate an IDEA project for the application (hit tab to see available configs). The project `.ipr` will appear under `app/<name>/idea` and the `.iml` for each bundle will appear under `bundle/<name>/`. Note that you need to build from sbt or at least run `managedSources` to ensure that the P1 and SP model generated source is available.
-| `ocsDist <platform>`        | Assemble the application distribution for the given platform (hit tab to see them). The build product will appear under `app/<name>/target/<name>/...` with the same layout as in OCS1.5. Note that the `clean` command will remove this build product. If you want to build a distribution that requires a JRE or special pakaging (anything other than Test or MacOS) then you need some additional stuff. See the discussion under *Application Projects* below.
+| `ocsAppIdeaModule <config>` | (*Out of date: Better to open ocs in Idea as an sbt project and run the TestLauncher class*) Generate an IDEA project for the application (hit tab to see available configs). The project `.ipr` will appear under `app/<name>/idea` and the `.iml` for each bundle will appear under `bundle/<name>/`. Note that you need to build from sbt or at least run `managedSources` to ensure that the P1 and SP model generated source is available.
+| `ocsDist <platform>`        | (*For example: ocsDist Test*): Assemble the application distribution for the given platform (hit tab to see them). The build product will appear under `app/<name>/target/<name>/...` with the same layout as in OCS1.5. Note that the `clean` command will remove this build product. If you want to build a distribution that requires a JRE or special pakaging (anything other than Test or MacOS) then you need some additional stuff. See the discussion under *Application Projects* below.
 
 At the moment **it is not possible to bootstrap a full OSGi app from within sbt or IDEA**. You need to build the test distribution and run from there.
 

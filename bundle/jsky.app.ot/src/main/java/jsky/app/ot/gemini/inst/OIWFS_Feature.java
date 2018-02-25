@@ -7,10 +7,12 @@ import edu.gemini.spModel.gemini.flamingos2.Flamingos2;
 import edu.gemini.spModel.gemini.gmos.InstGmosNorth;
 import edu.gemini.spModel.gemini.gmos.InstGmosSouth;
 import edu.gemini.spModel.gemini.gnirs.InstGNIRS;
+import edu.gemini.spModel.gemini.iris.Iris;
 import edu.gemini.spModel.gemini.nifs.InstNIFS;
 import edu.gemini.spModel.gemini.niri.InstNIRI;
 import edu.gemini.spModel.obscomp.SPInstObsComp;
 import jsky.app.ot.gemini.gnirs.GNIRS_OIWFS_Feature;
+import jsky.app.ot.gemini.nfiraos.NfiraosFeature;
 import jsky.app.ot.gemini.nifs.NIFS_OIWFS_Feature;
 import jsky.app.ot.gemini.niri.NIRI_OIWFS_Feature;
 import jsky.app.ot.tpe.*;
@@ -35,6 +37,7 @@ public class OIWFS_Feature extends TpeImageFeature {
     private TpeImageFeature _niriFeat;
     private TpeImageFeature _gnirsFeat;
     private TpeImageFeature _nifsFeat;
+    private TpeImageFeature _nfiraosFeat;
 
 
     private static final BasicPropertyList _props = new BasicPropertyList(OIWFS_Feature.class.getName());
@@ -82,6 +85,10 @@ public class OIWFS_Feature extends TpeImageFeature {
         } else if (inst instanceof Flamingos2) {
             _feat = Flamingos2OiwfsFeature.instance();
         }
+//        else if (inst instanceof Iris) {
+//            if (_nfiraosFeat == null) _nfiraosFeat = new NfiraosFeature();
+//            _feat = _nfiraosFeat;
+//        }
 
         if (_feat != null)
             _feat.reinit(iw, tii);

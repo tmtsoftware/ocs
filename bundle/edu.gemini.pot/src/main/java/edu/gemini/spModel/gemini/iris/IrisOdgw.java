@@ -3,6 +3,7 @@ package edu.gemini.spModel.gemini.iris;
 import edu.gemini.skycalc.Angle;
 import edu.gemini.skycalc.Coordinates;
 import edu.gemini.shared.util.immutable.*;
+import edu.gemini.skycalc.Offset;
 import edu.gemini.spModel.core.BandsList;
 import edu.gemini.spModel.core.RBandsList;
 import edu.gemini.spModel.nfiraos.NfiraosGuideProbeGroup;
@@ -136,7 +137,7 @@ public enum IrisOdgw implements ValidatableGuideProbe {
         return values()[id.index() - 1];
     }
 
-    public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx) {
+    public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx, Offset offset) {
         final Option<Long> when = ctx.getSchedulingBlockStart();
         return guideStar.getSkycalcCoordinates(when).map(coords -> {
             // Get the id of the detector in which the guide star lands, if any

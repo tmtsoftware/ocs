@@ -274,7 +274,7 @@ public enum PwfsGuideProbe implements ValidatableGuideProbe, OffsetValidatingGui
 
     /* ValidatableGuideProbe */
 
-    public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx) {
+    public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx, Offset offset) {
         final Option<Long> when = ctx.getSchedulingBlockStart();
         return guideStar.getSkycalcCoordinates(when).map(coords ->
             validate(coords, ctx)

@@ -267,7 +267,7 @@ public class PatrolField {
         }
 
         @Override
-        public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx) {
+        public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx, Offset offset) {
             return
                 guideStar.getSkycalcCoordinates(ctx.getSchedulingBlockStart()).flatMap(guideCoordinates ->
                 ctx.getBaseCoordinates().map(baseCoordinates -> {

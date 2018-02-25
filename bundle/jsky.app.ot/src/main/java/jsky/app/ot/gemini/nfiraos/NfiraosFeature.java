@@ -3,6 +3,8 @@ package jsky.app.ot.gemini.nfiraos;
 import edu.gemini.shared.util.immutable.Option;
 import edu.gemini.shared.util.immutable.Some;
 import edu.gemini.shared.util.immutable.None;
+import edu.gemini.skycalc.Angle;
+import edu.gemini.skycalc.Offset;
 import edu.gemini.spModel.gemini.nfiraos.NfiraosOiwfs;
 import edu.gemini.spModel.guide.GuideProbe;
 import edu.gemini.spModel.obs.context.ObsContext;
@@ -13,8 +15,6 @@ import edu.gemini.spModel.target.env.GuideProbeTargets;
 import edu.gemini.spModel.target.env.TargetEnvironment;
 import edu.gemini.spModel.target.env.TargetEnvironmentDiff;
 import edu.gemini.spModel.target.offset.OffsetPosBase;
-import edu.gemini.spModel.target.offset.OffsetPosList;
-import jsky.app.ot.gemini.inst.OiwfsPlotFeature;
 import jsky.app.ot.gemini.inst.OiwfsPlotFeature$;
 import jsky.app.ot.tpe.*;
 import jsky.app.ot.tpe.feat.TpeGuidePosCreatableItem;
@@ -33,8 +33,6 @@ import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.Collections;
 
-import static java.awt.BasicStroke.CAP_BUTT;
-import static java.awt.BasicStroke.JOIN_BEVEL;
 
 /**
  * Draws the Nfiraos AO field of view and probe ranges.
@@ -92,6 +90,13 @@ public final class NfiraosFeature extends TpeImageFeature implements PropertyWat
   }
 
   /**
+   * The position angle has changed.
+   */
+  public void posAngleUpdate(TpeImageInfo tii) {
+    reinit();
+  }
+
+  /**
    * A property has changed.
    *
    * @see PropertyWatcher
@@ -144,11 +149,31 @@ public final class NfiraosFeature extends TpeImageFeature implements PropertyWat
     // Monitor the selections of offset positions, since that affects the positions drawn
     _monitorOffsetSelections(selListener);
 
-    Point2D.Double base = tii.getBaseScreenPos();
     double ppa = tii.getPixelsPerArcsec();
 
+    // Use selected offset position, rotated by position angle, if defined
+    double posAngle = tii.getCorrectedPosAngleRadians();
+    double pixelsPerArcsec = tii.getPixelsPerArcsec();
+    Point2D.Double baseScreenPos = tii.getBaseScreenPos();
+    TpeContext ctx = _iw.getContext();
+    OffsetPosBase selectedOffsetPos = ctx.offsets().selectedPosOrNull();
+    double basePosX = baseScreenPos.x, basePosY = baseScreenPos.y;
+    if (selectedOffsetPos != null) {
+      // Get offset from base pos in pixels
+      // Note that the offset positions rotate with the instrument.
+      Point2D.Double p = new Point2D.Double(
+          selectedOffsetPos.getXaxis() * pixelsPerArcsec,
+          selectedOffsetPos.getYaxis() * pixelsPerArcsec);
+      edu.gemini.spModel.util.Angle.rotatePoint(p, posAngle);
+      double offsetX = p.x;
+      double offsetY = p.y;
+      basePosX -= offsetX;
+      basePosY -= offsetY;
+    }
+    Point2D.Double offsetBaseScreenPos = new Point2D.Double(basePosX, basePosY);
+
     trans = new AffineTransform();
-    trans.translate(base.x, base.y);
+    trans.translate(offsetBaseScreenPos.x, offsetBaseScreenPos.y);
     // The model already used the position angle, so just rotate by the difference between north and up in the image
     trans.rotate(-tii.getTheta());
     trans.scale(ppa, ppa);
@@ -244,6 +269,18 @@ public final class NfiraosFeature extends TpeImageFeature implements PropertyWat
     return a;
   }
 
+  // Rotate the selected offset position by the pos angle (Must be a better way to do this...).
+  private Offset rotateByPosAngle(ObsContext ctx, OffsetPosBase selectedOffsetPos) {
+    if (selectedOffsetPos == null) return new Offset(Angle.ANGLE_0DEGREES, Angle.ANGLE_0DEGREES);
+    Offset offset = selectedOffsetPos.toSkycalcOffset();
+    double p = offset.p().toArcsecs().getMagnitude();
+    double q = offset.q().toArcsecs().getMagnitude();
+    double a = ctx.getPositionAngle().toRadians();
+    Point2D.Double pd = new Point2D.Double(p, q);
+    edu.gemini.spModel.util.Angle.rotatePoint(pd, a);
+    return new Offset(new Angle(pd.x, Angle.Unit.ARCSECS), new Angle(pd.y, Angle.Unit.ARCSECS));
+  }
+
   /**
    * Draw the feature.
    */
@@ -265,9 +302,8 @@ public final class NfiraosFeature extends TpeImageFeature implements PropertyWat
     isEmpty = a.isEmpty();
     if (isEmpty) return;
 
-    // XXX TODO FIXME: Handle offset positions
-//    // If a base pos is selected, use it
-//    OffsetPosBase selectedOffsetPos = tpeCtx.offsets().selectedPosOrNull();
+    // If aan offset pos is selected, use it
+    Offset offset = rotateByPosAngle(ctx, tpeCtx.offsets().selectedPosOrNull());
 
     Shape s = trans.createTransformedShape(flipArea(a));
     g2d.setColor(AO_FOV_COLOR);
@@ -275,9 +311,9 @@ public final class NfiraosFeature extends TpeImageFeature implements PropertyWat
 
     // Draw the probe ranges.
     if (getDrawProbeRanges()) {
-      Area a1 = new Area(flipArea(NfiraosOiwfs.Wfs.oiwfs1.probeRange(ctx))).createTransformedArea(trans);
-      Area a2 = new Area(flipArea(NfiraosOiwfs.Wfs.oiwfs2.probeRange(ctx))).createTransformedArea(trans);
-      Area a3 = new Area(flipArea(NfiraosOiwfs.Wfs.oiwfs3.probeRange(ctx))).createTransformedArea(trans);
+      Area a1 = new Area(flipArea(NfiraosOiwfs.Wfs.oiwfs1.probeRange(ctx, Offset.ZERO_OFFSET))).createTransformedArea(trans);
+      Area a2 = new Area(flipArea(NfiraosOiwfs.Wfs.oiwfs2.probeRange(ctx, Offset.ZERO_OFFSET))).createTransformedArea(trans);
+      Area a3 = new Area(flipArea(NfiraosOiwfs.Wfs.oiwfs3.probeRange(ctx, Offset.ZERO_OFFSET))).createTransformedArea(trans);
 
       Stroke oldStroke = g2d.getStroke();
       g2d.setStroke(OiwfsPlotFeature$.MODULE$.ThickDashedStroke());
@@ -306,19 +342,19 @@ public final class NfiraosFeature extends TpeImageFeature implements PropertyWat
       g2d.setStroke(oldStroke);
     }
 
-    drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs1, AO_FOV_COLOR);
-    drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs2, AO_FOV_COLOR);
-    drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs3, AO_FOV_COLOR);
+    drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs1, offset);
+    drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs2, offset);
+    drawProbeArm(g2d, ctx, NfiraosOiwfs.Wfs.oiwfs3, offset);
 
     g2d.setColor(oldColor);
   }
 
   // draw the probe arm for the given wfs
-  private void drawProbeArm(Graphics2D g2d, ObsContext ctx, NfiraosOiwfs.Wfs wfs, Color color) {
-    wfs.probeArm(ctx, true).foreach(a -> {
+  private void drawProbeArm(Graphics2D g2d, ObsContext ctx, NfiraosOiwfs.Wfs wfs, Offset offset) {
+    wfs.probeArm(ctx, true, offset).foreach(a -> {
       if (a != null) {
         Shape s = trans.createTransformedShape(flipArea(a));
-        g2d.setColor(color);
+        g2d.setColor(AO_FOV_COLOR);
         g2d.draw(s);
         Composite c = g2d.getComposite();
         g2d.setComposite(BLOCKED);

@@ -3,6 +3,7 @@ package edu.gemini.spModel.gemini.gnirs;
 import edu.gemini.shared.util.immutable.None;
 import edu.gemini.shared.util.immutable.Option;
 import edu.gemini.shared.util.immutable.Some;
+import edu.gemini.skycalc.Offset;
 import edu.gemini.spModel.core.BandsList;
 import edu.gemini.spModel.core.MagnitudeBand;
 import edu.gemini.spModel.core.SingleBand;
@@ -94,7 +95,7 @@ public enum GnirsOiwfsGuideProbe implements ValidatableGuideProbe {
     }
 
     @Override
-    public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx) {
+    public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx, Offset offset) {
         return GuideProbeUtil.instance.validate(guideStar, this, ctx);
     }
 

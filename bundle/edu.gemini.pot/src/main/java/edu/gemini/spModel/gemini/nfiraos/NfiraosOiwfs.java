@@ -7,6 +7,7 @@ import edu.gemini.skycalc.Coordinates;
 import edu.gemini.skycalc.Offset;
 import edu.gemini.spModel.core.BandsList;
 import edu.gemini.spModel.core.RBandsList;
+import edu.gemini.spModel.inst.FeatureGeometry;
 import edu.gemini.spModel.nfiraos.NfiraosGuideProbeGroup;
 import edu.gemini.spModel.guide.*;
 import edu.gemini.spModel.obs.context.ObsContext;
@@ -35,13 +36,23 @@ public enum NfiraosOiwfs {
   public enum Wfs implements GuideProbe, ValidatableGuideProbe, OffsetValidatingGuideProbe {
     oiwfs1(1) {
       @Override
-      public Area probeRange(ObsContext ctx) {
-        return NfiraosOiwfs.instance.probeRange1(ctx);
+      public Area probeRange(ObsContext ctx, Offset offset) {
+        return NfiraosOiwfs.instance.probeRange1(ctx, offset);
       }
 
       @Override
-      public Option<Area> probeArm(ObsContext ctx, boolean validate) {
-        return NfiraosOiwfs.instance.probeArm1(ctx, validate);
+      public Option<Area> probeArm(ObsContext ctx, boolean validate, Offset offset) {
+        return NfiraosOiwfs.instance.probeArm1(ctx, validate, offset);
+      }
+
+      @Override
+      public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx, Offset offset) {
+        return super.validate(guideStar, ctx, offset)
+            .and(validateVignetting(oiwfs2, guideStar, ctx, offset))
+            .and(validateVignetting(oiwfs3, guideStar, ctx, offset))
+            .and(validateVignetting(oiwfs1, oiwfs2, ctx, offset))
+            .and(validateVignetting(oiwfs1, oiwfs3, ctx, offset))
+            ;
       }
 
       @Override
@@ -68,19 +79,22 @@ public enum NfiraosOiwfs {
 
     oiwfs2(2) {
       @Override
-      public Area probeRange(ObsContext ctx) {
-        return NfiraosOiwfs.instance.probeRange2(ctx);
+      public Area probeRange(ObsContext ctx, Offset offset) {
+        return NfiraosOiwfs.instance.probeRange2(ctx, offset);
       }
 
       @Override
-      public Option<Area> probeArm(ObsContext ctx, boolean validate) {
-        return NfiraosOiwfs.instance.probeArm2(ctx, validate);
+      public Option<Area> probeArm(ObsContext ctx, boolean validate, Offset offset) {
+        return NfiraosOiwfs.instance.probeArm2(ctx, validate, offset);
       }
 
       @Override
-      public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx) {
-        return super.validate(guideStar, ctx)
-            .and(validateVignetting(oiwfs1, guideStar, ctx));
+      public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx, Offset offset) {
+        return super.validate(guideStar, ctx, offset)
+            .and(validateVignetting(oiwfs1, guideStar, ctx, offset))
+            .and(validateVignetting(oiwfs3, guideStar, ctx, offset))
+            .and(validateVignetting(oiwfs2, oiwfs1, ctx, offset))
+            .and(validateVignetting(oiwfs2, oiwfs3, ctx, offset));
       }
 
       @Override
@@ -107,13 +121,13 @@ public enum NfiraosOiwfs {
 
     oiwfs3(3) {
       @Override
-      public Area probeRange(ObsContext ctx) {
-        return NfiraosOiwfs.instance.probeRange3(ctx);
+      public Area probeRange(ObsContext ctx, Offset offset) {
+        return NfiraosOiwfs.instance.probeRange3(ctx, offset);
       }
 
       @Override
-      public Option<Area> probeArm(ObsContext ctx, boolean validate) {
-        return NfiraosOiwfs.instance.probeArm3(ctx, validate);
+      public Option<Area> probeArm(ObsContext ctx, boolean validate, Offset offset) {
+        return NfiraosOiwfs.instance.probeArm3(ctx, validate, offset);
       }
 
       @Override
@@ -122,10 +136,12 @@ public enum NfiraosOiwfs {
       }
 
       @Override
-      public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx) {
-        return super.validate(guideStar, ctx)
-            .and(validateVignetting(oiwfs1, guideStar, ctx))
-            .and(validateVignetting(oiwfs2, guideStar, ctx));
+      public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx, Offset offset) {
+        return super.validate(guideStar, ctx, offset)
+            .and(validateVignetting(oiwfs1, guideStar, ctx, offset))
+            .and(validateVignetting(oiwfs2, guideStar, ctx, offset))
+            .and(validateVignetting(oiwfs3, oiwfs1, ctx, offset))
+            .and(validateVignetting(oiwfs3, oiwfs2, ctx, offset));
       }
 
       // not implemented yet, return an empty area
@@ -228,9 +244,10 @@ public enum NfiraosOiwfs {
      * relative to the base.
      *
      * @param ctx context of the given observation
+     * @param offset offset from base pos to use
      * @return Shape describing the range of the guide probe
      */
-    public abstract Area probeRange(ObsContext ctx);
+    public abstract Area probeRange(ObsContext ctx, Offset offset);
 
     /**
      * Gets the shape of the Nfiraos guide probe arm, which is dependent
@@ -238,21 +255,28 @@ public enum NfiraosOiwfs {
      *
      * @param ctx      context of the given observation
      * @param validate if true, calls validate() to check that the probe is in range and the arm is not vignetted
+     * @param offset   the offset from (0, 0) to use for calculations (already rotated by pos angle)
      * @return Shape describing the guide probe arm, if ctx target coordinates are known
      */
-    public abstract Option<Area> probeArm(ObsContext ctx, boolean validate);
+    public abstract Option<Area> probeArm(ObsContext ctx, boolean validate, Offset offset);
 
-    public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx) {
+    public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx, Offset offset) {
       final Option<Long> when = ctx.getSchedulingBlockStart();
       final Wfs self = this;
       return guideStar.getSkycalcCoordinates(when).map(coords ->
-          NfiraosOiwfs.instance.getProbesInRange(coords, ctx).contains(self) ?
+          NfiraosOiwfs.instance.getProbesInRange(coords, ctx, offset).contains(self) ?
               GuideStarValidation.VALID : GuideStarValidation.INVALID
       ).getOrElse(GuideStarValidation.UNDEFINED);
     }
 
-    private static GuideStarValidation validateVignetting(Wfs wfs, SPTarget guideStar, ObsContext ctx) {
-      return isVignetted(wfs, guideStar, ctx).map(b ->
+    private static GuideStarValidation validateVignetting(Wfs wfs, SPTarget guideStar, ObsContext ctx, Offset offset) {
+      return isVignetted(wfs, guideStar, ctx, offset).map(b ->
+          b ? GuideStarValidation.INVALID : GuideStarValidation.VALID
+      ).getOrElse(GuideStarValidation.UNDEFINED);
+    }
+
+    private static GuideStarValidation validateVignetting(Wfs wfs1, Wfs wfs2, ObsContext ctx, Offset offset) {
+      return isVignetted(wfs1, wfs2, ctx, offset).map(b ->
           b ? GuideStarValidation.INVALID : GuideStarValidation.VALID
       ).getOrElse(GuideStarValidation.UNDEFINED);
     }
@@ -260,17 +284,32 @@ public enum NfiraosOiwfs {
     // Returns true if the area of the probe arm for the given wfs contains the
     // coordinates of the given guide star
     // (i.e.: The guide star is vignetted by the wfs probe arm)
-    private static Option<Boolean> isVignetted(Wfs wfs, SPTarget guideStar, ObsContext ctx) {
+    private static Option<Boolean> isVignetted(Wfs wfs, SPTarget guideStar, ObsContext ctx, Offset offset) {
       return guideStar.getSkycalcCoordinates(ctx.getSchedulingBlockStart()).flatMap(gscoords ->
-          ctx.getBaseCoordinates().flatMap(coords ->
-              wfs.probeArm(ctx, false).map(a -> {
+          ctx.getBaseCoordinates().flatMap(baseCoords ->
+              wfs.probeArm(ctx, false, offset).map(a -> {
                 if (a == null) return false;
+                // Use offset position if defined instead of base pos
+                Coordinates coords = new Coordinates(baseCoords.getRa().add(offset.p()), baseCoords.getDec().add(offset.q()));
                 CoordinateDiff diff = new CoordinateDiff(coords, gscoords);
                 Offset dis = diff.getOffset();
                 double p = -dis.p().toArcsecs().getMagnitude();
                 double q = -dis.q().toArcsecs().getMagnitude();
                 return a.contains(p, q);
               })));
+    }
+
+    // Returns true if the probe arms cross
+    private static Option<Boolean> isVignetted(Wfs wfs1, Wfs wfs2, ObsContext ctx, Offset offset) {
+      Option<Area> p1 = wfs1.probeArm(ctx, false, offset);
+      Option<Area> p2 = wfs2.probeArm(ctx, false, offset);
+      if (p1 == null || p2 == null || p1.isEmpty() || p2.isEmpty() || p1.getValue() == null || p2.getValue() == null) {
+        return new Some<>(Boolean.FALSE);
+      }
+      Area a1 = p1.getValue();
+      Area a2 = p2.getValue();
+      a1.intersect(a2);
+      return new Some<>(!a1.isEmpty());
     }
 
     /**
@@ -324,13 +363,6 @@ public enum NfiraosOiwfs {
   private static final double R_HEAD = 25 / 2.0;             // radius of probe head (mm)
   private static final double PLATE_SCALE = 2.182;           // plate scale in OIWFS plane (mm/arcsec)
   private static final double PROBE_ARM_WIDTH = 3.0;         // Width of OIWFS probe arm in arcsec (XXX: Allan: Just guessing here)
-
-//  // XXX TODO FIXME: Duplicate of AO_PORT?
-//  /**
-//   * Returns a Shape that defines the AO port in arcsecs, centered at
-//   * <code>(0,0)</code>.
-//   */
-//  public static final Shape AO_PORT_SHAPE = new Ellipse2D.Double(AO_PORT.getX(), AO_PORT.getY(), AO_PORT.getWidth(), AO_PORT.getHeight());
 
   // Gets the primary OIWFS 3 guide star, if any.
   private Option<SPTarget> getPrimaryOiwfs3(ObsContext ctx) {
@@ -388,22 +420,21 @@ public enum NfiraosOiwfs {
     double y0 = R_ORIGIN * Math.sin(phi - t); // y-coordinate of arm origin
     double x = -x0 / PLATE_SCALE;
     double y = -y0 / PLATE_SCALE;
-    double size = R_MAX*2 / PLATE_SCALE;
-    Area range = new Area(new Ellipse2D.Double(x-size/2, y-size/2, size, size));
+    double size = R_MAX * 2 / PLATE_SCALE;
+    Area range = new Area(new Ellipse2D.Double(x - size / 2, y - size / 2, size, size));
     range.intersect(AO_BOUNDS);
     return range;
   }
 
-  // XXX ---------- TODO FIXME: update this for IRIS/NFIRAOS ---------------
-  public Area probeRange1(ObsContext ctx) {
+  public Area probeRange1(ObsContext ctx, Offset offset) {
     return probeDependentRange(ctx, Wfs.oiwfs1);
   }
 
-  public Area probeRange2(ObsContext ctx) {
+  public Area probeRange2(ObsContext ctx, Offset offset) {
     return probeDependentRange(ctx, Wfs.oiwfs2);
   }
 
-  public Area probeRange3(ObsContext ctx) {
+  public Area probeRange3(ObsContext ctx, Offset offset) {
     return probeDependentRange(ctx, Wfs.oiwfs3);
   }
 
@@ -438,17 +469,18 @@ public enum NfiraosOiwfs {
     return res;
   }
 
-  public Option<Area> probeArm1(ObsContext ctx, boolean validate) {
-    return probeArm(ctx, Wfs.oiwfs1, validate);
+  public Option<Area> probeArm1(ObsContext ctx, boolean validate, Offset offset) {
+    return probeArm(ctx, Wfs.oiwfs1, validate, offset);
   }
 
-  public Option<Area> probeArm2(ObsContext ctx, boolean validate) {
-    return probeArm(ctx, Wfs.oiwfs2, validate);
+  public Option<Area> probeArm2(ObsContext ctx, boolean validate, Offset offset) {
+    return probeArm(ctx, Wfs.oiwfs2, validate, offset);
   }
 
-  public Option<Area> probeArm3(ObsContext ctx, boolean validate) {
-    return probeArm(ctx, Wfs.oiwfs3, validate);
+  public Option<Area> probeArm3(ObsContext ctx, boolean validate, Offset offset) {
+    return probeArm(ctx, Wfs.oiwfs3, validate, offset);
   }
+
 
   /**
    * Returns a shape describing the probe arm for the given OIWFS.
@@ -456,20 +488,25 @@ public enum NfiraosOiwfs {
    * @param ctx      the context
    * @param oiwfs    one of oiwfs1, oiwfs2 or oiwfs3
    * @param validate if true, call validate to check if probe is in range and not vignetted
+   * @param offset   offset position to use for calculations in place of base position (or (0,0) if no offset pos selected)
    * @return the shape in arcsec relative to the base position, or null if the probe is not
    * in range or is vignetted
    */
-  public Option<Area> probeArm(ObsContext ctx, Wfs oiwfs, boolean validate) {
+  public Option<Area> probeArm(ObsContext ctx, Wfs oiwfs, boolean validate, Offset offset) {
     double phi = oiwfs.getArmAngle(ctx);      // base arm angle in radians
     double t = ctx.getPositionAngle().toRadians();
     double x0 = R_ORIGIN * Math.cos(phi - t); //  x-coordinate of arm origin
     double y0 = R_ORIGIN * Math.sin(phi - t); // y-coordinate of arm origin
 
-    return ctx.getBaseCoordinates().map(coords -> {
+    return ctx.getBaseCoordinates().map(baseCoords -> {
+
+      // Use offset position if defined instead of base pos
+      Coordinates coords = new Coordinates(baseCoords.getRa().add(offset.p()), baseCoords.getDec().add(offset.q()));
+
       GuideProbeTargets targets = ctx.getTargets().getPrimaryGuideGroup().get(oiwfs).getOrNull();
       if (targets != null) {
         SPTarget target = targets.getPrimary().getOrNull();
-        if (target != null && (!validate || oiwfs.validate(target, ctx) == GuideStarValidation.VALID)) {
+        if (target != null && (!validate || oiwfs.validate(target, ctx, offset) == GuideStarValidation.VALID)) {
           // Get offset from base position to oiwfs in arcsecs
           final Option<Coordinates> oc = target.getSkycalcCoordinates(ctx.getSchedulingBlockStart());
           if (oc.isDefined()) {
@@ -516,10 +553,13 @@ public enum NfiraosOiwfs {
    * Gets the set of guide probes that can reach the provided coordinates
    * in the given observing context (if any).
    */
-  public Set<Wfs> getProbesInRange(Coordinates coords, ObsContext ctx) {
+  public Set<Wfs> getProbesInRange(Coordinates coords, ObsContext ctx, Offset offset) {
     Set<Wfs> res = new HashSet<>();
 
-    ctx.getBaseCoordinates().foreach(bcs -> {
+    ctx.getBaseCoordinates().foreach(baseCoords -> {
+      // Use offset position if defined instead of base pos
+      Coordinates bcs = new Coordinates(baseCoords.getRa().add(offset.p()), baseCoords.getDec().add(offset.q()));
+
       // Calculate the difference between the coordinate and the observation's
       // base position.
       CoordinateDiff diff;
@@ -531,9 +571,9 @@ public enum NfiraosOiwfs {
       double p = -dis.p().toArcsecs().getMagnitude();
       double q = -dis.q().toArcsecs().getMagnitude();
 
-      if (probeRange1(ctx).contains(p, q)) res.add(Wfs.oiwfs1);
-      if (probeRange2(ctx).contains(p, q)) res.add(Wfs.oiwfs2);
-      if (probeRange3(ctx).contains(p, q)) res.add(Wfs.oiwfs3);
+      if (probeRange1(ctx, offset).contains(p, q)) res.add(Wfs.oiwfs1);
+      if (probeRange2(ctx, offset).contains(p, q)) res.add(Wfs.oiwfs2);
+      if (probeRange3(ctx, offset).contains(p, q)) res.add(Wfs.oiwfs3);
     });
 
     return res;

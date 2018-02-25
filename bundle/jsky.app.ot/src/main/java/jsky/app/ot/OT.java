@@ -21,7 +21,6 @@ import edu.gemini.spModel.smartgcal.repository.CalibrationRemoteRepository;
 import edu.gemini.spModel.smartgcal.repository.CalibrationResourceRepository;
 import edu.gemini.spModel.smartgcal.repository.CalibrationUpdater;
 import edu.gemini.util.security.auth.keychain.KeyChain;
-import jsky.app.ot.gemini.nfiraos.NfiraosFeature;
 import jsky.app.ot.modelconfig.Flamingos2Config;
 import jsky.app.ot.modelconfig.NfiraosConfig;
 import jsky.app.ot.modelconfig.ModelConfig;

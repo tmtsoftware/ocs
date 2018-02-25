@@ -100,7 +100,7 @@ public enum Flamingos2OiwfsGuideProbe implements GuideProbe, ValidatableGuidePro
     }
 
     @Override
-    public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx) {
+    public GuideStarValidation validate(SPTarget guideStar, ObsContext ctx, Offset offset) {
         return GuideProbeUtil.instance.validate(guideStar, this, ctx);
     }
 
