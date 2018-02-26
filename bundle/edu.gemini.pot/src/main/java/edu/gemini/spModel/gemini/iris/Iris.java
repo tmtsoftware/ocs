@@ -33,6 +33,7 @@ import edu.gemini.spModel.obs.plannedtime.PlannedTime.CategorizedTimeGroup;
 import edu.gemini.spModel.obs.plannedtime.PlannedTime.Category;
 import edu.gemini.spModel.obs.plannedtime.PlannedTime.StepCalculator;
 import edu.gemini.spModel.obscomp.InstConfigInfo;
+import edu.gemini.spModel.obscomp.InstConstants;
 import edu.gemini.spModel.obscomp.SPInstObsComp;
 import edu.gemini.spModel.pio.ParamSet;
 import edu.gemini.spModel.pio.Pio;
@@ -67,6 +68,7 @@ public final class Iris extends SPInstObsComp
 
     public static final ReadMode DEFAULT = ReadMode.BRIGHT;
     public static final ItemKey KEY = new ItemKey(INSTRUMENT_KEY, "readMode");
+    public static final ItemKey IFS_KEY = new ItemKey(INSTRUMENT_KEY, "ifsReadMode");
 
     private final String displayValue;
     private final String logValue;
@@ -489,7 +491,7 @@ public final class Iris extends SPInstObsComp
 
   }
 
-  private static final String VERSION = "2009A-1";
+  private static final String VERSION = "2018A-1";
 
   public static final SPComponentType SP_TYPE =
       SPComponentType.INSTRUMENT_IRIS;
@@ -507,9 +509,12 @@ public final class Iris extends SPInstObsComp
   public static final PropertyDescriptor FILTER_PROP;
   public static final PropertyDescriptor DETECTOR_PROP;
   public static final PropertyDescriptor READ_MODE_PROP;
+  public static final PropertyDescriptor IFS_READ_MODE_PROP;
   public static final PropertyDescriptor PORT_PROP;
   public static final PropertyDescriptor EXPOSURE_TIME_PROP;
+  public static final PropertyDescriptor IFS_EXPOSURE_TIME_PROP;
   public static final PropertyDescriptor COADDS_PROP;
+  public static final PropertyDescriptor IFS_COADDS_PROP;
   public static final PropertyDescriptor POS_ANGLE_PROP;
   public static final PropertyDescriptor POS_ANGLE_CONSTRAINT_PROP;
   public static final PropertyDescriptor UTILITY_WHEEL_PROP;
@@ -535,9 +540,12 @@ public final class Iris extends SPInstObsComp
     FILTER_PROP = initProp(Filter.KEY.getName(), query_yes, iter_yes);
     DETECTOR_PROP = initProp(Detector.KEY.getName(), query_yes, iter_yes);
     READ_MODE_PROP = initProp(ReadMode.KEY.getName(), query_yes, iter_yes);
+    IFS_READ_MODE_PROP = initProp(ReadMode.IFS_KEY.getName(), query_yes, iter_yes);
     PORT_PROP = initProp("issPort", query_no, iter_no);
     EXPOSURE_TIME_PROP = initProp("exposureTime", query_no, iter_yes);
+    IFS_EXPOSURE_TIME_PROP = initProp("ifsExposureTime", query_no, iter_yes);
     COADDS_PROP = initProp("coadds", query_no, iter_yes);
+    IFS_COADDS_PROP = initProp("ifsCoadds", query_no, iter_yes);
     POS_ANGLE_PROP = initProp("posAngle", query_no, iter_no);
     POS_ANGLE_CONSTRAINT_PROP = initProp("posAngleConstraint", query_no, iter_no);
 
@@ -561,8 +569,10 @@ public final class Iris extends SPInstObsComp
   private Filter filter = Filter.DEFAULT;
   private Detector detector = Detector.DEFAULT;
   private ReadMode readMode;
+  private ReadMode ifsReadMode;
   private IssPort port = IssPort.UP_LOOKING;
-
+  private double _ifsExposureTime = InstConstants.DEF_EXPOSURE_TIME;
+  private int _ifsCoadds = InstConstants.DEF_COADDS;
   private UtilityWheel utilityWheel = UtilityWheel.DEFAULT;
   private OdgwSize odgwSize = OdgwSize.DEFAULT;
   private Roi roi = Roi.DEFAULT;
@@ -662,6 +672,18 @@ public final class Iris extends SPInstObsComp
     if (oldValue != newValue) {
       readMode = newValue;
       firePropertyChange(READ_MODE_PROP.getName(), oldValue, newValue);
+    }
+  }
+
+  public ReadMode getIfsReadMode() {
+    return ifsReadMode;
+  }
+
+  public void setIfsReadMode(ReadMode newValue) {
+    ReadMode oldValue = getReadMode();
+    if (oldValue != newValue) {
+      ifsReadMode = newValue;
+      firePropertyChange(IFS_READ_MODE_PROP.getName(), oldValue, newValue);
     }
   }
 
@@ -787,6 +809,88 @@ public final class Iris extends SPInstObsComp
 
   }
 
+
+
+
+  //---------------------------
+  /**
+   * Set the IFS exposure time.
+   */
+  public void setIfsExposureTime(double newValue) {
+    double oldValue = getIfsExposureTime();
+    if (oldValue != newValue) {
+      _ifsExposureTime = newValue;
+      firePropertyChange(IFS_EXPOSURE_TIME_PROP, oldValue, newValue);
+    }
+  }
+
+  /**
+   * Set the IFS exposure time from the given String.
+   */
+  public void setIfsExposureTimeAsString(String newValue) {
+    setIfsExposureTime(Double.parseDouble(newValue));
+  }
+
+  /**
+   * Get the IFS exposure time.
+   */
+  public double getIfsExposureTime() {
+    return _ifsExposureTime;
+  }
+
+  /**
+   * Get the IFS exposure time as a string.
+   */
+  public String getIfsExposureTimeAsString() {
+    return Double.toString(_ifsExposureTime);
+  }
+
+  /**
+   * Return the total IFS integration time.  ifsCoadds * ifsExposureTime.
+   */
+  public double getTotalIfsExposureTime() {
+    return getIfsCoadds() * getIfsExposureTime();
+  }
+
+  /**
+   * Get the total IFS exposure time as a string.
+   */
+  public String getTotalIfsExposureTimeAsString() {
+    return Double.toString(getTotalIfsExposureTime());
+  }
+
+  /**
+   * Set the number of IFS coadds.
+   */
+  public void setIfsCoadds(int newValue) {
+    // No bad values allowed.
+    if (newValue <= 0)
+      newValue = InstConstants.DEF_COADDS;
+
+    int oldValue = getIfsCoadds();
+    if (oldValue != newValue) {
+      _ifsCoadds = newValue;
+      firePropertyChange(IFS_COADDS_PROP, oldValue, newValue);
+    }
+  }
+
+  /**
+   * Get the number of IFS coadds.
+   */
+  public int getIfsCoadds() {
+    return _ifsCoadds;
+  }
+
+  /**
+   * Get the number of IFS coadds as a String.
+   */
+  public String getIfsCoaddsAsString() {
+    return Integer.toString(_ifsCoadds);
+  }
+
+  //---------------------------
+
+
   // REL-1103
   // Get correct offset overhead in the common group.  If a guided offset
   // or a switch from guided to non-guided, it is expensive.  If going from
@@ -827,11 +931,15 @@ public final class Iris extends SPInstObsComp
     Pio.addParam(factory, paramSet, FILTER_PROP.getName(), filter.name());
     Pio.addParam(factory, paramSet, DETECTOR_PROP.getName(), detector.name());
     Pio.addParam(factory, paramSet, READ_MODE_PROP.getName(), readMode.name());
+    Pio.addParam(factory, paramSet, IFS_READ_MODE_PROP.getName(), ifsReadMode.name());
     Pio.addParam(factory, paramSet, PORT_PROP.getName(), port.name());
     Pio.addParam(factory, paramSet, POS_ANGLE_CONSTRAINT_PROP.getName(), getPosAngleConstraint().name());
     Pio.addParam(factory, paramSet, UTILITY_WHEEL_PROP.getName(), utilityWheel.name());
     Pio.addParam(factory, paramSet, ODGW_SIZE_PROP.getName(), odgwSize.name());
     Pio.addParam(factory, paramSet, ROI_PROP.getName(), roi.name());
+
+    Pio.addParam(factory, paramSet, IFS_EXPOSURE_TIME_PROP, getIfsExposureTimeAsString());
+    Pio.addParam(factory, paramSet, IFS_COADDS_PROP, getIfsCoaddsAsString());
 
     return paramSet;
   }
@@ -855,6 +963,9 @@ public final class Iris extends SPInstObsComp
     v = Pio.getValue(paramSet, READ_MODE_PROP.getName());
     if (v != null) setReadMode(ReadMode.valueOf(v, getReadMode()));
 
+    v = Pio.getValue(paramSet, IFS_READ_MODE_PROP.getName());
+    if (v != null) setIfsReadMode(ReadMode.valueOf(v, getIfsReadMode()));
+
     v = Pio.getValue(paramSet, PORT_PROP.getName());
     if (v != null) setIssPort(IssPort.valueOf(v));
 
@@ -870,6 +981,14 @@ public final class Iris extends SPInstObsComp
     v = Pio.getValue(paramSet, ROI_PROP.getName());
     if (v != null) setRoi(Roi.valueOf(v, getRoi()));
 
+    v = Pio.getValue(paramSet, IFS_EXPOSURE_TIME_PROP);
+    if (v != null) {
+      setIfsExposureTimeAsString(v);
+    }
+    v = Pio.getValue(paramSet, IFS_COADDS_PROP);
+    if (v != null) {
+      setIfsCoadds(Integer.parseInt(v));
+    }
   }
 
   public ISysConfig getSysConfig() {
@@ -879,14 +998,17 @@ public final class Iris extends SPInstObsComp
     sc.putParameter(DefaultParameter.getInstance(FILTER_PROP.getName(), getFilter()));
     sc.putParameter(DefaultParameter.getInstance(DETECTOR_PROP.getName(), getDetector()));
     sc.putParameter(DefaultParameter.getInstance(READ_MODE_PROP.getName(), getReadMode()));
+    sc.putParameter(DefaultParameter.getInstance(IFS_READ_MODE_PROP.getName(), getIfsReadMode()));
     sc.putParameter(DefaultParameter.getInstance(PORT_PROP, getIssPort()));
     sc.putParameter(DefaultParameter.getInstance(UTILITY_WHEEL_PROP.getName(), getUtilityWheel()));
     sc.putParameter(DefaultParameter.getInstance(ODGW_SIZE_PROP.getName(), getOdgwSize()));
     sc.putParameter(DefaultParameter.getInstance(ROI_PROP.getName(), getRoi()));
     sc.putParameter(DefaultParameter.getInstance(EXPOSURE_TIME_PROP.getName(), getExposureTime()));
+    sc.putParameter(DefaultParameter.getInstance(IFS_EXPOSURE_TIME_PROP.getName(), getIfsExposureTime()));
     sc.putParameter(DefaultParameter.getInstance(POS_ANGLE_PROP.getName(), getPosAngleDegrees()));
     sc.putParameter(DefaultParameter.getInstance(POS_ANGLE_CONSTRAINT_PROP.getName(), getPosAngleConstraint()));
     sc.putParameter(DefaultParameter.getInstance(COADDS_PROP.getName(), getCoadds()));
+    sc.putParameter(DefaultParameter.getInstance(IFS_COADDS_PROP.getName(), getIfsCoadds()));
 
     return sc;
   }
@@ -896,6 +1018,7 @@ public final class Iris extends SPInstObsComp
     configInfo.add(new InstConfigInfo(FILTER_PROP));
     configInfo.add(new InstConfigInfo(DETECTOR_PROP));
     configInfo.add(new InstConfigInfo(READ_MODE_PROP));
+    configInfo.add(new InstConfigInfo(IFS_READ_MODE_PROP));
     return configInfo;
   }
 

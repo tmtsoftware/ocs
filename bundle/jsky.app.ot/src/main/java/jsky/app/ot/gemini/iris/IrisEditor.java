@@ -1,5 +1,6 @@
 package jsky.app.ot.gemini.iris;
 
+import com.jgoodies.forms.factories.DefaultComponentFactory;
 import edu.gemini.pot.sp.ISPObsComponent;
 import edu.gemini.shared.gui.ThinBorder;
 import edu.gemini.shared.gui.bean.*;
@@ -15,7 +16,6 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyDescriptor;
 
 import static edu.gemini.spModel.gemini.iris.Iris.*;
 
@@ -137,60 +137,145 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     private final EditListener<Iris, Iris.Detector> detectorChangeListener = evt -> {
     };
 
-//    private final class ExposureTimeMessageUpdater implements EditListener<Iris, Double>, PropertyChangeListener {
-//        private final JLabel label;
-//
-//        ExposureTimeMessageUpdater() {
-//            this.label = new JLabel("");
-//        }
-//
-//        JLabel getLabel() {
-//            return label;
-//        }
-//
-//        public void valueChanged(EditEvent<Iris, Double> event) {
-//            update(event.getNewValue());
-//        }
-//
-//        public void propertyChange(PropertyChangeEvent evt) {
-//            update();
-//        }
-//
-//        void update() {
-//            final Iris iris = getDataObject();
-//            update((iris == null) ? null : iris.getExposureTime());
-//        }
-//
-//        void update(Double val) {
-//            final Iris iris = getDataObject();
-//            Color fg = Color.black;
-//            String txt = "";
-//            if ((iris != null) && (val != null)) {
-//                final double min = iris.getMinimumExposureTimeSecs();
-//                final double rec = iris.getRecommendedExposureTimeSecs();
+    private final class ImagerExposureTimeMessageUpdater implements EditListener<Iris, Double>, PropertyChangeListener {
+        private final JLabel label;
+
+        ImagerExposureTimeMessageUpdater() {
+            this.label = new JLabel("");
+        }
+
+        JLabel getLabel() {
+            return label;
+        }
+
+        public void valueChanged(EditEvent<Iris, Double> event) {
+            update(event.getNewValue());
+        }
+
+        public void propertyChange(PropertyChangeEvent evt) {
+            update();
+        }
+
+        void update() {
+            final Iris iris = getDataObject();
+            update((iris == null) ? null : iris.getExposureTime());
+        }
+
+        void update(Double val) {
+            final Iris iris = getDataObject();
+            Color fg = Color.black;
+            String txt = "";
+            if ((iris != null) && (val != null)) {
+                final double min = iris.getMinimumExposureTimeSecs();
+                final double rec = iris.getRecommendedExposureTimeSecs();
 //                final double max = iris.getFilter().exposureTimeHalfWellSecs();
-//
-//                if (val < min) {
-//                    fg = FATAL_FG_COLOR;
-//                    txt = String.format("Below minimum (%.1f sec).", min);
-//                } else if (val < rec) {
-//                    fg = WARNING_FG_COLOR;
-//                    txt = String.format("Below recommendation (%.1f sec).", rec);
-//                } else if ((val > max) && (max > 0)) {
+
+                if (val < min) {
+                    fg = FATAL_FG_COLOR;
+                    txt = String.format("Below minimum (%.1f sec).", min);
+                } else if (val < rec) {
+                    fg = WARNING_FG_COLOR;
+                    txt = String.format("Below recommendation (%.1f sec).", rec);
+                }
+//                else if ((val > max) && (max > 0)) {
 //                    fg = WARNING_FG_COLOR;
 //                    txt = String.format("Very long exp. time (%d sec max).", Math.round(max));
 //                }
-//            }
-//
-//            label.setText(txt);
-//            label.setForeground(fg);
-//        }
-//    }
+            }
 
-    private final class CoaddsMessageUpdater implements EditListener<Iris, Integer>, PropertyChangeListener {
+            label.setText(txt);
+            label.setForeground(fg);
+        }
+    }
+
+    private final class IfsExposureTimeMessageUpdater implements EditListener<Iris, Double>, PropertyChangeListener {
         private final JLabel label;
 
-        CoaddsMessageUpdater() {
+        IfsExposureTimeMessageUpdater() {
+            this.label = new JLabel("");
+        }
+
+        JLabel getLabel() {
+            return label;
+        }
+
+        public void valueChanged(EditEvent<Iris, Double> event) {
+            update(event.getNewValue());
+        }
+
+        public void propertyChange(PropertyChangeEvent evt) {
+            update();
+        }
+
+        void update() {
+            final Iris iris = getDataObject();
+            update((iris == null) ? null : iris.getExposureTime());
+        }
+
+        void update(Double val) {
+            final Iris iris = getDataObject();
+            Color fg = Color.black;
+            String txt = "";
+            if ((iris != null) && (val != null)) {
+                final double min = iris.getMinimumExposureTimeSecs();
+                final double rec = iris.getRecommendedExposureTimeSecs();
+//                final double max = iris.getFilter().exposureTimeHalfWellSecs();
+
+                if (val < min) {
+                    fg = FATAL_FG_COLOR;
+                    txt = String.format("Below minimum (%.1f sec).", min);
+                } else if (val < rec) {
+                    fg = WARNING_FG_COLOR;
+                    txt = String.format("Below recommendation (%.1f sec).", rec);
+                }
+//                else if ((val > max) && (max > 0)) {
+//                    fg = WARNING_FG_COLOR;
+//                    txt = String.format("Very long exp. time (%d sec max).", Math.round(max));
+//                }
+            }
+
+            label.setText(txt);
+            label.setForeground(fg);
+        }
+    }
+
+    private final class ImagerCoaddsMessageUpdater implements EditListener<Iris, Integer>, PropertyChangeListener {
+        private final JLabel label;
+
+        ImagerCoaddsMessageUpdater() {
+            this.label = new JLabel("");
+        }
+
+        JLabel getLabel() {
+            return label;
+        }
+
+        public void valueChanged(EditEvent<Iris, Integer> event) {
+            update(event.getNewValue());
+        }
+
+        public void propertyChange(PropertyChangeEvent evt) {
+            update();
+        }
+
+        void update() {
+            final Iris iris = getDataObject();
+            update((iris == null) ? null : iris.getCoadds());
+        }
+
+        void update(Integer val) {
+            String txt = "";
+            if (val != null) {
+                if (val <= 0) txt = "Coadds must be greater than 0.";
+            }
+            label.setText(txt);
+        }
+    }
+
+    private final class IfsCoaddsMessageUpdater implements EditListener<Iris, Integer>, PropertyChangeListener {
+        private final JLabel label;
+
+        IfsCoaddsMessageUpdater() {
             this.label = new JLabel("");
         }
 
@@ -221,11 +306,13 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     }
 
     private final JPanel pan;
+    private final DefaultComponentFactory compFactory;
 
     private final ComboPropertyCtrl<Iris, Filter> filterCtrl;
     private final ComboPropertyCtrl<Iris, Detector> detectorCtrl;
     private final RadioPropertyCtrl<Iris, IssPort> portCtrl;
-    private final RadioPropertyCtrl<Iris, ReadMode> readModeCtrl;
+    private final RadioPropertyCtrl<Iris, ReadMode> imagerReadModeCtrl;
+    private final RadioPropertyCtrl<Iris, ReadMode> ifsReadModeCtrl;
     private final ComboPropertyCtrl<Iris, OdgwSize> odgwSizeCtrl;
     private final ComboPropertyCtrl<Iris, UtilityWheel> utilWheelCtrl;
     private final ComboPropertyCtrl<Iris, Roi> roiCtrl;
@@ -233,41 +320,53 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
     private final TextFieldPropertyCtrl<Iris, Double> posAngleCtrl;
     private final CheckboxEnumPropertyCtrl<Iris, PosAngleConstraint> posAngleConstraintCtrl;
-//    private final TextFieldPropertyCtrl<Iris, Double> exposureTimeCtrl;
-//    private final ExposureTimeMessageUpdater exposureTimeMessageUpdater;
-    private final TextFieldPropertyCtrl<Iris, Integer> coaddsCtrl;
-    private final CoaddsMessageUpdater coaddsMessageUpdater;
 
-    private final ReadModeMessagePanel msgPanel = new ReadModeMessagePanel();
+    private final TextFieldPropertyCtrl<Iris, Double> imagerExposureTimeCtrl;
+    private final ImagerExposureTimeMessageUpdater imagerExposureTimeMessageUpdater;
+    private final TextFieldPropertyCtrl<Iris, Integer> imagerCoaddsCtrl;
+    private final ImagerCoaddsMessageUpdater imagerCoaddsMessageUpdater;
+    private final ReadModeMessagePanel imagerMsgPanel = new ReadModeMessagePanel();
+
+    private final TextFieldPropertyCtrl<Iris, Double> ifsExposureTimeCtrl;
+    private final IfsExposureTimeMessageUpdater ifsExposureTimeMessageUpdater;
+    private final TextFieldPropertyCtrl<Iris, Integer> ifsCoaddsCtrl;
+    private final IfsCoaddsMessageUpdater ifsCoaddsMessageUpdater;
+    private final ReadModeMessagePanel ifsMsgPanel = new ReadModeMessagePanel();
 
     public IrisEditor() {
-
         filterCtrl   = ComboPropertyCtrl.enumInstance(FILTER_PROP);
         detectorCtrl = ComboPropertyCtrl.enumInstance(DETECTOR_PROP);
         portCtrl     = new RadioPropertyCtrl<>(PORT_PROP);
-        readModeCtrl = new RadioPropertyCtrl<>(READ_MODE_PROP);
+        imagerReadModeCtrl = new RadioPropertyCtrl<>(READ_MODE_PROP);
+        ifsReadModeCtrl = new RadioPropertyCtrl<>(IFS_READ_MODE_PROP);
         odgwSizeCtrl = ComboPropertyCtrl.enumInstance(ODGW_SIZE_PROP);
         utilWheelCtrl= ComboPropertyCtrl.enumInstance(UTILITY_WHEEL_PROP);
         roiCtrl= ComboPropertyCtrl.enumInstance(ROI_PROP);
+        compFactory = DefaultComponentFactory.getInstance();
 
         // Position Angle
-        PropertyDescriptor pd = Iris.POS_ANGLE_PROP;
-        posAngleCtrl = TextFieldPropertyCtrl.createDoubleInstance(pd, 1);
+        posAngleCtrl = TextFieldPropertyCtrl.createDoubleInstance(Iris.POS_ANGLE_PROP, 1);
 
         posAngleConstraintCtrl = new CheckboxEnumPropertyCtrl<>("Allow Auto Guide Search to select PA",
                 POS_ANGLE_CONSTRAINT_PROP, PosAngleConstraint.UNBOUNDED, PosAngleConstraint.FIXED);
 
         // Exposure Time
-//        pd = Iris.EXPOSURE_TIME_PROP;
-//        exposureTimeMessageUpdater = new ExposureTimeMessageUpdater();
-//        exposureTimeCtrl = TextFieldPropertyCtrl.createDoubleInstance(pd, 1);
-//        exposureTimeCtrl.addEditListener(exposureTimeMessageUpdater);
+        imagerExposureTimeMessageUpdater = new ImagerExposureTimeMessageUpdater();
+        imagerExposureTimeCtrl = TextFieldPropertyCtrl.createDoubleInstance(Iris.EXPOSURE_TIME_PROP, 1);
+        imagerExposureTimeCtrl.addEditListener(imagerExposureTimeMessageUpdater);
+
+        ifsExposureTimeMessageUpdater = new IfsExposureTimeMessageUpdater();
+        ifsExposureTimeCtrl = TextFieldPropertyCtrl.createDoubleInstance(Iris.IFS_EXPOSURE_TIME_PROP, 1);
+        ifsExposureTimeCtrl.addEditListener(ifsExposureTimeMessageUpdater);
 
         // Cooads
-        pd = Iris.COADDS_PROP;
-        coaddsMessageUpdater = new CoaddsMessageUpdater();
-        coaddsCtrl = TextFieldPropertyCtrl.createIntegerInstance(pd);
-        coaddsCtrl.addEditListener(coaddsMessageUpdater);
+        imagerCoaddsMessageUpdater = new ImagerCoaddsMessageUpdater();
+        imagerCoaddsCtrl = TextFieldPropertyCtrl.createIntegerInstance(Iris.COADDS_PROP);
+        imagerCoaddsCtrl.addEditListener(imagerCoaddsMessageUpdater);
+
+        ifsCoaddsMessageUpdater = new IfsCoaddsMessageUpdater();
+        ifsCoaddsCtrl = TextFieldPropertyCtrl.createIntegerInstance(Iris.IFS_COADDS_PROP);
+        ifsCoaddsCtrl.addEditListener(ifsCoaddsMessageUpdater);
 
         pan = new JPanel(new GridBagLayout());
         initEditorPanel(pan);
@@ -275,60 +374,129 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
 
     private void initEditorPanel(JPanel pan) {
+        int row = 0;
         pan.setBorder(PANEL_BORDER);
-        addCtrl(pan, 0, 0, filterCtrl);
+        addCtrl(pan, 0, row, filterCtrl);
+        row++;
 
         posAngleCtrl.setColumns(4);
-        addCtrl(pan, 0, 1, posAngleCtrl, "deg E of N");
+        addCtrl(pan, 0, row, posAngleCtrl, "deg E of N");
         // Column Gap
-        pan.add(new JPanel(), colGapGbc(3, 1));
-
-        pan.add(posAngleConstraintCtrl.getComponent(), propWidgetGbc(6, 1));
+        pan.add(new JPanel(), colGapGbc(3, row));
+        pan.add(posAngleConstraintCtrl.getComponent(), propWidgetGbc(6, row));
+        row++;
 
         addCtrl(pan, 0, 2, detectorCtrl);
+        row++;
 
         // ------ Separator --------
-        pan.add(new JSeparator(JSeparator.HORIZONTAL), separatorGbc(0, 3, 7));
+        pan.add(new JSeparator(JSeparator.HORIZONTAL), separatorGbc(0, row, 7));
+        row++;
 
-//        exposureTimeCtrl.setColumns(4);
-//        pan.add(new JLabel("Exp Time"), propLabelGbc(0, 4));
-//        pan.add(exposureTimeCtrl.getComponent(), propWidgetGbc(1, 4));
-//        pan.add(new JLabel("sec"), propUnitsGbc(2, 4));
-//        pan.add(exposureTimeMessageUpdater.getLabel(), warningLabelGbc(0, 5, 3));
+        pan.add(compFactory.createSeparator("Imager"), separatorGbc(0, row, 3));
+        pan.add(compFactory.createSeparator("IFS"), separatorGbc(4, row, 4));
+        row++;
 
-        coaddsCtrl.setColumns(3);
-        addCtrl(pan, 4, 4, coaddsCtrl, "exp/obs");
+        final int imagerIfsStartRow = row;
 
-        final JLabel coaddsWarning = coaddsMessageUpdater.getLabel();
-        coaddsWarning.setForeground(WARNING_FG_COLOR);
-        pan.add(coaddsWarning, warningLabelGbc(4, 5, 3));
+        // ------ Imager --------
+        imagerExposureTimeCtrl.setColumns(4);
+        pan.add(new JLabel("Exp Time"), propLabelGbc(0, row));
+        pan.add(imagerExposureTimeCtrl.getComponent(), propWidgetGbc(1, row));
+        pan.add(new JLabel("sec"), propUnitsGbc(2, row));
+        row++;
 
-        final JTabbedPane tabPane = new JTabbedPane();
-        tabPane.addTab("Read Mode", getTabPanel(readModeCtrl.getComponent()));
-        tabPane.addTab("ISS Port", getTabPanel(portCtrl.getComponent()));
+        pan.add(imagerExposureTimeMessageUpdater.getLabel(), warningLabelGbc(0, row, 3));
+        row++;
+
+        imagerCoaddsCtrl.setColumns(3);
+        addCtrl(pan, 0, row, imagerCoaddsCtrl, "exp/obs");
+        row++;
+
+        final JLabel imagerCoaddsWarning = imagerCoaddsMessageUpdater.getLabel();
+        imagerCoaddsWarning.setForeground(WARNING_FG_COLOR);
+        pan.add(imagerCoaddsWarning, warningLabelGbc(0, row, 3));
+        row++;
+
+        final JTabbedPane imagerTabPane = new JTabbedPane();
+        imagerTabPane.addTab("Read Mode", getTabPanel(imagerReadModeCtrl.getComponent()));
+//        imagerTabPane.addTab("ISS Port", getTabPanel(portCtrl.getComponent()));
 
         // Tab Pane
-        pan.add(tabPane, new GridBagConstraints(){{
-            gridx     = 0;    gridy      = 6;
-            gridwidth = 7;    gridheight = 1;
+        final int imagerTabRow = row;
+        pan.add(imagerTabPane, new GridBagConstraints(){{
+            gridx     = 0;    gridy      = imagerTabRow;
+            gridwidth = 3;    gridheight = 1;
             weightx   = 1.0;  weighty    = 0;
             anchor    = WEST; fill       = HORIZONTAL;
             insets    = new Insets(PROPERTY_ROW_GAP, 0, 0, 0);
         }});
+        row++;
 
         // Message panel.
-        final Border b = new ThinBorder(BevelBorder.RAISED);
-        msgPanel.setBorder(BorderFactory.createCompoundBorder(b, BorderFactory.createEmptyBorder(5, 15, 5, 5)));
-        pan.add(msgPanel, new GridBagConstraints(){{
-            gridx     = 0;    gridy      = 7;
-            gridwidth = 7;    gridheight = 1;
+        final int imagerMsgRow = row;
+        imagerMsgPanel.setBorder(BorderFactory.createCompoundBorder(new ThinBorder(BevelBorder.RAISED),
+            BorderFactory.createEmptyBorder(5, 15, 5, 5)));
+        pan.add(imagerMsgPanel, new GridBagConstraints(){{
+            gridx     = 0;    gridy      = imagerMsgRow;
+            gridwidth = 3;    gridheight = 1;
             weightx   = 1.0;  weighty    = 0;
             anchor    = WEST; fill       = HORIZONTAL;
             insets    = new Insets(2, 0, 0, 0);
         }});
 
+
+        // ------ IFS --------
+        row = imagerIfsStartRow;
+
+        ifsExposureTimeCtrl.setColumns(4);
+        pan.add(new JLabel("Exp Time"), propLabelGbc(0, row));
+        pan.add(ifsExposureTimeCtrl.getComponent(), propWidgetGbc(1, row));
+        pan.add(new JLabel("sec"), propUnitsGbc(2, row));
+        row++;
+
+        pan.add(ifsExposureTimeMessageUpdater.getLabel(), warningLabelGbc(0, row, 3));
+        row++;
+
+        ifsCoaddsCtrl.setColumns(3);
+        addCtrl(pan, 0, row, ifsCoaddsCtrl, "exp/obs");
+        row++;
+
+        final JLabel ifsCoaddsWarning = ifsCoaddsMessageUpdater.getLabel();
+        ifsCoaddsWarning.setForeground(WARNING_FG_COLOR);
+        pan.add(ifsCoaddsWarning, warningLabelGbc(0, row, 3));
+        row++;
+
+        final JTabbedPane ifsTabPane = new JTabbedPane();
+        ifsTabPane.addTab("Read Mode", getTabPanel(ifsReadModeCtrl.getComponent()));
+//        ifsTabPane.addTab("ISS Port", getTabPanel(portCtrl.getComponent()));
+
+        // Tab Pane
+        final int ifsTabRow = row;
+        pan.add(ifsTabPane, new GridBagConstraints(){{
+            gridx     = 0;    gridy      = ifsTabRow;
+            gridwidth = 3;    gridheight = 1;
+            weightx   = 1.0;  weighty    = 0;
+            anchor    = WEST; fill       = HORIZONTAL;
+            insets    = new Insets(PROPERTY_ROW_GAP, 0, 0, 0);
+        }});
+        row++;
+
+        // Message panel.
+        final int ifsMsgRow = row;
+        ifsMsgPanel.setBorder(BorderFactory.createCompoundBorder(new ThinBorder(BevelBorder.RAISED),
+            BorderFactory.createEmptyBorder(5, 15, 5, 5)));
+        pan.add(ifsMsgPanel, new GridBagConstraints(){{
+            gridx     = 0;    gridy      = ifsMsgRow;
+            gridwidth = 3;    gridheight = 1;
+            weightx   = 1.0;  weighty    = 0;
+            anchor    = WEST; fill       = HORIZONTAL;
+            insets    = new Insets(2, 0, 0, 0);
+        }});
+        row++;
+
         // Push everything to the top left.
-        pan.add(new JPanel(), pushGbc(10, 10));
+        pan.add(new JPanel(), pushGbc(10, row));
     }
 
     public Component getEngineeringComponent() {
@@ -360,10 +528,12 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     @Override
     protected void handlePreDataObjectUpdate(Iris iris) {
         if (iris == null) return;
-        iris.removePropertyChangeListener(FILTER_PROP.getName(), msgPanel);
-        iris.removePropertyChangeListener(READ_MODE_PROP.getName(), msgPanel);
-//        iris.removePropertyChangeListener(FILTER_PROP.getName(), exposureTimeMessageUpdater);
-//        iris.removePropertyChangeListener(READ_MODE_PROP.getName(), exposureTimeMessageUpdater);
+        iris.removePropertyChangeListener(FILTER_PROP.getName(), imagerMsgPanel);
+        iris.removePropertyChangeListener(READ_MODE_PROP.getName(), imagerMsgPanel);
+        iris.removePropertyChangeListener(IFS_READ_MODE_PROP.getName(), ifsMsgPanel);
+        iris.removePropertyChangeListener(FILTER_PROP.getName(), imagerExposureTimeMessageUpdater);
+        iris.removePropertyChangeListener(READ_MODE_PROP.getName(), imagerExposureTimeMessageUpdater);
+        iris.removePropertyChangeListener(IFS_READ_MODE_PROP.getName(), ifsExposureTimeMessageUpdater);
     }
 
     @Override
@@ -373,8 +543,8 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
         posAngleCtrl.setBean(iris);
         posAngleConstraintCtrl.setBean(iris);
-//        exposureTimeCtrl.setBean(iris);
-        coaddsCtrl.setBean(iris);
+        imagerExposureTimeCtrl.setBean(iris);
+        imagerCoaddsCtrl.setBean(iris);
         filterCtrl.setBean(iris);
         detectorCtrl.setBean(iris);
         portCtrl.setBean(iris);
@@ -383,16 +553,18 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         utilWheelCtrl.setBean(iris);
         roiCtrl.setBean(iris);
 
-        readModeCtrl.setBean(iris);
+        imagerReadModeCtrl.setBean(iris);
 
         filterCtrl.addEditListener(filterChangeListener);
         detectorCtrl.addEditListener(detectorChangeListener);
 
-        iris.addPropertyChangeListener(FILTER_PROP.getName(), msgPanel);
-        iris.addPropertyChangeListener(READ_MODE_PROP.getName(), msgPanel);
-//        iris.addPropertyChangeListener(FILTER_PROP.getName(), exposureTimeMessageUpdater);
-//        iris.addPropertyChangeListener(READ_MODE_PROP.getName(), exposureTimeMessageUpdater);
-        msgPanel.update();
-//        exposureTimeMessageUpdater.update();
+        iris.addPropertyChangeListener(FILTER_PROP.getName(), imagerMsgPanel);
+        iris.addPropertyChangeListener(READ_MODE_PROP.getName(), imagerMsgPanel);
+        iris.addPropertyChangeListener(IFS_READ_MODE_PROP.getName(), ifsMsgPanel);
+        iris.addPropertyChangeListener(FILTER_PROP.getName(), imagerExposureTimeMessageUpdater);
+        iris.addPropertyChangeListener(READ_MODE_PROP.getName(), imagerExposureTimeMessageUpdater);
+        iris.addPropertyChangeListener(IFS_READ_MODE_PROP.getName(), ifsExposureTimeMessageUpdater);
+        imagerMsgPanel.update();
+        imagerExposureTimeMessageUpdater.update();
     }
 }
