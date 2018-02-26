@@ -169,6 +169,47 @@ public final class Iris extends SPInstObsComp
 
   }
 
+  public enum Lenslet implements DisplayableSpType, SequenceableSpType, LoggableSpType {
+    LENSLET1("0.45”x0.51” @ 0.004” scale", "lenslet1"),
+    LENSLET2("1.01”x1.15” @ 0.009” scale", "lenslet2");
+
+    public static final Lenslet DEFAULT = Lenslet.LENSLET1;
+    public static final ItemKey KEY = new ItemKey(INSTRUMENT_KEY, "lenslet");
+
+    private final String displayValue;
+    private final String logValue;
+
+    Lenslet(String displayValue, String logValue) {
+      this.displayValue = displayValue;
+      this.logValue = logValue;
+    }
+
+    public String displayValue() {
+      return displayValue;
+    }
+
+    public String logValue() {
+      return logValue;
+    }
+
+    public String sequenceValue() {
+      return name();
+    }
+
+    public String toString() {
+      return displayValue;
+    }
+
+    /**
+     * Returns the read mode matching the given name by searching through
+     * the known types.  If not found, nvalue is returned.
+     */
+    public static Lenslet valueOf(String name, Lenslet nvalue) {
+      return SpTypeUtil.oldValueOf(Lenslet.class, name, nvalue);
+    }
+
+  }
+
   // REL-445: Updated using the new 50/50 times below
   public enum Filter implements DisplayableSpType, SequenceableSpType, LoggableSpType {
     Zbb("Zbb (0.928 um)", "Zbb", 0.928, ReadMode.FAINT, new SingleBand((MagnitudeBand.J$.MODULE$))),
@@ -549,6 +590,7 @@ public final class Iris extends SPInstObsComp
   public static final PropertyDescriptor FILTER_PROP;
   public static final PropertyDescriptor DETECTOR_PROP;
   public static final PropertyDescriptor SLICER_PROP;
+  public static final PropertyDescriptor LENSLET_PROP;
   public static final PropertyDescriptor READ_MODE_PROP;
   public static final PropertyDescriptor IFS_READ_MODE_PROP;
   public static final PropertyDescriptor PORT_PROP;
@@ -581,14 +623,17 @@ public final class Iris extends SPInstObsComp
     FILTER_PROP = initProp(Filter.KEY.getName(), query_yes, iter_yes);
     DETECTOR_PROP = initProp(Detector.KEY.getName(), query_yes, iter_yes);
     SLICER_PROP = initProp(Slicer.KEY.getName(), query_yes, iter_yes);
+    LENSLET_PROP = initProp(Lenslet.KEY.getName(), query_yes, iter_yes);
     READ_MODE_PROP = initProp(ReadMode.KEY.getName(), query_yes, iter_yes);
     IFS_READ_MODE_PROP = initProp(ReadMode.IFS_KEY.getName(), query_yes, iter_yes);
+    IFS_READ_MODE_PROP.setDisplayName("IFS Read Mode");
     PORT_PROP = initProp("issPort", query_no, iter_no);
     EXPOSURE_TIME_PROP = initProp("exposureTime", query_no, iter_yes);
     IFS_EXPOSURE_TIME_PROP = initProp("ifsExposureTime", query_no, iter_yes);
+    IFS_EXPOSURE_TIME_PROP.setDisplayName("IFS Exposure Time");
     COADDS_PROP = initProp("coadds", query_no, iter_yes);
     IFS_COADDS_PROP = initProp("ifsCoadds", query_no, iter_yes);
-    IFS_COADDS_PROP.setDisplayName("Coadds");
+    IFS_COADDS_PROP.setDisplayName("IFS Coadds");
     POS_ANGLE_PROP = initProp("posAngle", query_no, iter_no);
     POS_ANGLE_CONSTRAINT_PROP = initProp("posAngleConstraint", query_no, iter_no);
 
@@ -612,6 +657,7 @@ public final class Iris extends SPInstObsComp
   private Filter filter = Filter.DEFAULT;
   private Detector detector = Detector.DEFAULT;
   private Slicer slicer = Slicer.DEFAULT;
+  private Lenslet lenslet = Lenslet.DEFAULT;
   private ReadMode readMode;
   private ReadMode ifsReadMode;
   private IssPort port = IssPort.UP_LOOKING;
@@ -679,6 +725,18 @@ public final class Iris extends SPInstObsComp
     if (oldValue != newValue) {
       slicer = newValue;
       firePropertyChange(SLICER_PROP.getName(), oldValue, newValue);
+    }
+  }
+
+  public Lenslet getLenslet() {
+    return lenslet;
+  }
+
+  public void setLenslet(Lenslet newValue) {
+    Lenslet oldValue = getLenslet();
+    if (oldValue != newValue) {
+      lenslet = newValue;
+      firePropertyChange(LENSLET_PROP.getName(), oldValue, newValue);
     }
   }
 
@@ -866,9 +924,8 @@ public final class Iris extends SPInstObsComp
   }
 
 
-
-
   //---------------------------
+
   /**
    * Set the IFS exposure time.
    */
@@ -987,6 +1044,7 @@ public final class Iris extends SPInstObsComp
     Pio.addParam(factory, paramSet, FILTER_PROP.getName(), filter.name());
     Pio.addParam(factory, paramSet, DETECTOR_PROP.getName(), detector.name());
     Pio.addParam(factory, paramSet, SLICER_PROP.getName(), slicer.name());
+    Pio.addParam(factory, paramSet, LENSLET_PROP.getName(), lenslet.name());
     Pio.addParam(factory, paramSet, READ_MODE_PROP.getName(), readMode.name());
     Pio.addParam(factory, paramSet, IFS_READ_MODE_PROP.getName(), ifsReadMode.name());
     Pio.addParam(factory, paramSet, PORT_PROP.getName(), port.name());
@@ -1019,6 +1077,9 @@ public final class Iris extends SPInstObsComp
 
     v = Pio.getValue(paramSet, SLICER_PROP.getName());
     if (v != null) setSlicer(Slicer.valueOf(v, getSlicer()));
+
+    v = Pio.getValue(paramSet, LENSLET_PROP.getName());
+    if (v != null) setLenslet(Lenslet.valueOf(v, getLenslet()));
 
     v = Pio.getValue(paramSet, READ_MODE_PROP.getName());
     if (v != null) setReadMode(ReadMode.valueOf(v, getReadMode()));
@@ -1058,6 +1119,7 @@ public final class Iris extends SPInstObsComp
     sc.putParameter(DefaultParameter.getInstance(FILTER_PROP.getName(), getFilter()));
     sc.putParameter(DefaultParameter.getInstance(DETECTOR_PROP.getName(), getDetector()));
     sc.putParameter(DefaultParameter.getInstance(SLICER_PROP.getName(), getSlicer()));
+    sc.putParameter(DefaultParameter.getInstance(LENSLET_PROP.getName(), getLenslet()));
     sc.putParameter(DefaultParameter.getInstance(READ_MODE_PROP.getName(), getReadMode()));
     sc.putParameter(DefaultParameter.getInstance(IFS_READ_MODE_PROP.getName(), getIfsReadMode()));
     sc.putParameter(DefaultParameter.getInstance(PORT_PROP, getIssPort()));
@@ -1079,6 +1141,7 @@ public final class Iris extends SPInstObsComp
     configInfo.add(new InstConfigInfo(FILTER_PROP));
     configInfo.add(new InstConfigInfo(DETECTOR_PROP));
     configInfo.add(new InstConfigInfo(SLICER_PROP));
+    configInfo.add(new InstConfigInfo(LENSLET_PROP));
     configInfo.add(new InstConfigInfo(READ_MODE_PROP));
     configInfo.add(new InstConfigInfo(IFS_READ_MODE_PROP));
     return configInfo;

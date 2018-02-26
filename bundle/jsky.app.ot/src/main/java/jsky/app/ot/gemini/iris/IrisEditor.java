@@ -140,6 +140,9 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     private final EditListener<Iris, Iris.Slicer> slicerChangeListener = evt -> {
     };
 
+    private final EditListener<Iris, Iris.Lenslet> lensletChangeListener = evt -> {
+    };
+
     private final class ImagerExposureTimeMessageUpdater implements EditListener<Iris, Double>, PropertyChangeListener {
         private final JLabel label;
 
@@ -314,6 +317,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     private final ComboPropertyCtrl<Iris, Filter> filterCtrl;
     private final ComboPropertyCtrl<Iris, Detector> detectorCtrl;
     private final ComboPropertyCtrl<Iris, Slicer> slicerCtrl;
+    private final ComboPropertyCtrl<Iris, Lenslet> lensletCtrl;
     private final RadioPropertyCtrl<Iris, IssPort> portCtrl;
     private final RadioPropertyCtrl<Iris, ReadMode> imagerReadModeCtrl;
     private final RadioPropertyCtrl<Iris, ReadMode> ifsReadModeCtrl;
@@ -341,6 +345,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         filterCtrl   = ComboPropertyCtrl.enumInstance(FILTER_PROP);
         detectorCtrl = ComboPropertyCtrl.enumInstance(DETECTOR_PROP);
         slicerCtrl = ComboPropertyCtrl.enumInstance(SLICER_PROP);
+        lensletCtrl = ComboPropertyCtrl.enumInstance(LENSLET_PROP);
         portCtrl     = new RadioPropertyCtrl<>(PORT_PROP);
         imagerReadModeCtrl = new RadioPropertyCtrl<>(READ_MODE_PROP);
         ifsReadModeCtrl = new RadioPropertyCtrl<>(IFS_READ_MODE_PROP);
@@ -419,6 +424,8 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         imagerCoaddsCtrl.setColumns(3);
         addCtrl(pan, col, row, imagerCoaddsCtrl, "exp/obs");
         row++;
+        row++;
+        row++;
 
         final JLabel imagerCoaddsWarning = imagerCoaddsMessageUpdater.getLabel();
         imagerCoaddsWarning.setForeground(WARNING_FG_COLOR);
@@ -460,6 +467,9 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         col = 5;
 
         addCtrl(pan, col, row, slicerCtrl);
+        row++;
+
+        addCtrl(pan, col, row, lensletCtrl);
         row++;
 
         ifsExposureTimeCtrl.setColumns(4);
@@ -556,6 +566,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         filterCtrl.removeEditListener(filterChangeListener);
         detectorCtrl.removeEditListener(detectorChangeListener);
         slicerCtrl.removeEditListener(slicerChangeListener);
+        lensletCtrl.removeEditListener(lensletChangeListener);
 
         posAngleCtrl.setBean(iris);
         posAngleConstraintCtrl.setBean(iris);
@@ -564,6 +575,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         filterCtrl.setBean(iris);
         detectorCtrl.setBean(iris);
         slicerCtrl.setBean(iris);
+        lensletCtrl.setBean(iris);
         portCtrl.setBean(iris);
 
         odgwSizeCtrl.setBean(iris);
@@ -575,6 +587,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         filterCtrl.addEditListener(filterChangeListener);
         detectorCtrl.addEditListener(detectorChangeListener);
         slicerCtrl.addEditListener(slicerChangeListener);
+        lensletCtrl.addEditListener(lensletChangeListener);
 
         iris.addPropertyChangeListener(FILTER_PROP.getName(), imagerMsgPanel);
         iris.addPropertyChangeListener(READ_MODE_PROP.getName(), imagerMsgPanel);
