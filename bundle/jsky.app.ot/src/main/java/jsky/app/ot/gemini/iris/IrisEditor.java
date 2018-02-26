@@ -137,6 +137,9 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     private final EditListener<Iris, Iris.Detector> detectorChangeListener = evt -> {
     };
 
+    private final EditListener<Iris, Iris.Slicer> slicerChangeListener = evt -> {
+    };
+
     private final class ImagerExposureTimeMessageUpdater implements EditListener<Iris, Double>, PropertyChangeListener {
         private final JLabel label;
 
@@ -310,6 +313,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
     private final ComboPropertyCtrl<Iris, Filter> filterCtrl;
     private final ComboPropertyCtrl<Iris, Detector> detectorCtrl;
+    private final ComboPropertyCtrl<Iris, Slicer> slicerCtrl;
     private final RadioPropertyCtrl<Iris, IssPort> portCtrl;
     private final RadioPropertyCtrl<Iris, ReadMode> imagerReadModeCtrl;
     private final RadioPropertyCtrl<Iris, ReadMode> ifsReadModeCtrl;
@@ -336,6 +340,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     public IrisEditor() {
         filterCtrl   = ComboPropertyCtrl.enumInstance(FILTER_PROP);
         detectorCtrl = ComboPropertyCtrl.enumInstance(DETECTOR_PROP);
+        slicerCtrl = ComboPropertyCtrl.enumInstance(SLICER_PROP);
         portCtrl     = new RadioPropertyCtrl<>(PORT_PROP);
         imagerReadModeCtrl = new RadioPropertyCtrl<>(READ_MODE_PROP);
         ifsReadModeCtrl = new RadioPropertyCtrl<>(IFS_READ_MODE_PROP);
@@ -375,47 +380,49 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
     private void initEditorPanel(JPanel pan) {
         int row = 0;
+        int col = 0;
         pan.setBorder(PANEL_BORDER);
-        addCtrl(pan, 0, row, filterCtrl);
+        addCtrl(pan, col, row, filterCtrl);
         row++;
 
         posAngleCtrl.setColumns(4);
-        addCtrl(pan, 0, row, posAngleCtrl, "deg E of N");
+        addCtrl(pan, col, row, posAngleCtrl, "deg E of N");
         // Column Gap
-        pan.add(new JPanel(), colGapGbc(3, row));
+        pan.add(new JPanel(), colGapGbc(col+3, row));
         pan.add(posAngleConstraintCtrl.getComponent(), propWidgetGbc(6, row));
         row++;
 
-        addCtrl(pan, 0, 2, detectorCtrl);
+        addCtrl(pan, col, row, detectorCtrl);
         row++;
 
         // ------ Separator --------
-        pan.add(new JSeparator(JSeparator.HORIZONTAL), separatorGbc(0, row, 7));
+        pan.add(new JSeparator(JSeparator.HORIZONTAL), separatorGbc(col, row, 8));
+        pan.add(new JPanel(), colGapGbc(col+4, row));
         row++;
 
-        pan.add(compFactory.createSeparator("Imager"), separatorGbc(0, row, 3));
-        pan.add(compFactory.createSeparator("IFS"), separatorGbc(4, row, 4));
+        pan.add(compFactory.createSeparator("Imager"), separatorGbc(col, row, 3));
+        pan.add(compFactory.createSeparator("IFS"), separatorGbc(col+5, row, 4));
         row++;
 
         final int imagerIfsStartRow = row;
 
         // ------ Imager --------
         imagerExposureTimeCtrl.setColumns(4);
-        pan.add(new JLabel("Exp Time"), propLabelGbc(0, row));
-        pan.add(imagerExposureTimeCtrl.getComponent(), propWidgetGbc(1, row));
-        pan.add(new JLabel("sec"), propUnitsGbc(2, row));
+        pan.add(new JLabel("Exp Time"), propLabelGbc(col, row));
+        pan.add(imagerExposureTimeCtrl.getComponent(), propWidgetGbc(col+1, row));
+        pan.add(new JLabel("sec"), propUnitsGbc(col+2, row));
         row++;
 
-        pan.add(imagerExposureTimeMessageUpdater.getLabel(), warningLabelGbc(0, row, 3));
-        row++;
+        pan.add(imagerExposureTimeMessageUpdater.getLabel(), warningLabelGbc(col, row, 3));
+//        row++;
 
         imagerCoaddsCtrl.setColumns(3);
-        addCtrl(pan, 0, row, imagerCoaddsCtrl, "exp/obs");
+        addCtrl(pan, col, row, imagerCoaddsCtrl, "exp/obs");
         row++;
 
         final JLabel imagerCoaddsWarning = imagerCoaddsMessageUpdater.getLabel();
         imagerCoaddsWarning.setForeground(WARNING_FG_COLOR);
-        pan.add(imagerCoaddsWarning, warningLabelGbc(0, row, 3));
+        pan.add(imagerCoaddsWarning, warningLabelGbc(col, row, 3));
         row++;
 
         final JTabbedPane imagerTabPane = new JTabbedPane();
@@ -424,8 +431,9 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
         // Tab Pane
         final int imagerTabRow = row;
+        final int imagerTabCol = col;
         pan.add(imagerTabPane, new GridBagConstraints(){{
-            gridx     = 0;    gridy      = imagerTabRow;
+            gridx     = imagerTabCol;    gridy      = imagerTabRow;
             gridwidth = 3;    gridheight = 1;
             weightx   = 1.0;  weighty    = 0;
             anchor    = WEST; fill       = HORIZONTAL;
@@ -435,10 +443,11 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
         // Message panel.
         final int imagerMsgRow = row;
+        final int imagerMsgCol = col;
         imagerMsgPanel.setBorder(BorderFactory.createCompoundBorder(new ThinBorder(BevelBorder.RAISED),
             BorderFactory.createEmptyBorder(5, 15, 5, 5)));
         pan.add(imagerMsgPanel, new GridBagConstraints(){{
-            gridx     = 0;    gridy      = imagerMsgRow;
+            gridx     = imagerMsgCol;    gridy      = imagerMsgRow;
             gridwidth = 3;    gridheight = 1;
             weightx   = 1.0;  weighty    = 0;
             anchor    = WEST; fill       = HORIZONTAL;
@@ -448,23 +457,27 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
         // ------ IFS --------
         row = imagerIfsStartRow;
+        col = 5;
+
+        addCtrl(pan, col, row, slicerCtrl);
+        row++;
 
         ifsExposureTimeCtrl.setColumns(4);
-        pan.add(new JLabel("Exp Time"), propLabelGbc(0, row));
-        pan.add(ifsExposureTimeCtrl.getComponent(), propWidgetGbc(1, row));
-        pan.add(new JLabel("sec"), propUnitsGbc(2, row));
+        pan.add(new JLabel("Exp Time"), propLabelGbc(col, row));
+        pan.add(ifsExposureTimeCtrl.getComponent(), propWidgetGbc(col+1, row));
+        pan.add(new JLabel("sec"), propUnitsGbc(col+2, row));
         row++;
 
-        pan.add(ifsExposureTimeMessageUpdater.getLabel(), warningLabelGbc(0, row, 3));
-        row++;
+        pan.add(ifsExposureTimeMessageUpdater.getLabel(), warningLabelGbc(col, row, 3));
+//        row++;
 
         ifsCoaddsCtrl.setColumns(3);
-        addCtrl(pan, 0, row, ifsCoaddsCtrl, "exp/obs");
+        addCtrl(pan, col, row, ifsCoaddsCtrl, "exp/obs");
         row++;
 
         final JLabel ifsCoaddsWarning = ifsCoaddsMessageUpdater.getLabel();
         ifsCoaddsWarning.setForeground(WARNING_FG_COLOR);
-        pan.add(ifsCoaddsWarning, warningLabelGbc(0, row, 3));
+        pan.add(ifsCoaddsWarning, warningLabelGbc(col, row, 3));
         row++;
 
         final JTabbedPane ifsTabPane = new JTabbedPane();
@@ -473,8 +486,9 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
         // Tab Pane
         final int ifsTabRow = row;
+        final int ifsTabCol = col;
         pan.add(ifsTabPane, new GridBagConstraints(){{
-            gridx     = 0;    gridy      = ifsTabRow;
+            gridx     = ifsTabCol;    gridy      = ifsTabRow;
             gridwidth = 3;    gridheight = 1;
             weightx   = 1.0;  weighty    = 0;
             anchor    = WEST; fill       = HORIZONTAL;
@@ -484,10 +498,11 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
         // Message panel.
         final int ifsMsgRow = row;
+        final int ifsMsgCol = col;
         ifsMsgPanel.setBorder(BorderFactory.createCompoundBorder(new ThinBorder(BevelBorder.RAISED),
             BorderFactory.createEmptyBorder(5, 15, 5, 5)));
         pan.add(ifsMsgPanel, new GridBagConstraints(){{
-            gridx     = 0;    gridy      = ifsMsgRow;
+            gridx     = ifsMsgCol;    gridy      = ifsMsgRow;
             gridwidth = 3;    gridheight = 1;
             weightx   = 1.0;  weighty    = 0;
             anchor    = WEST; fill       = HORIZONTAL;
@@ -540,6 +555,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     protected void handlePostDataObjectUpdate(final Iris iris) {
         filterCtrl.removeEditListener(filterChangeListener);
         detectorCtrl.removeEditListener(detectorChangeListener);
+        slicerCtrl.removeEditListener(slicerChangeListener);
 
         posAngleCtrl.setBean(iris);
         posAngleConstraintCtrl.setBean(iris);
@@ -547,6 +563,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         imagerCoaddsCtrl.setBean(iris);
         filterCtrl.setBean(iris);
         detectorCtrl.setBean(iris);
+        slicerCtrl.setBean(iris);
         portCtrl.setBean(iris);
 
         odgwSizeCtrl.setBean(iris);
@@ -557,6 +574,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
         filterCtrl.addEditListener(filterChangeListener);
         detectorCtrl.addEditListener(detectorChangeListener);
+        slicerCtrl.addEditListener(slicerChangeListener);
 
         iris.addPropertyChangeListener(FILTER_PROP.getName(), imagerMsgPanel);
         iris.addPropertyChangeListener(READ_MODE_PROP.getName(), imagerMsgPanel);

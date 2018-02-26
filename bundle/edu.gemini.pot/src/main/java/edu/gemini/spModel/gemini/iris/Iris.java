@@ -126,6 +126,46 @@ public final class Iris extends SPInstObsComp
     public static ReadMode valueOf(String name, ReadMode nvalue) {
       return SpTypeUtil.oldValueOf(ReadMode.class, name, nvalue);
     }
+  }
+
+  public enum Slicer implements DisplayableSpType, SequenceableSpType, LoggableSpType {
+    PSEUDOSLIT1("1.125”x2.2” @ 0.025” scale", "pseudoslit1"),
+    PSEUDOSLIT2("2.25”x4.4” @ 0.050” scale", "pseudoslit2");
+
+    public static final Slicer DEFAULT = Slicer.PSEUDOSLIT1;
+    public static final ItemKey KEY = new ItemKey(INSTRUMENT_KEY, "slicer");
+
+    private final String displayValue;
+    private final String logValue;
+
+    Slicer(String displayValue, String logValue) {
+      this.displayValue = displayValue;
+      this.logValue = logValue;
+    }
+
+    public String displayValue() {
+      return displayValue;
+    }
+
+    public String logValue() {
+      return logValue;
+    }
+
+    public String sequenceValue() {
+      return name();
+    }
+
+    public String toString() {
+      return displayValue;
+    }
+
+    /**
+     * Returns the read mode matching the given name by searching through
+     * the known types.  If not found, nvalue is returned.
+     */
+    public static Slicer valueOf(String name, Slicer nvalue) {
+      return SpTypeUtil.oldValueOf(Slicer.class, name, nvalue);
+    }
 
   }
 
@@ -508,6 +548,7 @@ public final class Iris extends SPInstObsComp
 
   public static final PropertyDescriptor FILTER_PROP;
   public static final PropertyDescriptor DETECTOR_PROP;
+  public static final PropertyDescriptor SLICER_PROP;
   public static final PropertyDescriptor READ_MODE_PROP;
   public static final PropertyDescriptor IFS_READ_MODE_PROP;
   public static final PropertyDescriptor PORT_PROP;
@@ -539,6 +580,7 @@ public final class Iris extends SPInstObsComp
 
     FILTER_PROP = initProp(Filter.KEY.getName(), query_yes, iter_yes);
     DETECTOR_PROP = initProp(Detector.KEY.getName(), query_yes, iter_yes);
+    SLICER_PROP = initProp(Slicer.KEY.getName(), query_yes, iter_yes);
     READ_MODE_PROP = initProp(ReadMode.KEY.getName(), query_yes, iter_yes);
     IFS_READ_MODE_PROP = initProp(ReadMode.IFS_KEY.getName(), query_yes, iter_yes);
     PORT_PROP = initProp("issPort", query_no, iter_no);
@@ -546,6 +588,7 @@ public final class Iris extends SPInstObsComp
     IFS_EXPOSURE_TIME_PROP = initProp("ifsExposureTime", query_no, iter_yes);
     COADDS_PROP = initProp("coadds", query_no, iter_yes);
     IFS_COADDS_PROP = initProp("ifsCoadds", query_no, iter_yes);
+    IFS_COADDS_PROP.setDisplayName("Coadds");
     POS_ANGLE_PROP = initProp("posAngle", query_no, iter_no);
     POS_ANGLE_CONSTRAINT_PROP = initProp("posAngleConstraint", query_no, iter_no);
 
@@ -568,6 +611,7 @@ public final class Iris extends SPInstObsComp
 
   private Filter filter = Filter.DEFAULT;
   private Detector detector = Detector.DEFAULT;
+  private Slicer slicer = Slicer.DEFAULT;
   private ReadMode readMode;
   private ReadMode ifsReadMode;
   private IssPort port = IssPort.UP_LOOKING;
@@ -626,6 +670,18 @@ public final class Iris extends SPInstObsComp
     }
   }
 
+  public Slicer getSlicer() {
+    return slicer;
+  }
+
+  public void setSlicer(Slicer newValue) {
+    Slicer oldValue = getSlicer();
+    if (oldValue != newValue) {
+      slicer = newValue;
+      firePropertyChange(SLICER_PROP.getName(), oldValue, newValue);
+    }
+  }
+
   public UtilityWheel getUtilityWheel() {
     return utilityWheel;
   }
@@ -680,7 +736,7 @@ public final class Iris extends SPInstObsComp
   }
 
   public void setIfsReadMode(ReadMode newValue) {
-    ReadMode oldValue = getReadMode();
+    ReadMode oldValue = getIfsReadMode();
     if (oldValue != newValue) {
       ifsReadMode = newValue;
       firePropertyChange(IFS_READ_MODE_PROP.getName(), oldValue, newValue);
@@ -930,6 +986,7 @@ public final class Iris extends SPInstObsComp
 
     Pio.addParam(factory, paramSet, FILTER_PROP.getName(), filter.name());
     Pio.addParam(factory, paramSet, DETECTOR_PROP.getName(), detector.name());
+    Pio.addParam(factory, paramSet, SLICER_PROP.getName(), slicer.name());
     Pio.addParam(factory, paramSet, READ_MODE_PROP.getName(), readMode.name());
     Pio.addParam(factory, paramSet, IFS_READ_MODE_PROP.getName(), ifsReadMode.name());
     Pio.addParam(factory, paramSet, PORT_PROP.getName(), port.name());
@@ -959,6 +1016,9 @@ public final class Iris extends SPInstObsComp
 
     v = Pio.getValue(paramSet, DETECTOR_PROP.getName());
     if (v != null) setDetector(Detector.valueOf(v, getDetector()));
+
+    v = Pio.getValue(paramSet, SLICER_PROP.getName());
+    if (v != null) setSlicer(Slicer.valueOf(v, getSlicer()));
 
     v = Pio.getValue(paramSet, READ_MODE_PROP.getName());
     if (v != null) setReadMode(ReadMode.valueOf(v, getReadMode()));
@@ -997,6 +1057,7 @@ public final class Iris extends SPInstObsComp
     sc.putParameter(StringParameter.getInstance(ISPDataObject.VERSION_PROP, getVersion()));
     sc.putParameter(DefaultParameter.getInstance(FILTER_PROP.getName(), getFilter()));
     sc.putParameter(DefaultParameter.getInstance(DETECTOR_PROP.getName(), getDetector()));
+    sc.putParameter(DefaultParameter.getInstance(SLICER_PROP.getName(), getSlicer()));
     sc.putParameter(DefaultParameter.getInstance(READ_MODE_PROP.getName(), getReadMode()));
     sc.putParameter(DefaultParameter.getInstance(IFS_READ_MODE_PROP.getName(), getIfsReadMode()));
     sc.putParameter(DefaultParameter.getInstance(PORT_PROP, getIssPort()));
@@ -1017,6 +1078,7 @@ public final class Iris extends SPInstObsComp
     List<InstConfigInfo> configInfo = new LinkedList<>();
     configInfo.add(new InstConfigInfo(FILTER_PROP));
     configInfo.add(new InstConfigInfo(DETECTOR_PROP));
+    configInfo.add(new InstConfigInfo(SLICER_PROP));
     configInfo.add(new InstConfigInfo(READ_MODE_PROP));
     configInfo.add(new InstConfigInfo(IFS_READ_MODE_PROP));
     return configInfo;
