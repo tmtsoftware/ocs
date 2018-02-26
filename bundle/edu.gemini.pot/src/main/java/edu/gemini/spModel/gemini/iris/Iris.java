@@ -264,6 +264,49 @@ public final class Iris extends SPInstObsComp
   }
 
 
+  public enum Detector implements DisplayableSpType, SequenceableSpType, LoggableSpType {
+    IMAGER_ONLY("Imager Only", "imagerOnly"),
+    IMAGER_WITH_IFS("Imager with IFS", "imagerWithIfs"),
+    IFS_WITH_IMAGER("IFS with Imager", "ifsWithImager"),
+    IFS_ONLY("IFS Only", "ifsOnly");
+
+    public static Detector DEFAULT = IMAGER_ONLY;
+    public static final ItemKey KEY = new ItemKey(INSTRUMENT_KEY, "detector");
+
+    private final String displayValue;
+    private final String logValue;
+
+    Detector(String displayValue, String logValue) {
+      this.displayValue = displayValue;
+      this.logValue = logValue;
+    }
+
+    public String displayValue() {
+      return displayValue;
+    }
+
+    public String logValue() {
+      return logValue;
+    }
+
+    public String sequenceValue() {
+      return name();
+    }
+
+    public String toString() {
+      return displayValue;
+    }
+
+    /**
+     * Returns the detector matching the given name by searching through the
+     * known types.  If not found, nvalue is returned.
+     */
+    public static Detector valueOf(String name, Detector nvalue) {
+      return SpTypeUtil.oldValueOf(Detector.class, name, nvalue);
+    }
+  }
+
+
   /**
    * IRIS Dispersers.
    */
@@ -462,6 +505,7 @@ public final class Iris extends SPInstObsComp
       CategorizedTime.fromSeconds(Category.CONFIG_CHANGE, GUIDED_OFFSET_OVERHEAD, OffsetOverheadCalculator.DETAIL);
 
   public static final PropertyDescriptor FILTER_PROP;
+  public static final PropertyDescriptor DETECTOR_PROP;
   public static final PropertyDescriptor READ_MODE_PROP;
   public static final PropertyDescriptor PORT_PROP;
   public static final PropertyDescriptor EXPOSURE_TIME_PROP;
@@ -489,6 +533,7 @@ public final class Iris extends SPInstObsComp
     boolean iter_no = false;
 
     FILTER_PROP = initProp(Filter.KEY.getName(), query_yes, iter_yes);
+    DETECTOR_PROP = initProp(Detector.KEY.getName(), query_yes, iter_yes);
     READ_MODE_PROP = initProp(ReadMode.KEY.getName(), query_yes, iter_yes);
     PORT_PROP = initProp("issPort", query_no, iter_no);
     EXPOSURE_TIME_PROP = initProp("exposureTime", query_no, iter_yes);
@@ -514,6 +559,7 @@ public final class Iris extends SPInstObsComp
   private PosAngleConstraint _posAngleConstraint = PosAngleConstraint.UNBOUNDED;
 
   private Filter filter = Filter.DEFAULT;
+  private Detector detector = Detector.DEFAULT;
   private ReadMode readMode;
   private IssPort port = IssPort.UP_LOOKING;
 
@@ -555,6 +601,18 @@ public final class Iris extends SPInstObsComp
     if (oldValue != newValue) {
       filter = newValue;
       firePropertyChange(FILTER_PROP.getName(), oldValue, newValue);
+    }
+  }
+
+  public Detector getDetector() {
+    return detector;
+  }
+
+  public void setDetector(Detector newValue) {
+    Detector oldValue = getDetector();
+    if (oldValue != newValue) {
+      detector = newValue;
+      firePropertyChange(DETECTOR_PROP.getName(), oldValue, newValue);
     }
   }
 
@@ -767,6 +825,7 @@ public final class Iris extends SPInstObsComp
     ParamSet paramSet = super.getParamSet(factory);
 
     Pio.addParam(factory, paramSet, FILTER_PROP.getName(), filter.name());
+    Pio.addParam(factory, paramSet, DETECTOR_PROP.getName(), detector.name());
     Pio.addParam(factory, paramSet, READ_MODE_PROP.getName(), readMode.name());
     Pio.addParam(factory, paramSet, PORT_PROP.getName(), port.name());
     Pio.addParam(factory, paramSet, POS_ANGLE_CONSTRAINT_PROP.getName(), getPosAngleConstraint().name());
@@ -789,6 +848,9 @@ public final class Iris extends SPInstObsComp
     String v;
     v = Pio.getValue(paramSet, FILTER_PROP.getName());
     if (v != null) setFilter(Filter.valueOf(v, getFilter()));
+
+    v = Pio.getValue(paramSet, DETECTOR_PROP.getName());
+    if (v != null) setDetector(Detector.valueOf(v, getDetector()));
 
     v = Pio.getValue(paramSet, READ_MODE_PROP.getName());
     if (v != null) setReadMode(ReadMode.valueOf(v, getReadMode()));
@@ -815,6 +877,7 @@ public final class Iris extends SPInstObsComp
 
     sc.putParameter(StringParameter.getInstance(ISPDataObject.VERSION_PROP, getVersion()));
     sc.putParameter(DefaultParameter.getInstance(FILTER_PROP.getName(), getFilter()));
+    sc.putParameter(DefaultParameter.getInstance(DETECTOR_PROP.getName(), getDetector()));
     sc.putParameter(DefaultParameter.getInstance(READ_MODE_PROP.getName(), getReadMode()));
     sc.putParameter(DefaultParameter.getInstance(PORT_PROP, getIssPort()));
     sc.putParameter(DefaultParameter.getInstance(UTILITY_WHEEL_PROP.getName(), getUtilityWheel()));
@@ -831,6 +894,7 @@ public final class Iris extends SPInstObsComp
   public static List<InstConfigInfo> getInstConfigInfo() {
     List<InstConfigInfo> configInfo = new LinkedList<>();
     configInfo.add(new InstConfigInfo(FILTER_PROP));
+    configInfo.add(new InstConfigInfo(DETECTOR_PROP));
     configInfo.add(new InstConfigInfo(READ_MODE_PROP));
     return configInfo;
   }

@@ -134,6 +134,9 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 //        getDataObject().setReadMode(readMode);
     };
 
+    private final EditListener<Iris, Iris.Detector> detectorChangeListener = evt -> {
+    };
+
 //    private final class ExposureTimeMessageUpdater implements EditListener<Iris, Double>, PropertyChangeListener {
 //        private final JLabel label;
 //
@@ -220,6 +223,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     private final JPanel pan;
 
     private final ComboPropertyCtrl<Iris, Filter> filterCtrl;
+    private final ComboPropertyCtrl<Iris, Detector> detectorCtrl;
     private final RadioPropertyCtrl<Iris, IssPort> portCtrl;
     private final RadioPropertyCtrl<Iris, ReadMode> readModeCtrl;
     private final ComboPropertyCtrl<Iris, OdgwSize> odgwSizeCtrl;
@@ -239,6 +243,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     public IrisEditor() {
 
         filterCtrl   = ComboPropertyCtrl.enumInstance(FILTER_PROP);
+        detectorCtrl = ComboPropertyCtrl.enumInstance(DETECTOR_PROP);
         portCtrl     = new RadioPropertyCtrl<>(PORT_PROP);
         readModeCtrl = new RadioPropertyCtrl<>(READ_MODE_PROP);
         odgwSizeCtrl = ComboPropertyCtrl.enumInstance(ODGW_SIZE_PROP);
@@ -253,7 +258,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
                 POS_ANGLE_CONSTRAINT_PROP, PosAngleConstraint.UNBOUNDED, PosAngleConstraint.FIXED);
 
         // Exposure Time
-        pd = Iris.EXPOSURE_TIME_PROP;
+//        pd = Iris.EXPOSURE_TIME_PROP;
 //        exposureTimeMessageUpdater = new ExposureTimeMessageUpdater();
 //        exposureTimeCtrl = TextFieldPropertyCtrl.createDoubleInstance(pd, 1);
 //        exposureTimeCtrl.addEditListener(exposureTimeMessageUpdater);
@@ -279,6 +284,8 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         pan.add(new JPanel(), colGapGbc(3, 1));
 
         pan.add(posAngleConstraintCtrl.getComponent(), propWidgetGbc(6, 1));
+
+        addCtrl(pan, 0, 2, detectorCtrl);
 
         // ------ Separator --------
         pan.add(new JSeparator(JSeparator.HORIZONTAL), separatorGbc(0, 3, 7));
@@ -362,12 +369,14 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     @Override
     protected void handlePostDataObjectUpdate(final Iris iris) {
         filterCtrl.removeEditListener(filterChangeListener);
+        detectorCtrl.removeEditListener(detectorChangeListener);
 
         posAngleCtrl.setBean(iris);
         posAngleConstraintCtrl.setBean(iris);
 //        exposureTimeCtrl.setBean(iris);
         coaddsCtrl.setBean(iris);
         filterCtrl.setBean(iris);
+        detectorCtrl.setBean(iris);
         portCtrl.setBean(iris);
 
         odgwSizeCtrl.setBean(iris);
@@ -377,6 +386,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         readModeCtrl.setBean(iris);
 
         filterCtrl.addEditListener(filterChangeListener);
+        detectorCtrl.addEditListener(detectorChangeListener);
 
         iris.addPropertyChangeListener(FILTER_PROP.getName(), msgPanel);
         iris.addPropertyChangeListener(READ_MODE_PROP.getName(), msgPanel);
