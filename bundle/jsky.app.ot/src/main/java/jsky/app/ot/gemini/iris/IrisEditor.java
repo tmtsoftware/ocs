@@ -328,6 +328,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
     private final TextFieldPropertyCtrl<Iris, Double> posAngleCtrl;
     private final CheckboxEnumPropertyCtrl<Iris, PosAngleConstraint> posAngleConstraintCtrl;
+    private final CheckboxEnumPropertyCtrl<Iris, Adc> adcCtrl;
 
     private final TextFieldPropertyCtrl<Iris, Double> imagerExposureTimeCtrl;
     private final ImagerExposureTimeMessageUpdater imagerExposureTimeMessageUpdater;
@@ -360,6 +361,9 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         posAngleConstraintCtrl = new CheckboxEnumPropertyCtrl<>("Allow Auto Guide Search to select PA",
                 POS_ANGLE_CONSTRAINT_PROP, PosAngleConstraint.UNBOUNDED, PosAngleConstraint.FIXED);
 
+        adcCtrl = new CheckboxEnumPropertyCtrl<>("Atmospheric Dispersion Corrector",
+                ADC_PROP, Adc.ON, Adc.OFF);
+
         // Exposure Time
         imagerExposureTimeMessageUpdater = new ImagerExposureTimeMessageUpdater();
         imagerExposureTimeCtrl = TextFieldPropertyCtrl.createDoubleInstance(Iris.EXPOSURE_TIME_PROP, 1);
@@ -388,6 +392,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         int col = 0;
         pan.setBorder(PANEL_BORDER);
         addCtrl(pan, col, row, filterCtrl);
+        pan.add(adcCtrl.getComponent(), propWidgetGbc(6, row));
         row++;
 
         posAngleCtrl.setColumns(4);
@@ -412,6 +417,9 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         final int imagerIfsStartRow = row;
 
         // ------ Imager --------
+        row++;  // Stay on same row as IFS exposure time
+        row++;
+
         imagerExposureTimeCtrl.setColumns(4);
         pan.add(new JLabel("Exp Time"), propLabelGbc(col, row));
         pan.add(imagerExposureTimeCtrl.getComponent(), propWidgetGbc(col+1, row));
@@ -419,12 +427,10 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         row++;
 
         pan.add(imagerExposureTimeMessageUpdater.getLabel(), warningLabelGbc(col, row, 3));
-//        row++;
+        row++;
 
         imagerCoaddsCtrl.setColumns(3);
         addCtrl(pan, col, row, imagerCoaddsCtrl, "exp/obs");
-        row++;
-        row++;
         row++;
 
         final JLabel imagerCoaddsWarning = imagerCoaddsMessageUpdater.getLabel();
@@ -479,7 +485,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         row++;
 
         pan.add(ifsExposureTimeMessageUpdater.getLabel(), warningLabelGbc(col, row, 3));
-//        row++;
+        row++;
 
         ifsCoaddsCtrl.setColumns(3);
         addCtrl(pan, col, row, ifsCoaddsCtrl, "exp/obs");
@@ -570,8 +576,14 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
         posAngleCtrl.setBean(iris);
         posAngleConstraintCtrl.setBean(iris);
+        adcCtrl.setBean(iris);
+
         imagerExposureTimeCtrl.setBean(iris);
         imagerCoaddsCtrl.setBean(iris);
+
+        ifsExposureTimeCtrl.setBean(iris);
+        ifsCoaddsCtrl.setBean(iris);
+
         filterCtrl.setBean(iris);
         detectorCtrl.setBean(iris);
         slicerCtrl.setBean(iris);
@@ -583,6 +595,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         roiCtrl.setBean(iris);
 
         imagerReadModeCtrl.setBean(iris);
+        ifsReadModeCtrl.setBean(iris);
 
         filterCtrl.addEditListener(filterChangeListener);
         detectorCtrl.addEditListener(detectorChangeListener);

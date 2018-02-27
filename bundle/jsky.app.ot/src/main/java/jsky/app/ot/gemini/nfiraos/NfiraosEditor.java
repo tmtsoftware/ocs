@@ -20,7 +20,7 @@ import java.util.Map;
 public final class NfiraosEditor extends OtItemEditor<ISPObsComponent, Nfiraos> {
 
     private final JPanel pan;
-    private final JCheckBox adcCheckbox;
+//    private final JCheckBox adcCheckbox;
     private final OptionsBox<Nfiraos.DichroicBeamsplitter> bsBox;
     private final OptionsBox<Nfiraos.AstrometricMode> amBox;
 
@@ -34,7 +34,7 @@ public final class NfiraosEditor extends OtItemEditor<ISPObsComponent, Nfiraos> 
         gbc.gridx   = 0;
         gbc.anchor  = GridBagConstraints.NORTHEAST;
         gbc.insets  = new Insets(0, 0, 10, 10);
-        gbc.gridy = 0; pan.add(new JLabel("Atmospheric Dispersion Corrector"), gbc);
+//        gbc.gridy = 0; pan.add(new JLabel("Atmospheric Dispersion Corrector"), gbc);
         gbc.gridy = 1; pan.add(new JLabel("Dichroic Beamsplitter"), gbc);
         gbc.gridy = 2; pan.add(new JLabel("Astrometric Mode"), gbc);
 
@@ -43,7 +43,7 @@ public final class NfiraosEditor extends OtItemEditor<ISPObsComponent, Nfiraos> 
         gbc.gridx   = 1;
         gbc.anchor  = GridBagConstraints.NORTHWEST;
         gbc.insets  = new Insets(0, 0, 10, 0);
-        gbc.gridy = 0; pan.add(adcCheckbox = createAdc(), gbc);
+//        gbc.gridy = 0; pan.add(adcCheckbox = createAdc(), gbc);
         gbc.gridy = 1; pan.add((bsBox = createBeamsplitter()).getBox(), gbc);
         gbc.gridy = 2; pan.add((amBox = createAstrometricMode()).getBox(), gbc);
 
@@ -56,16 +56,16 @@ public final class NfiraosEditor extends OtItemEditor<ISPObsComponent, Nfiraos> 
         pan.add(new JPanel(), gbc);
     }
 
-    private JCheckBox createAdc() {
-        final JCheckBox cb = new JCheckBox(Nfiraos.Adc.ON.displayValue());
-        cb.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (getDataObject() == null) return;
-                getDataObject().setAdc(cb.isSelected() ? Nfiraos.Adc.ON : Nfiraos.Adc.OFF);
-            }
-        });
-        return cb;
-    }
+//    private JCheckBox createAdc() {
+//        final JCheckBox cb = new JCheckBox(Nfiraos.Adc.ON.displayValue());
+//        cb.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                if (getDataObject() == null) return;
+//                getDataObject().setAdc(cb.isSelected() ? Nfiraos.Adc.ON : Nfiraos.Adc.OFF);
+//            }
+//        });
+//        return cb;
+//    }
 
     private interface ListenerFactory<T extends DisplayableSpType> {
         ActionListener create(T t);
@@ -135,7 +135,7 @@ public final class NfiraosEditor extends OtItemEditor<ISPObsComponent, Nfiraos> 
     }
 
     public void init() {
-        adcCheckbox.setSelected(getDataObject().getAdc() == Nfiraos.Adc.ON);
+//        adcCheckbox.setSelected(getDataObject().getAdc() == Nfiraos.Adc.ON);
         bsBox.get(getDataObject().getDichroicBeamsplitter()).setSelected(true);
         amBox.get(getDataObject().getAstrometricMode()).setSelected(true);
     }

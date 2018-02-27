@@ -35,32 +35,32 @@ import java.util.logging.Logger;
 public final class Nfiraos extends AbstractDataObject implements PropertyProvider, GuideProbeProvider, GuideProbeConsumer {
     private static final Logger LOG = Logger.getLogger(Nfiraos.class.getName());
 
-    public static enum Adc implements DisplayableSpType, SequenceableSpType {
-        ON("On"),
-        OFF("Off"),
-        ;
-
-        public static Adc DEFAULT = OFF;
-
-        private String displayValue;
-
-        private Adc(String displayValue) {
-            this.displayValue = displayValue;
-        }
-
-        public String displayValue() {
-            return this.displayValue;
-        }
-
-        public String sequenceValue() {
-            return name();
-        }
-
-        public static Adc valueOf(String name, Adc value) {
-            Adc res = SpTypeUtil.noExceptionValueOf(Adc.class, name);
-            return res == null ? value : res;
-        }
-    }
+//    public static enum Adc implements DisplayableSpType, SequenceableSpType {
+//        ON("On"),
+//        OFF("Off"),
+//        ;
+//
+//        public static Adc DEFAULT = OFF;
+//
+//        private String displayValue;
+//
+//        private Adc(String displayValue) {
+//            this.displayValue = displayValue;
+//        }
+//
+//        public String displayValue() {
+//            return this.displayValue;
+//        }
+//
+//        public String sequenceValue() {
+//            return name();
+//        }
+//
+//        public static Adc valueOf(String name, Adc value) {
+//            Adc res = SpTypeUtil.noExceptionValueOf(Adc.class, name);
+//            return res == null ? value : res;
+//        }
+//    }
 
     public static enum AstrometricMode implements DisplayableSpType, SequenceableSpType {
         OFF("Off"),
@@ -127,7 +127,7 @@ public final class Nfiraos extends AbstractDataObject implements PropertyProvide
 
     public static final SPComponentType SP_TYPE = SPComponentType.AO_NFIRAOS;
 
-    public static final PropertyDescriptor ADC_PROP;
+//    public static final PropertyDescriptor ADC_PROP;
     public static final PropertyDescriptor DICHROIC_BEAMSPLITTER_PROP;
     public static final PropertyDescriptor ASTROMETRIC_MODE_PROP;
 
@@ -142,12 +142,12 @@ public final class Nfiraos extends AbstractDataObject implements PropertyProvide
     }
 
     static {
-        ADC_PROP                   = initProp("adc");
+//        ADC_PROP                   = initProp("adc");
         DICHROIC_BEAMSPLITTER_PROP = initProp("dichroicBeamsplitter");
         ASTROMETRIC_MODE_PROP      = initProp("astrometricMode");
     }
 
-    private Adc adc = Adc.DEFAULT;
+//    private Adc adc = Adc.DEFAULT;
     private DichroicBeamsplitter dichroicBeamsplitter = DichroicBeamsplitter.DEFAULT;
     private AstrometricMode astrometricMode = AstrometricMode.DEFAULT;
 
@@ -160,17 +160,17 @@ public final class Nfiraos extends AbstractDataObject implements PropertyProvide
         return PROPERTY_MAP;
     }
 
-    public Adc getAdc() {
-        return adc;
-    }
-
-    public void setAdc(Adc adc) {
-        Adc oldValue = getAdc();
-        if (oldValue != adc) {
-            this.adc = adc;
-            firePropertyChange(ADC_PROP, oldValue, adc);
-        }
-    }
+//    public Adc getAdc() {
+//        return adc;
+//    }
+//
+//    public void setAdc(Adc adc) {
+//        Adc oldValue = getAdc();
+//        if (oldValue != adc) {
+//            this.adc = adc;
+//            firePropertyChange(ADC_PROP, oldValue, adc);
+//        }
+//    }
 
     public DichroicBeamsplitter getDichroicBeamsplitter() {
         return dichroicBeamsplitter;
@@ -199,7 +199,7 @@ public final class Nfiraos extends AbstractDataObject implements PropertyProvide
     public ParamSet getParamSet(PioFactory factory) {
         ParamSet paramSet = super.getParamSet(factory);
 
-        Pio.addParam(factory, paramSet, ADC_PROP.getName(), adc.name());
+//        Pio.addParam(factory, paramSet, ADC_PROP.getName(), adc.name());
         Pio.addParam(factory, paramSet, DICHROIC_BEAMSPLITTER_PROP.getName(), dichroicBeamsplitter.name());
         Pio.addParam(factory, paramSet, ASTROMETRIC_MODE_PROP.getName(), astrometricMode.name());
 
@@ -209,10 +209,12 @@ public final class Nfiraos extends AbstractDataObject implements PropertyProvide
     public void setParamSet(ParamSet paramSet) {
         super.setParamSet(paramSet);
 
-        String v = Pio.getValue(paramSet, ADC_PROP.getName());
-        if (v != null) {
-            setAdc(Adc.valueOf(v, getAdc()));
-        }
+        String v;
+
+//        v = Pio.getValue(paramSet, ADC_PROP.getName());
+//        if (v != null) {
+//            setAdc(Adc.valueOf(v, getAdc()));
+//        }
 
         v = Pio.getValue(paramSet, DICHROIC_BEAMSPLITTER_PROP.getName());
         if (v != null) {
@@ -229,7 +231,7 @@ public final class Nfiraos extends AbstractDataObject implements PropertyProvide
         ISysConfig sc = new DefaultSysConfig(AOConstants.AO_CONFIG_NAME);
 
         sc.putParameter(StringParameter.getInstance(ISPDataObject.VERSION_PROP, getVersion()));
-        sc.putParameter(DefaultParameter.getInstance(ADC_PROP, getAdc()));
+//        sc.putParameter(DefaultParameter.getInstance(ADC_PROP, getAdc()));
         sc.putParameter(DefaultParameter.getInstance(DICHROIC_BEAMSPLITTER_PROP, getDichroicBeamsplitter()));
         sc.putParameter(DefaultParameter.getInstance(ASTROMETRIC_MODE_PROP, getAstrometricMode()));
 

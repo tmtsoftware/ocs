@@ -210,6 +210,33 @@ public final class Iris extends SPInstObsComp
 
   }
 
+  public static enum Adc implements DisplayableSpType, SequenceableSpType {
+    ON("On"),
+    OFF("Off"),;
+
+    public static Adc DEFAULT = OFF;
+
+    private String displayValue;
+
+    private Adc(String displayValue) {
+      this.displayValue = displayValue;
+    }
+
+    public String displayValue() {
+      return this.displayValue;
+    }
+
+    public String sequenceValue() {
+      return name();
+    }
+
+    public static Adc valueOf(String name, Adc value) {
+      Adc res = SpTypeUtil.noExceptionValueOf(Adc.class, name);
+      return res == null ? value : res;
+    }
+  }
+
+
   // REL-445: Updated using the new 50/50 times below
   public enum Filter implements DisplayableSpType, SequenceableSpType, LoggableSpType {
     Zbb("Zbb (0.928 um)", "Zbb", 0.928, ReadMode.FAINT, new SingleBand((MagnitudeBand.J$.MODULE$))),
@@ -603,6 +630,7 @@ public final class Iris extends SPInstObsComp
   public static final PropertyDescriptor UTILITY_WHEEL_PROP;
   public static final PropertyDescriptor ROI_PROP;
   public static final PropertyDescriptor ODGW_SIZE_PROP;
+  public static final PropertyDescriptor ADC_PROP;
 
   private static final Map<String, PropertyDescriptor> PRIVATE_PROP_MAP = new TreeMap<>();
   public static final Map<String, PropertyDescriptor> PROPERTY_MAP = Collections.unmodifiableMap(PRIVATE_PROP_MAP);
@@ -636,6 +664,7 @@ public final class Iris extends SPInstObsComp
     IFS_COADDS_PROP.setDisplayName("IFS Coadds");
     POS_ANGLE_PROP = initProp("posAngle", query_no, iter_no);
     POS_ANGLE_CONSTRAINT_PROP = initProp("posAngleConstraint", query_no, iter_no);
+    ADC_PROP = initProp("adc", query_yes, iter_yes);
 
     UTILITY_WHEEL_PROP = initProp(UtilityWheel.KEY.getName(), query_no, iter_yes);
     UTILITY_WHEEL_PROP.setExpert(true);
@@ -666,12 +695,18 @@ public final class Iris extends SPInstObsComp
   private UtilityWheel utilityWheel = UtilityWheel.DEFAULT;
   private OdgwSize odgwSize = OdgwSize.DEFAULT;
   private Roi roi = Roi.DEFAULT;
+  private Adc adc = Adc.DEFAULT;
 
   public Iris() {
     super(SP_TYPE);
     setVersion(VERSION);
-//        readMode = filter.readMode();
-    setExposureTime(60); // REL-445
+
+    //        readMode = filter.readMode();
+    readMode = ReadMode.DEFAULT;
+    ifsReadMode = ReadMode.DEFAULT;
+
+    setExposureTime(60);
+    setIfsExposureTime(60);
   }
 
   public Map<String, PropertyDescriptor> getProperties() {
@@ -701,6 +736,18 @@ public final class Iris extends SPInstObsComp
     if (oldValue != newValue) {
       filter = newValue;
       firePropertyChange(FILTER_PROP.getName(), oldValue, newValue);
+    }
+  }
+
+  public Adc getAdc() {
+    return adc;
+  }
+
+  public void setAdc(Adc adc) {
+    Adc oldValue = getAdc();
+    if (oldValue != adc) {
+      this.adc = adc;
+      firePropertyChange(ADC_PROP, oldValue, adc);
     }
   }
 
@@ -1052,7 +1099,7 @@ public final class Iris extends SPInstObsComp
     Pio.addParam(factory, paramSet, UTILITY_WHEEL_PROP.getName(), utilityWheel.name());
     Pio.addParam(factory, paramSet, ODGW_SIZE_PROP.getName(), odgwSize.name());
     Pio.addParam(factory, paramSet, ROI_PROP.getName(), roi.name());
-
+    Pio.addParam(factory, paramSet, ADC_PROP.getName(), adc.name());
     Pio.addParam(factory, paramSet, IFS_EXPOSURE_TIME_PROP, getIfsExposureTimeAsString());
     Pio.addParam(factory, paramSet, IFS_COADDS_PROP, getIfsCoaddsAsString());
 
@@ -1102,10 +1149,16 @@ public final class Iris extends SPInstObsComp
     v = Pio.getValue(paramSet, ROI_PROP.getName());
     if (v != null) setRoi(Roi.valueOf(v, getRoi()));
 
+    v = Pio.getValue(paramSet, ADC_PROP.getName());
+    if (v != null) {
+      setAdc(Adc.valueOf(v, getAdc()));
+    }
+
     v = Pio.getValue(paramSet, IFS_EXPOSURE_TIME_PROP);
     if (v != null) {
       setIfsExposureTimeAsString(v);
     }
+
     v = Pio.getValue(paramSet, IFS_COADDS_PROP);
     if (v != null) {
       setIfsCoadds(Integer.parseInt(v));
@@ -1132,6 +1185,7 @@ public final class Iris extends SPInstObsComp
     sc.putParameter(DefaultParameter.getInstance(POS_ANGLE_CONSTRAINT_PROP.getName(), getPosAngleConstraint()));
     sc.putParameter(DefaultParameter.getInstance(COADDS_PROP.getName(), getCoadds()));
     sc.putParameter(DefaultParameter.getInstance(IFS_COADDS_PROP.getName(), getIfsCoadds()));
+    sc.putParameter(DefaultParameter.getInstance(ADC_PROP, getAdc()));
 
     return sc;
   }
