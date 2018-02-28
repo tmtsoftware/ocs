@@ -12,7 +12,6 @@ import jsky.app.ot.gemini.editor.ComponentEditor;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -135,12 +134,24 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     };
 
     private final EditListener<Iris, Iris.Detector> detectorChangeListener = evt -> {
+        boolean wasIfs = evt.getOldValue() != Detector.IMAGER_ONLY;
+        boolean isIfs = evt.getNewValue() != Detector.IMAGER_ONLY;
+        if (wasIfs != isIfs) setIfsEnabled(isIfs);
     };
 
-    private final EditListener<Iris, Iris.Slicer> slicerChangeListener = evt -> {
-    };
+    // If isIfs is true, enable the IFS controls and disable the imager controls, otherwise do the opposite.
+    private void setIfsEnabled(boolean isIfs) {
+        scaleCtrl.getComponent().setEnabled(isIfs);
+        ifsExposureTimeCtrl.getComponent().setEnabled(isIfs);
+        ifsCoaddsCtrl.getComponent().setEnabled(isIfs);
+        updateEnabledState(ifsReadModeCtrl.getComponent().getComponents(), isIfs);
 
-    private final EditListener<Iris, Iris.Lenslet> lensletChangeListener = evt -> {
+        imagerExposureTimeCtrl.getComponent().setEnabled(!isIfs);
+        imagerCoaddsCtrl.getComponent().setEnabled(!isIfs);
+        updateEnabledState(imagerReadModeCtrl.getComponent().getComponents(), !isIfs);
+    }
+
+    private final EditListener<Iris, Iris.Scale> scaleChangeListener = evt -> {
     };
 
     private final class ImagerExposureTimeMessageUpdater implements EditListener<Iris, Double>, PropertyChangeListener {
@@ -316,8 +327,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
     private final ComboPropertyCtrl<Iris, Filter> filterCtrl;
     private final ComboPropertyCtrl<Iris, Detector> detectorCtrl;
-    private final ComboPropertyCtrl<Iris, Slicer> slicerCtrl;
-    private final ComboPropertyCtrl<Iris, Lenslet> lensletCtrl;
+    private final ComboPropertyCtrl<Iris, Scale> scaleCtrl;
     private final RadioPropertyCtrl<Iris, IssPort> portCtrl;
     private final RadioPropertyCtrl<Iris, ReadMode> imagerReadModeCtrl;
     private final RadioPropertyCtrl<Iris, ReadMode> ifsReadModeCtrl;
@@ -329,6 +339,9 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     private final TextFieldPropertyCtrl<Iris, Double> posAngleCtrl;
     private final CheckboxEnumPropertyCtrl<Iris, PosAngleConstraint> posAngleConstraintCtrl;
     private final CheckboxEnumPropertyCtrl<Iris, Adc> adcCtrl;
+
+    private final JComponent imagerSeparator;
+    private final JComponent ifsSeparator;
 
     private final TextFieldPropertyCtrl<Iris, Double> imagerExposureTimeCtrl;
     private final ImagerExposureTimeMessageUpdater imagerExposureTimeMessageUpdater;
@@ -345,8 +358,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     public IrisEditor() {
         filterCtrl   = ComboPropertyCtrl.enumInstance(FILTER_PROP);
         detectorCtrl = ComboPropertyCtrl.enumInstance(DETECTOR_PROP);
-        slicerCtrl = ComboPropertyCtrl.enumInstance(SLICER_PROP);
-        lensletCtrl = ComboPropertyCtrl.enumInstance(LENSLET_PROP);
+        scaleCtrl = ComboPropertyCtrl.enumInstance(SCALE_PROP);
         portCtrl     = new RadioPropertyCtrl<>(PORT_PROP);
         imagerReadModeCtrl = new RadioPropertyCtrl<>(READ_MODE_PROP);
         ifsReadModeCtrl = new RadioPropertyCtrl<>(IFS_READ_MODE_PROP);
@@ -363,6 +375,10 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
         adcCtrl = new CheckboxEnumPropertyCtrl<>("Atmospheric Dispersion Corrector",
                 ADC_PROP, Adc.ON, Adc.OFF);
+
+        imagerSeparator = compFactory.createSeparator("Imager");
+        ifsSeparator = compFactory.createSeparator("IFS");
+
 
         // Exposure Time
         imagerExposureTimeMessageUpdater = new ImagerExposureTimeMessageUpdater();
@@ -410,8 +426,8 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         pan.add(new JPanel(), colGapGbc(col+4, row));
         row++;
 
-        pan.add(compFactory.createSeparator("Imager"), separatorGbc(col, row, 3));
-        pan.add(compFactory.createSeparator("IFS"), separatorGbc(col+5, row, 4));
+        pan.add(imagerSeparator, separatorGbc(col, row, 3));
+        pan.add(ifsSeparator, separatorGbc(col+5, row, 4));
         row++;
 
         final int imagerIfsStartRow = row;
@@ -472,10 +488,8 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         row = imagerIfsStartRow;
         col = 5;
 
-        addCtrl(pan, col, row, slicerCtrl);
+        addCtrl(pan, col, row, scaleCtrl);
         row++;
-
-        addCtrl(pan, col, row, lensletCtrl);
         row++;
 
         ifsExposureTimeCtrl.setColumns(4);
@@ -571,8 +585,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     protected void handlePostDataObjectUpdate(final Iris iris) {
         filterCtrl.removeEditListener(filterChangeListener);
         detectorCtrl.removeEditListener(detectorChangeListener);
-        slicerCtrl.removeEditListener(slicerChangeListener);
-        lensletCtrl.removeEditListener(lensletChangeListener);
+        scaleCtrl.removeEditListener(scaleChangeListener);
 
         posAngleCtrl.setBean(iris);
         posAngleConstraintCtrl.setBean(iris);
@@ -586,8 +599,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
         filterCtrl.setBean(iris);
         detectorCtrl.setBean(iris);
-        slicerCtrl.setBean(iris);
-        lensletCtrl.setBean(iris);
+        scaleCtrl.setBean(iris);
         portCtrl.setBean(iris);
 
         odgwSizeCtrl.setBean(iris);
@@ -599,8 +611,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
         filterCtrl.addEditListener(filterChangeListener);
         detectorCtrl.addEditListener(detectorChangeListener);
-        slicerCtrl.addEditListener(slicerChangeListener);
-        lensletCtrl.addEditListener(lensletChangeListener);
+        scaleCtrl.addEditListener(scaleChangeListener);
 
         iris.addPropertyChangeListener(FILTER_PROP.getName(), imagerMsgPanel);
         iris.addPropertyChangeListener(READ_MODE_PROP.getName(), imagerMsgPanel);
@@ -610,5 +621,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         iris.addPropertyChangeListener(IFS_READ_MODE_PROP.getName(), ifsExposureTimeMessageUpdater);
         imagerMsgPanel.update();
         imagerExposureTimeMessageUpdater.update();
+
+        setIfsEnabled(iris.getDetector() != Detector.IMAGER_ONLY);
     }
 }

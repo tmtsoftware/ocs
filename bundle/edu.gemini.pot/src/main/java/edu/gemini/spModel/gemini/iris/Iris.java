@@ -128,19 +128,40 @@ public final class Iris extends SPInstObsComp
     }
   }
 
-  public enum Slicer implements DisplayableSpType, SequenceableSpType, LoggableSpType {
-    PSEUDOSLIT1("1.125”x2.2” @ 0.025” scale", "pseudoslit1"),
-    PSEUDOSLIT2("2.25”x4.4” @ 0.050” scale", "pseudoslit2");
+  public enum Scale implements DisplayableSpType, SequenceableSpType, LoggableSpType {
+    LENSLET1("Lenslet: 0.45”x0.51” @ 0.004” scale", "lenslet1", 0.45, 0.51, 0.004),
+    LENSLET2("Lenslet: 1.01”x1.15” @ 0.009” scale", "lenslet2", 1.01, 1.15, 0.009),
+    SLICER1("Slicer: 1.125”x2.2” @ 0.025” scale", "slicer1", 1.125, 2.2, 0.025),
+    SLICER2("Slicer: 2.25”x4.4” @ 0.050” scale", "slicer2", 2.25, 4.4, 0.050);
 
-    public static final Slicer DEFAULT = Slicer.PSEUDOSLIT1;
-    public static final ItemKey KEY = new ItemKey(INSTRUMENT_KEY, "slicer");
+    public static final Scale DEFAULT = Scale.LENSLET1;
+    public static final ItemKey KEY = new ItemKey(INSTRUMENT_KEY, "scale");
 
     private final String displayValue;
     private final String logValue;
+    private final double width;
+    private final double height;
+    private final double scale;
 
-    Slicer(String displayValue, String logValue) {
+    // All values in arcsec
+    Scale(String displayValue, String logValue, double w, double h, double scale) {
       this.displayValue = displayValue;
       this.logValue = logValue;
+      this.width = w;
+      this.height = h;
+      this.scale = scale;
+    }
+
+    public double getWidth() {
+      return width;
+    }
+
+    public double getHeight() {
+      return height;
+    }
+
+    public double getScale() {
+      return scale;
     }
 
     public String displayValue() {
@@ -163,52 +184,12 @@ public final class Iris extends SPInstObsComp
      * Returns the read mode matching the given name by searching through
      * the known types.  If not found, nvalue is returned.
      */
-    public static Slicer valueOf(String name, Slicer nvalue) {
-      return SpTypeUtil.oldValueOf(Slicer.class, name, nvalue);
+    public static Scale valueOf(String name, Scale nvalue) {
+      return SpTypeUtil.oldValueOf(Scale.class, name, nvalue);
     }
 
   }
 
-  public enum Lenslet implements DisplayableSpType, SequenceableSpType, LoggableSpType {
-    LENSLET1("0.45”x0.51” @ 0.004” scale", "lenslet1"),
-    LENSLET2("1.01”x1.15” @ 0.009” scale", "lenslet2");
-
-    public static final Lenslet DEFAULT = Lenslet.LENSLET1;
-    public static final ItemKey KEY = new ItemKey(INSTRUMENT_KEY, "lenslet");
-
-    private final String displayValue;
-    private final String logValue;
-
-    Lenslet(String displayValue, String logValue) {
-      this.displayValue = displayValue;
-      this.logValue = logValue;
-    }
-
-    public String displayValue() {
-      return displayValue;
-    }
-
-    public String logValue() {
-      return logValue;
-    }
-
-    public String sequenceValue() {
-      return name();
-    }
-
-    public String toString() {
-      return displayValue;
-    }
-
-    /**
-     * Returns the read mode matching the given name by searching through
-     * the known types.  If not found, nvalue is returned.
-     */
-    public static Lenslet valueOf(String name, Lenslet nvalue) {
-      return SpTypeUtil.oldValueOf(Lenslet.class, name, nvalue);
-    }
-
-  }
 
   public static enum Adc implements DisplayableSpType, SequenceableSpType {
     ON("On"),
@@ -616,8 +597,7 @@ public final class Iris extends SPInstObsComp
 
   public static final PropertyDescriptor FILTER_PROP;
   public static final PropertyDescriptor DETECTOR_PROP;
-  public static final PropertyDescriptor SLICER_PROP;
-  public static final PropertyDescriptor LENSLET_PROP;
+  public static final PropertyDescriptor SCALE_PROP;
   public static final PropertyDescriptor READ_MODE_PROP;
   public static final PropertyDescriptor IFS_READ_MODE_PROP;
   public static final PropertyDescriptor PORT_PROP;
@@ -650,8 +630,7 @@ public final class Iris extends SPInstObsComp
 
     FILTER_PROP = initProp(Filter.KEY.getName(), query_yes, iter_yes);
     DETECTOR_PROP = initProp(Detector.KEY.getName(), query_yes, iter_yes);
-    SLICER_PROP = initProp(Slicer.KEY.getName(), query_yes, iter_yes);
-    LENSLET_PROP = initProp(Lenslet.KEY.getName(), query_yes, iter_yes);
+    SCALE_PROP = initProp(Scale.KEY.getName(), query_yes, iter_yes);
     READ_MODE_PROP = initProp(ReadMode.KEY.getName(), query_yes, iter_yes);
     IFS_READ_MODE_PROP = initProp(ReadMode.IFS_KEY.getName(), query_yes, iter_yes);
     IFS_READ_MODE_PROP.setDisplayName("IFS Read Mode");
@@ -685,8 +664,7 @@ public final class Iris extends SPInstObsComp
 
   private Filter filter = Filter.DEFAULT;
   private Detector detector = Detector.DEFAULT;
-  private Slicer slicer = Slicer.DEFAULT;
-  private Lenslet lenslet = Lenslet.DEFAULT;
+  private Scale scale = Scale.DEFAULT;
   private ReadMode readMode;
   private ReadMode ifsReadMode;
   private IssPort port = IssPort.UP_LOOKING;
@@ -763,27 +741,15 @@ public final class Iris extends SPInstObsComp
     }
   }
 
-  public Slicer getSlicer() {
-    return slicer;
+  public Scale getScale() {
+    return scale;
   }
 
-  public void setSlicer(Slicer newValue) {
-    Slicer oldValue = getSlicer();
+  public void setScale(Scale newValue) {
+    Scale oldValue = getScale();
     if (oldValue != newValue) {
-      slicer = newValue;
-      firePropertyChange(SLICER_PROP.getName(), oldValue, newValue);
-    }
-  }
-
-  public Lenslet getLenslet() {
-    return lenslet;
-  }
-
-  public void setLenslet(Lenslet newValue) {
-    Lenslet oldValue = getLenslet();
-    if (oldValue != newValue) {
-      lenslet = newValue;
-      firePropertyChange(LENSLET_PROP.getName(), oldValue, newValue);
+      scale = newValue;
+      firePropertyChange(SCALE_PROP.getName(), oldValue, newValue);
     }
   }
 
@@ -1090,8 +1056,7 @@ public final class Iris extends SPInstObsComp
 
     Pio.addParam(factory, paramSet, FILTER_PROP.getName(), filter.name());
     Pio.addParam(factory, paramSet, DETECTOR_PROP.getName(), detector.name());
-    Pio.addParam(factory, paramSet, SLICER_PROP.getName(), slicer.name());
-    Pio.addParam(factory, paramSet, LENSLET_PROP.getName(), lenslet.name());
+    Pio.addParam(factory, paramSet, SCALE_PROP.getName(), scale.name());
     Pio.addParam(factory, paramSet, READ_MODE_PROP.getName(), readMode.name());
     Pio.addParam(factory, paramSet, IFS_READ_MODE_PROP.getName(), ifsReadMode.name());
     Pio.addParam(factory, paramSet, PORT_PROP.getName(), port.name());
@@ -1122,11 +1087,8 @@ public final class Iris extends SPInstObsComp
     v = Pio.getValue(paramSet, DETECTOR_PROP.getName());
     if (v != null) setDetector(Detector.valueOf(v, getDetector()));
 
-    v = Pio.getValue(paramSet, SLICER_PROP.getName());
-    if (v != null) setSlicer(Slicer.valueOf(v, getSlicer()));
-
-    v = Pio.getValue(paramSet, LENSLET_PROP.getName());
-    if (v != null) setLenslet(Lenslet.valueOf(v, getLenslet()));
+    v = Pio.getValue(paramSet, SCALE_PROP.getName());
+    if (v != null) setScale(Scale.valueOf(v, getScale()));
 
     v = Pio.getValue(paramSet, READ_MODE_PROP.getName());
     if (v != null) setReadMode(ReadMode.valueOf(v, getReadMode()));
@@ -1171,8 +1133,7 @@ public final class Iris extends SPInstObsComp
     sc.putParameter(StringParameter.getInstance(ISPDataObject.VERSION_PROP, getVersion()));
     sc.putParameter(DefaultParameter.getInstance(FILTER_PROP.getName(), getFilter()));
     sc.putParameter(DefaultParameter.getInstance(DETECTOR_PROP.getName(), getDetector()));
-    sc.putParameter(DefaultParameter.getInstance(SLICER_PROP.getName(), getSlicer()));
-    sc.putParameter(DefaultParameter.getInstance(LENSLET_PROP.getName(), getLenslet()));
+    sc.putParameter(DefaultParameter.getInstance(SCALE_PROP.getName(), getScale()));
     sc.putParameter(DefaultParameter.getInstance(READ_MODE_PROP.getName(), getReadMode()));
     sc.putParameter(DefaultParameter.getInstance(IFS_READ_MODE_PROP.getName(), getIfsReadMode()));
     sc.putParameter(DefaultParameter.getInstance(PORT_PROP, getIssPort()));
@@ -1194,8 +1155,7 @@ public final class Iris extends SPInstObsComp
     List<InstConfigInfo> configInfo = new LinkedList<>();
     configInfo.add(new InstConfigInfo(FILTER_PROP));
     configInfo.add(new InstConfigInfo(DETECTOR_PROP));
-    configInfo.add(new InstConfigInfo(SLICER_PROP));
-    configInfo.add(new InstConfigInfo(LENSLET_PROP));
+    configInfo.add(new InstConfigInfo(SCALE_PROP));
     configInfo.add(new InstConfigInfo(READ_MODE_PROP));
     configInfo.add(new InstConfigInfo(IFS_READ_MODE_PROP));
     return configInfo;

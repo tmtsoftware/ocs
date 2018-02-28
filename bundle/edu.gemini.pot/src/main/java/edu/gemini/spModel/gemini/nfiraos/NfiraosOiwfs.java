@@ -521,6 +521,7 @@ public enum NfiraosOiwfs {
             double y = -y0 / PLATE_SCALE;
             double headWidth = R_HEAD / PLATE_SCALE;
 
+            // XXX TODO: Make probe arm thicker at base and thinner at the guide star
             // Calculate the polygon for the probe arm
             // (Need to draw the rect at an angle between the guide star and the origin, so using a polygon)
             double px = y - q, py = -(x - p);

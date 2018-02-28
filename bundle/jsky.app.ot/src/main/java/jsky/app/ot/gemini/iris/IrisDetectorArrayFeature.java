@@ -1,5 +1,6 @@
 package jsky.app.ot.gemini.iris;
 
+import edu.gemini.spModel.gemini.iris.Iris;
 import edu.gemini.spModel.gemini.iris.IrisDetectorArray;
 import static edu.gemini.spModel.gemini.iris.IrisDetectorArray.Quadrant;
 
@@ -9,16 +10,18 @@ import jsky.app.ot.tpe.TpeImageInfo;
 
 import java.awt.*;
 import java.awt.font.TextLayout;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.*;
 
 /**
  * Draws the Science Area, the detector or slit.
  */
 public final class IrisDetectorArrayFeature extends SciAreaFeatureBase {
+
     private AffineTransform trans;
+
+    private Iris getIris() {
+        return _iw.getContext().instrument().orNull(Iris.SP_TYPE);
+    }
 
     @Override
     protected Point2D.Double _getTickMarkOffset() {
@@ -26,8 +29,7 @@ public final class IrisDetectorArrayFeature extends SciAreaFeatureBase {
         trans.translate(_baseScreenPos.x, _baseScreenPos.y);
         trans.scale(_tii.getPixelsPerArcsec(), _tii.getPixelsPerArcsec());
 
-        Point2D.Double p;
-        p = new Point2D.Double(0.0,
+        Point2D.Double p = new Point2D.Double(0.0,
                 - (IrisDetectorArray.DETECTOR_GAP_ARCSEC + IrisDetectorArray.DETECTOR_SIZE_ARCSEC)
                         + IrisDetectorArray.ODGW_HOTSPOT_OFFSET);
         return (Point2D.Double) trans.transform(p, p);
@@ -44,17 +46,26 @@ public final class IrisDetectorArrayFeature extends SciAreaFeatureBase {
         return true;
     }
 
+    // If _flipRA is -1, flip the RA axis of the area
+    private Area flipArea(Area a) {
+        if (_flipRA == -1) {
+            a = a.createTransformedArea(AffineTransform.getScaleInstance(_flipRA, 1.0));
+        }
+        return a;
+    }
 
 
     protected Shape getShape() {
         Area a = new Area(IrisDetectorArray.instance.shape());
+        return flipArea(a).createTransformedArea(trans);
+    }
 
-        // Flip the shape if needed
-        if (_flipRA == -1) {
-            a = a.createTransformedArea(AffineTransform.getScaleInstance(_flipRA, 1.0));
-        }
+    private Shape getIfsDetectorShape(Iris.Scale scale) {
+        double w = scale.getWidth();
+        double h = scale.getHeight(); // arcsecs
+        Rectangle2D.Double rect = new Rectangle2D.Double(-w/2, -h/2, w, h);
 
-        return a.createTransformedArea(trans);
+        return trans.createTransformedShape(flipArea(new Area(rect)));
     }
 
     private void drawLabels(Graphics2D g2d) {
@@ -110,6 +121,24 @@ public final class IrisDetectorArrayFeature extends SciAreaFeatureBase {
         g2d.draw(getShape());
         drawLabels(g2d);
         drawDragItem(g2d);
+
+        Iris inst = getIris();
+        if (inst != null) {
+            if (inst.getDetector() != Iris.Detector.IMAGER_ONLY) {
+                drawIfsDetector(g2d, inst.getScale());
+            }
+        }
+    }
+
+    private void drawIfsDetector(Graphics2D g2d, Iris.Scale scale) {
+        Shape s = getIfsDetectorShape(scale);
+        Color oldColor = g2d.getColor();
+        Stroke oldStroke = g2d.getStroke();
+        g2d.setColor(Color.magenta);
+        g2d.setStroke(new BasicStroke(3.0F));
+        g2d.draw(s);
+        g2d.setColor(oldColor);
+        g2d.setStroke(oldStroke);
     }
 
     /**
@@ -123,6 +152,13 @@ public final class IrisDetectorArrayFeature extends SciAreaFeatureBase {
         try {
             g2d.translate(x - _baseScreenPos.x, y - _baseScreenPos.y);
             g2d.draw(getShape());
+
+            Iris inst = getIris();
+            if (inst != null) {
+                if (inst.getDetector() != Iris.Detector.IMAGER_ONLY) {
+                    g2d.draw(getIfsDetectorShape(inst.getScale()));
+                }
+            }
         } finally {
             g2d.setTransform(saveAT);
         }
