@@ -133,6 +133,9 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 //        getDataObject().setReadMode(readMode);
     };
 
+    private final EditListener<Iris, Iris.Grating> gratingChangeListener = evt -> {
+    };
+
     private final EditListener<Iris, Iris.Detector> detectorChangeListener = evt -> {
         boolean wasIfs = evt.getOldValue() != Detector.IMAGER_ONLY;
         boolean isIfs = evt.getNewValue() != Detector.IMAGER_ONLY;
@@ -142,6 +145,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     // If isIfs is true, enable the IFS controls and disable the imager controls, otherwise do the opposite.
     private void setIfsEnabled(boolean isIfs) {
         scaleCtrl.getComponent().setEnabled(isIfs);
+        gratingCtrl.getComponent().setEnabled(isIfs);
         ifsExposureTimeCtrl.getComponent().setEnabled(isIfs);
         ifsCoaddsCtrl.getComponent().setEnabled(isIfs);
         updateEnabledState(ifsReadModeCtrl.getComponent().getComponents(), isIfs);
@@ -326,6 +330,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     private final DefaultComponentFactory compFactory;
 
     private final ComboPropertyCtrl<Iris, Filter> filterCtrl;
+    private final ComboPropertyCtrl<Iris, Grating> gratingCtrl;
     private final ComboPropertyCtrl<Iris, Detector> detectorCtrl;
     private final ComboPropertyCtrl<Iris, Scale> scaleCtrl;
     private final RadioPropertyCtrl<Iris, IssPort> portCtrl;
@@ -357,6 +362,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
     public IrisEditor() {
         filterCtrl   = ComboPropertyCtrl.enumInstance(FILTER_PROP);
+        gratingCtrl   = ComboPropertyCtrl.enumInstance(GRATING_PROP);
         detectorCtrl = ComboPropertyCtrl.enumInstance(DETECTOR_PROP);
         scaleCtrl = ComboPropertyCtrl.enumInstance(SCALE_PROP);
         portCtrl     = new RadioPropertyCtrl<>(PORT_PROP);
@@ -490,6 +496,8 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
 
         addCtrl(pan, col, row, scaleCtrl);
         row++;
+
+        addCtrl(pan, col, row, gratingCtrl);
         row++;
 
         ifsExposureTimeCtrl.setColumns(4);
@@ -574,6 +582,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     protected void handlePreDataObjectUpdate(Iris iris) {
         if (iris == null) return;
         iris.removePropertyChangeListener(FILTER_PROP.getName(), imagerMsgPanel);
+        iris.removePropertyChangeListener(GRATING_PROP.getName(), imagerMsgPanel);
         iris.removePropertyChangeListener(READ_MODE_PROP.getName(), imagerMsgPanel);
         iris.removePropertyChangeListener(IFS_READ_MODE_PROP.getName(), ifsMsgPanel);
         iris.removePropertyChangeListener(FILTER_PROP.getName(), imagerExposureTimeMessageUpdater);
@@ -584,6 +593,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     @Override
     protected void handlePostDataObjectUpdate(final Iris iris) {
         filterCtrl.removeEditListener(filterChangeListener);
+        gratingCtrl.removeEditListener(gratingChangeListener);
         detectorCtrl.removeEditListener(detectorChangeListener);
         scaleCtrl.removeEditListener(scaleChangeListener);
 
@@ -598,6 +608,7 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         ifsCoaddsCtrl.setBean(iris);
 
         filterCtrl.setBean(iris);
+        gratingCtrl.setBean(iris);
         detectorCtrl.setBean(iris);
         scaleCtrl.setBean(iris);
         portCtrl.setBean(iris);
@@ -610,9 +621,11 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         ifsReadModeCtrl.setBean(iris);
 
         filterCtrl.addEditListener(filterChangeListener);
+        gratingCtrl.addEditListener(gratingChangeListener);
         detectorCtrl.addEditListener(detectorChangeListener);
         scaleCtrl.addEditListener(scaleChangeListener);
 
+        // XXX TODO: Add grating listener for ifs...
         iris.addPropertyChangeListener(FILTER_PROP.getName(), imagerMsgPanel);
         iris.addPropertyChangeListener(READ_MODE_PROP.getName(), imagerMsgPanel);
         iris.addPropertyChangeListener(IFS_READ_MODE_PROP.getName(), ifsMsgPanel);

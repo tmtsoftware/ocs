@@ -218,7 +218,6 @@ public final class Iris extends SPInstObsComp
   }
 
 
-  // REL-445: Updated using the new 50/50 times below
   public enum Filter implements DisplayableSpType, SequenceableSpType, LoggableSpType {
     Zbb("Zbb (0.928 um)", "Zbb", 0.928, ReadMode.FAINT, new SingleBand((MagnitudeBand.J$.MODULE$))),
     Ybb("Ybb (1.092 um)", "Ybb", 1.092, ReadMode.FAINT),
@@ -351,6 +350,65 @@ public final class Iris extends SPInstObsComp
 
     public Option<BandsList> getCatalogBand() {
       return catalogBand;
+    }
+  }
+
+
+  public enum Grating implements DisplayableSpType, SequenceableSpType, LoggableSpType {
+    Z4000("Z4000"),
+    Y4000("Y4000"),
+    J4000("J4000"),
+    H4000("H4000"),
+    K4000("K4000"),
+    HK4000("HK4000"),
+
+    Z8000("Z8000"),
+    Y8000("Y8000"),
+    J8000("J8000"),
+    H8000("H8000"),
+    K8000("K8000"),
+
+    Z10000("Z10000"),
+    Y10000("Y10000"),
+    J10000("J10000"),
+    H10000("H10000"),
+    K10000("K10000"),
+
+    ADC50("ADC50")
+    ;
+
+
+    public static Grating DEFAULT = Z4000;
+    public static final ItemKey KEY = new ItemKey(INSTRUMENT_KEY, "grating");
+
+    private final String displayValue;
+
+    Grating(String displayValue) {
+      this.displayValue = displayValue;
+    }
+
+    public String displayValue() {
+      return displayValue;
+    }
+
+    public String logValue() {
+      return displayValue;
+    }
+
+    public String sequenceValue() {
+      return name();
+    }
+
+    public String toString() {
+      return displayValue;
+    }
+
+    /**
+     * Returns the grating matching the given name by searching through the
+     * known types.  If not found, nvalue is returned.
+     */
+    public static Grating valueOf(String name, Grating nvalue) {
+      return SpTypeUtil.oldValueOf(Grating.class, name, nvalue);
     }
   }
 
@@ -596,6 +654,7 @@ public final class Iris extends SPInstObsComp
       CategorizedTime.fromSeconds(Category.CONFIG_CHANGE, GUIDED_OFFSET_OVERHEAD, OffsetOverheadCalculator.DETAIL);
 
   public static final PropertyDescriptor FILTER_PROP;
+  public static final PropertyDescriptor GRATING_PROP;
   public static final PropertyDescriptor DETECTOR_PROP;
   public static final PropertyDescriptor SCALE_PROP;
   public static final PropertyDescriptor READ_MODE_PROP;
@@ -629,6 +688,7 @@ public final class Iris extends SPInstObsComp
     boolean iter_no = false;
 
     FILTER_PROP = initProp(Filter.KEY.getName(), query_yes, iter_yes);
+    GRATING_PROP = initProp(Grating.KEY.getName(), query_yes, iter_yes);
     DETECTOR_PROP = initProp(Detector.KEY.getName(), query_yes, iter_yes);
     SCALE_PROP = initProp(Scale.KEY.getName(), query_yes, iter_yes);
     READ_MODE_PROP = initProp(ReadMode.KEY.getName(), query_yes, iter_yes);
@@ -663,6 +723,7 @@ public final class Iris extends SPInstObsComp
   private PosAngleConstraint _posAngleConstraint = PosAngleConstraint.UNBOUNDED;
 
   private Filter filter = Filter.DEFAULT;
+  private Grating grating = Grating.DEFAULT;
   private Detector detector = Detector.DEFAULT;
   private Scale scale = Scale.DEFAULT;
   private ReadMode readMode;
@@ -714,6 +775,18 @@ public final class Iris extends SPInstObsComp
     if (oldValue != newValue) {
       filter = newValue;
       firePropertyChange(FILTER_PROP.getName(), oldValue, newValue);
+    }
+  }
+
+  public Grating getGrating() {
+    return grating;
+  }
+
+  public void setGrating(Grating newValue) {
+    Grating oldValue = getGrating();
+    if (oldValue != newValue) {
+      grating = newValue;
+      firePropertyChange(GRATING_PROP.getName(), oldValue, newValue);
     }
   }
 
@@ -1055,6 +1128,7 @@ public final class Iris extends SPInstObsComp
     ParamSet paramSet = super.getParamSet(factory);
 
     Pio.addParam(factory, paramSet, FILTER_PROP.getName(), filter.name());
+    Pio.addParam(factory, paramSet, GRATING_PROP.getName(), grating.name());
     Pio.addParam(factory, paramSet, DETECTOR_PROP.getName(), detector.name());
     Pio.addParam(factory, paramSet, SCALE_PROP.getName(), scale.name());
     Pio.addParam(factory, paramSet, READ_MODE_PROP.getName(), readMode.name());
@@ -1083,6 +1157,9 @@ public final class Iris extends SPInstObsComp
     String v;
     v = Pio.getValue(paramSet, FILTER_PROP.getName());
     if (v != null) setFilter(Filter.valueOf(v, getFilter()));
+
+    v = Pio.getValue(paramSet, GRATING_PROP.getName());
+    if (v != null) setGrating(Grating.valueOf(v, getGrating()));
 
     v = Pio.getValue(paramSet, DETECTOR_PROP.getName());
     if (v != null) setDetector(Detector.valueOf(v, getDetector()));
@@ -1132,6 +1209,7 @@ public final class Iris extends SPInstObsComp
 
     sc.putParameter(StringParameter.getInstance(ISPDataObject.VERSION_PROP, getVersion()));
     sc.putParameter(DefaultParameter.getInstance(FILTER_PROP.getName(), getFilter()));
+    sc.putParameter(DefaultParameter.getInstance(GRATING_PROP.getName(), getGrating()));
     sc.putParameter(DefaultParameter.getInstance(DETECTOR_PROP.getName(), getDetector()));
     sc.putParameter(DefaultParameter.getInstance(SCALE_PROP.getName(), getScale()));
     sc.putParameter(DefaultParameter.getInstance(READ_MODE_PROP.getName(), getReadMode()));
@@ -1154,6 +1232,7 @@ public final class Iris extends SPInstObsComp
   public static List<InstConfigInfo> getInstConfigInfo() {
     List<InstConfigInfo> configInfo = new LinkedList<>();
     configInfo.add(new InstConfigInfo(FILTER_PROP));
+    configInfo.add(new InstConfigInfo(GRATING_PROP));
     configInfo.add(new InstConfigInfo(DETECTOR_PROP));
     configInfo.add(new InstConfigInfo(SCALE_PROP));
     configInfo.add(new InstConfigInfo(READ_MODE_PROP));
