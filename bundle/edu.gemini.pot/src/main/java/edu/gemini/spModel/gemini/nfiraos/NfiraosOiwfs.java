@@ -521,6 +521,7 @@ public enum NfiraosOiwfs {
             double y = -y0 / PLATE_SCALE;
             double headWidth = R_HEAD / PLATE_SCALE;
 
+            // Draw the probe arm from the origin (x, y) to the guide star (p, q) with width headWidth.
             // XXX TODO: Make probe arm thicker at base and thinner at the guide star
             // Calculate the polygon for the probe arm
             // (Need to draw the rect at an angle between the guide star and the origin, so using a polygon)
@@ -538,10 +539,6 @@ public enum NfiraosOiwfs {
             Area res = new Area(probeArm);
             // Add a circle for the probe head
             res.add(new Area(new Ellipse2D.Double(p - headWidth / 2, q - headWidth / 2, headWidth, headWidth)));
-
-            // Clip to Nfiraos range, taking offsets into account
-//                        Area range = probeRange3(ctx);
-//                        res.intersect(range);
             return res;
           }
         }
