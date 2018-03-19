@@ -523,8 +523,8 @@ public enum NfiraosOiwfs {
 
             // Draw the probe arm from the origin (x, y) to the guide star (p, q) with width PROBE_ARM_WIDTH.
             // XXX TODO: Make probe arm thicker at base and thinner at the guide star
-            // Calculate the polygon for the probe arm
-            // (Need to draw the rect at an angle between the guide star and the origin, so using a polygon)
+            // Calculate the polygon for the probe arm.
+            // (Note: For now, using formula for drawing a rectangle between two points rather then rotating it afterwards.)
             double px = y - q, py = -(x - p);
             double length = Math.hypot(px, py); // length of perpendicular for arm rect
             double nx = px / length;
