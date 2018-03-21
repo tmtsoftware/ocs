@@ -137,22 +137,22 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
     };
 
     private final EditListener<Iris, Iris.Detector> detectorChangeListener = evt -> {
-        boolean wasIfs = evt.getOldValue() != Detector.IMAGER_ONLY;
-        boolean isIfs = evt.getNewValue() != Detector.IMAGER_ONLY;
-        if (wasIfs != isIfs) setIfsEnabled(isIfs);
+        updateImagerIfsEnabledStates(evt.getNewValue());
     };
 
-    // If isIfs is true, enable the IFS controls and disable the imager controls, otherwise do the opposite.
-    private void setIfsEnabled(boolean isIfs) {
-        scaleCtrl.getComponent().setEnabled(isIfs);
-        gratingCtrl.getComponent().setEnabled(isIfs);
-        ifsExposureTimeCtrl.getComponent().setEnabled(isIfs);
-        ifsCoaddsCtrl.getComponent().setEnabled(isIfs);
-        updateEnabledState(ifsReadModeCtrl.getComponent().getComponents(), isIfs);
+    // Updates the enabled states of the imager and IFS panels based on the selected detector.
+    private void updateImagerIfsEnabledStates(Iris.Detector detector) {
+        boolean ifsEnabled = detector != Detector.IMAGER_ONLY;
+        boolean imagerEnabled = detector != Detector.IFS_ONLY;
+        scaleCtrl.getComponent().setEnabled(ifsEnabled);
+        gratingCtrl.getComponent().setEnabled(ifsEnabled);
+        ifsExposureTimeCtrl.getComponent().setEnabled(ifsEnabled);
+        ifsCoaddsCtrl.getComponent().setEnabled(ifsEnabled);
+        updateEnabledState(ifsReadModeCtrl.getComponent().getComponents(), ifsEnabled);
 
-        imagerExposureTimeCtrl.getComponent().setEnabled(!isIfs);
-        imagerCoaddsCtrl.getComponent().setEnabled(!isIfs);
-        updateEnabledState(imagerReadModeCtrl.getComponent().getComponents(), !isIfs);
+        imagerExposureTimeCtrl.getComponent().setEnabled(imagerEnabled);
+        imagerCoaddsCtrl.getComponent().setEnabled(imagerEnabled);
+        updateEnabledState(imagerReadModeCtrl.getComponent().getComponents(), imagerEnabled);
     }
 
     private final EditListener<Iris, Iris.Scale> scaleChangeListener = evt -> {
@@ -635,6 +635,6 @@ public final class IrisEditor extends ComponentEditor<ISPObsComponent, Iris> imp
         imagerMsgPanel.update();
         imagerExposureTimeMessageUpdater.update();
 
-        setIfsEnabled(iris.getDetector() != Detector.IMAGER_ONLY);
+        updateImagerIfsEnabledStates(iris.getDetector());
     }
 }
