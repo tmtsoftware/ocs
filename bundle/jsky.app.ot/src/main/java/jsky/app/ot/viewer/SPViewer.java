@@ -808,7 +808,7 @@ public final class SPViewer extends SPViewerGUI implements PropertyChangeListene
     /** Update the title of the frame to include information about the file name. */
     private void _updateFrameTitle() {
         final JFrame parent = getParentFrame();
-        String title = "Gemini OT";
+        String title = "TMT OT";
         if (getRoot() != null) {
             title += " - " + getTitle();
         }

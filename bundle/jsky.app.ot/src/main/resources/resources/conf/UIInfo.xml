@@ -10,7 +10,7 @@
 
     <UIInfo
             dataObject="edu.gemini.spModel.gemini.obscomp.SPProgram"
-            name="Gemini Science Program"
+            name="TMT Science Program"
             type="scienceProgram"
             imageKey="program_small.png"
             shortDescription="Program information taken from the Phase 1 proposal."

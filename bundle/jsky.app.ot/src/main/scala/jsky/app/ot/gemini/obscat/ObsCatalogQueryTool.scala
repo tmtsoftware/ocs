@@ -61,7 +61,7 @@ object ObsCatalogFrame extends Frame with PreferredSizeFrame {
 
   def loadPresets(conf: OTBrowserConf):Unit = Swing.onEDT(cqt.loadPreset(conf))
 
-  title = "Gemini Science Program Database"
+  title = "TMT Science Program Database"
 
   lazy val cqt = new ObsCatalogQueryTool(ObsCatalog.INSTANCE)
   contents = new MigPanel(LC().insets(0).fill().minWidth(1200.px)) {

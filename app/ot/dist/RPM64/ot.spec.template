@@ -17,7 +17,7 @@ BuildArch: x86_64
 Autoreq: 0
 
 %description
-Gemini OT.
+TMT OT.
 
 %prep
 %setup -q -n %{name}_%{version}_rpm64

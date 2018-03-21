@@ -65,7 +65,7 @@ public final class ObsCatalog extends SkycatCatalog {
         final SkycatConfigEntry _configEntry;
         final Properties p = new Properties();
         p.setProperty(SkycatConfigFile.SERV_TYPE, "catalog");
-        p.setProperty(SkycatConfigFile.LONG_NAME, "Gemini Science Program Database");
+        p.setProperty(SkycatConfigFile.LONG_NAME, "TMT Science Program Database");
         p.setProperty(SkycatConfigFile.SHORT_NAME, "spdb");
         _configEntry = new SkycatConfigEntry(p);
         _configEntry.setParamDesc(newParamDesc());
@@ -81,7 +81,7 @@ public final class ObsCatalog extends SkycatCatalog {
         // Row 1
         p = new FieldDescAdapter(ObsCatalogInfo.PROG_REF);
         p.setDescription(
-                "Enter wildcard expression for Gemini science program reference number. " +
+                "Enter wildcard expression for TMT science program reference number. " +
                         wildcards);
         params.add(p);
 
