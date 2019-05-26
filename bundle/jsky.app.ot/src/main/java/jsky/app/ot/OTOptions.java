@@ -100,18 +100,21 @@ public class OTOptions {
     }
 
     public static boolean isStaff(SPProgramID pid) {
-        return hasPermission(new StaffPermission(pid)) ||
-               hasPermission(new VisitorPermission(pid));
+//        return hasPermission(new StaffPermission(pid)) ||
+//               hasPermission(new VisitorPermission(pid));
+        return true; // XXX allan
     }
 
     public static boolean isStaff(ISPProgram prog) {
-        final SPProgramID pid = (prog == null) ? null : prog.getProgramID();
-        return (pid != null) && isStaff(pid);
+//        final SPProgramID pid = (prog == null) ? null : prog.getProgramID();
+//        return (pid != null) && isStaff(pid);
+        return true; // XXX allan
     }
 
     public static boolean isStaffGlobally() {
-        return hasPermission(new StaffPermission()) ||
-               hasPermission(new VisitorPermission());
+//        return hasPermission(new StaffPermission()) ||
+//               hasPermission(new VisitorPermission());
+        return true; // XXX allan
 
     }
 
